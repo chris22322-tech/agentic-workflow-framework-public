@@ -18,7 +18,7 @@ CSM needs to learn, based on their current situation.
 ## About Me (fill this in before running)
 
 Role: Customer Success Manager
-Company/Industry: [e.g., "B2B SaaS", "Core banking vendor", "FinTech"]
+Company/Industry: [e.g., "B2B SaaS", "Insurance", "Healthcare platform"]
 Portfolio size: [e.g., "25 mid-market accounts", "8 enterprise accounts"]
 Typical workflows I do repeatedly:
 - [e.g., "Weekly client check-in prep"]

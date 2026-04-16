@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 """Production readiness verification script.
 
-Automates the framework-quality checks:
+Automates the checks from docs/PRODUCTION_CHECKLIST.md that can be automated:
   - mkdocs build --strict (zero warnings)
-  - Content gating (platform-neutrality, placeholder cleanup)
+  - Content gating (banned terms — empty in public build, see sync script)
   - docs/downloads/ files are non-empty
   - templates/check_sync.py passes
   - mkdocs.yml nav entries resolve to existing files
 
 Usage:
     python scripts/production_check.py
-
-Note: a content-gating step ("banned terms") exists if you want to enforce
-that certain strings never appear in docs/ or templates/ (for example,
-legacy client names from prior proof-of-concept work). By default the
-public build has an empty banned list so the check is a no-op — add terms
-below if you need them.
 """
 
 import os
@@ -30,10 +24,7 @@ DOWNLOADS_DIR = DOCS_DIR / "downloads"
 MKDOCS_YML = PROJECT_ROOT / "mkdocs.yml"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 
-# Content-gating list — empty by default in the public build.
-# Add tuples of (regex_pattern, display_label) to enforce that specific
-# terms never appear in docs/ or templates/.
-BANNED_TERMS: list[tuple[str, str]] = []
+BANNED_TERMS: list[tuple[str, str]] = []  # public build: empty (see sync_to_public.sh)
 
 # Directories to exclude from banned-term scanning
 SCAN_DIRS = [DOCS_DIR, TEMPLATES_DIR]
@@ -81,14 +72,8 @@ def check_mkdocs_build() -> CheckResult:
 
 
 def check_banned_terms() -> CheckResult:
-    """Grep docs/ and templates/ for optional banned terms.
-
-    Skipped if BANNED_TERMS is empty (the public-build default).
-    """
+    """Grep docs/ and templates/ for banned terms."""
     result = CheckResult("Content gating (banned terms)")
-    if not BANNED_TERMS:
-        result.info("No banned terms configured — skipped")
-        return result
     hits = 0
     for scan_dir in SCAN_DIRS:
         if not scan_dir.exists():

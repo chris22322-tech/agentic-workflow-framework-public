@@ -44,9 +44,9 @@ STAGES = {
         ("Constraints & Assumptions", "stage3-constraints-and-assumptions.csv"),
     ],
     "Stage 4 - Design.xlsx": [
-        ("Scope-to-Node Mapping", "stage4-scope-to-node-mapping.csv"),
-        ("State Schema", "stage4-state-schema.csv"),
-        ("Node Specifications", "stage4-node-specifications.csv"),
+        ("Scope-to-Action Mapping", "stage4-scope-to-node-mapping.csv"),
+        ("Memory Schema", "stage4-state-schema.csv"),
+        ("Action Specifications", "stage4-node-specifications.csv"),
         ("HIL Interaction Design", "stage4-hil-interaction-design.csv"),
         ("Error Handling", "stage4-error-handling.csv"),
     ],

@@ -252,7 +252,7 @@ doc.add_heading("What This Document Does NOT Cover", level=2)
 add_bullet(doc, "Production deployment configuration (infrastructure, monitoring, alerting)")
 add_bullet(doc, "Ongoing production evaluation and continuous improvement after graduation")
 add_bullet(doc, "User training or change management for the agent-assisted workflow")
-add_bullet(doc, "Automated evaluation pipelines (e.g., LangSmith dataset runs) \u2014 this document covers manual and semi-automated evaluation")
+add_bullet(doc, "Automated evaluation pipelines (e.g., platform-native dataset runs or third-party eval tooling) \u2014 this document covers manual and semi-automated evaluation")
 
 # ════════════════════════════════════════════════════════════════════
 # 3. OBJECTIVES
@@ -370,7 +370,7 @@ add_example_row(table, 2, [
 ], Pt(8))
 add_example_row(table, 3, [
     "Graph Issue",
-    "The workflow structure is wrong \u2014 nodes in the wrong order, missing conditional edges, HIL at the wrong point.",
+    "The workflow structure is wrong \u2014 actions in the wrong order, missing conditional edges, HIL at the wrong point.",
     "Data and analysis are correct, but the workflow routes them incorrectly. Fix the graph (Stage 4)."
 ], Pt(8))
 add_example_row(table, 4, [
@@ -517,7 +517,7 @@ add_prefilled_row(table, 5, [
 add_prefilled_row(table, 6, [
     "HIL Effectiveness",
     "Are the human-in-the-loop checkpoints at the right places? Is the information surfaced at each checkpoint useful for the reviewer? Are checkpoints adding value or just adding delay?",
-    "Track the size of human edits at each checkpoint across all test cases. Categories: none, minor tweaks, significant corrections, complete rewrite. If edits are consistently none/minor, the checkpoint may be unnecessary. If consistently significant/rewrite, the preceding node needs improvement.",
+    "Track the size of human edits at each checkpoint across all test cases. Categories: none, minor tweaks, significant corrections, complete rewrite. If edits are consistently none/minor, the checkpoint may be unnecessary. If consistently significant/rewrite, the preceding action needs improvement.",
     "",
     "",
     "",
@@ -528,8 +528,8 @@ add_prefilled_row(table, 6, [
 # Row 7: Trajectory
 add_prefilled_row(table, 7, [
     "Trajectory",
-    "Did the agent take the correct path through the graph \u2014 right node sequence, no unnecessary loops, no skipped steps? Did it reach the right output via the right process, not just by coincidence?",
-    "Define expected node sequences for each test case and compare against actual execution order via traces (LangSmith or manual logging). Flag cases where the agent reached the correct output via an inefficient or incorrect path.",
+    "Did the agent take the correct path through the flow \u2014 right action sequence, no unnecessary loops, no skipped steps? Did it reach the right output via the right process, not just by coincidence?",
+    "Define expected action sequences for each test case and compare against actual execution order via traces (your platform's tracing/observability tool, or manual logging). Flag cases where the agent reached the correct output via an inefficient or incorrect path.",
     "",
     "",
     "",
@@ -544,7 +544,7 @@ add_tip(doc,
     "Trajectory evaluation catches failures invisible to output-only assessment. "
     "An agent can produce a correct report while taking an unnecessarily expensive "
     "path \u2014 re-running analysis after an unnecessary loop, skipping a data source "
-    "and compensating downstream. Define expected node sequences for each test case "
+    "and compensating downstream. Define expected action sequences for each test case "
     "and compare against actual execution traces."
 )
 
@@ -876,7 +876,7 @@ add_body(doc,
 
 add_body(doc, "1. Tool layer \u2014 Was the right data retrieved?")
 add_body(doc, "2. Prompt layer \u2014 Given the data it received, did the prompt produce the right analysis?")
-add_body(doc, "3. Graph layer \u2014 Is the node in the right position with the right inputs?")
+add_body(doc, "3. Flow layer \u2014 Is the action in the right position with the right inputs?")
 add_body(doc, "4. Scope layer \u2014 Does the scope support what the agent needs to represent?")
 
 add_italic_instruction(doc,
@@ -1183,7 +1183,7 @@ add_body(doc,
 
 add_tip(doc,
     "This is the final stage of the framework methodology. For reference material "
-    "on LangGraph patterns, decision trees, and checklists, see the Reference "
+    "on agent-framework patterns, decision trees, and checklists, see the Reference "
     "section of the documentation."
 )
 

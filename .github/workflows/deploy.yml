@@ -17,6 +17,12 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Opt into Node.js 24 for all JavaScript actions. Node.js 20 will be
+# removed from GitHub runners on 2026-09-16. This line keeps the workflow
+# working through that cutover without bumping individual action versions.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest

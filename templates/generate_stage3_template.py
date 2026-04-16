@@ -223,8 +223,8 @@ doc.add_paragraph(
 
 doc.add_paragraph(
     "Once completed, this document feeds directly into Stage 4 (Design), where every step, data source, "
-    "and decision point you record here is translated into a LangGraph agent architecture. The quality "
-    "of the design is entirely determined by the quality of this scope."
+    "and decision point you record here is translated into an agent architecture on the platform your team has chosen. "
+    "The quality of the design is entirely determined by the quality of this scope."
 )
 
 # ══════════════════════════════════════════════════════════════════
@@ -319,10 +319,10 @@ doc.add_heading("5. Outputs Produced", level=1)
 doc.add_paragraph("This document produces the following artifacts that Stage 4 (Design) consumes:")
 
 outputs = [
-    ("Step-by-Step Workflow Map", "The sequence of steps, with decision logic and boundary tags, that becomes the node/edge structure of the LangGraph agent."),
-    ("Data Inventory", "The list of data sources that becomes the tool specification for each data-retrieval node."),
+    ("Step-by-Step Workflow Map", "The sequence of steps, with decision logic and boundary tags, that becomes the action/flow structure of the agent."),
+    ("Data Inventory", "The list of data sources that becomes the tool specification for each data-retrieval action."),
     ("Integration Requirements", "The technology stack that informs the build environment and dependency setup."),
-    ("Constraints and Assumptions", "The operating conditions that shape the state schema, error handling strategy, and scope limitations of the agent design."),
+    ("Constraints and Assumptions", "The operating conditions that shape the memory schema, error handling strategy, and scope limitations of the agent design."),
 ]
 for title, desc in outputs:
     p = doc.add_paragraph()
@@ -490,7 +490,7 @@ doc.add_heading("Boundary Rationale", level=2)
 add_italic_instruction(doc,
     "For each step where the boundary assignment is not obvious (especially HIL and MANUAL steps, and any "
     "split-boundary steps), write a brief narrative explaining why you chose that boundary. This rationale "
-    "is critical for Stage 4 — it determines which steps become automated nodes vs. interrupt checkpoints.\n\n"
+    "is critical for Stage 4 — it determines which steps become automated actions vs. HIL checkpoints.\n\n"
     "Example: 'Step 5 (Slack sentiment) is HIL because Slack conversations contain sarcasm, inside jokes, and "
     "genuine complaints mixed together. The LLM can summarise and propose a sentiment reading, but the CSM "
     "knows the relationship context. The agent does the heavy lifting; the human validates.'\n\n"
@@ -508,7 +508,7 @@ doc.add_heading("9. Data Inventory", level=1)
 
 doc.add_paragraph(
     "Document every data source your workflow touches. This inventory becomes the tool specification "
-    "for data-retrieval nodes in Stage 4 and the integration setup checklist in Stage 5."
+    "for data-retrieval actions in Stage 4 and the integration setup checklist in Stage 5."
 )
 
 di_headers = ["Data Source", "System / Platform", "Access Method", "Data Format", "Auth Required", "Rate Limits / Pagination", "Data Quality Notes", "Used by Steps"]
@@ -577,20 +577,20 @@ ir_table = add_table_with_headers(doc, ir_headers)
 
 add_example_row(ir_table, [
     "Framework",
-    "LangGraph \u2014 agent orchestration",
-    "LangGraph \u22650.2 (Python)",
+    "Agent orchestration framework",
+    "Whichever framework your team has chosen",
     "Needs Setup",
     "Developer / Builder",
-    "Core dependency. Workflow steps become LangGraph nodes. Install via pip install langgraph."
+    "Core dependency. Workflow steps become flow actions. Installation depends on the chosen platform \u2014 see Stage 4."
 ])
 
 add_example_row(ir_table, [
     "LLM Provider",
-    "Anthropic SDK \u2014 Claude API for synthesis, summarisation, report generation",
-    "Anthropic Python SDK \u22650.39",
+    "Language model API access for synthesis, summarisation, report generation",
+    "A capable general-purpose LLM available via API",
     "Needs Setup",
     "Developer / Builder",
-    "Required for synthesis and judgement steps. API key must be provisioned and stored securely."
+    "Required for synthesis and judgement steps. API credentials must be provisioned and stored securely."
 ])
 
 add_example_row(ir_table, [
@@ -693,7 +693,7 @@ add_example_row(ca_table, [
     "Each account has exactly one active product. The health scoring workflow evaluates a single product's usage metrics per account.",
     "If multi-product: health score conflates products \u2014 healthy Product A masks failing Product B. Steps 7 and 9 need product-level sub-steps.",
     "Needs investigation",
-    "Stage 3 (workflow map), Stage 4 (state schema needs product loop), Stage 5 (scoring rubric needs per-product dimensions)",
+    "Stage 3 (workflow map), Stage 4 (memory schema needs product loop), Stage 5 (scoring rubric needs per-product dimensions)",
     "If multi-product accounts exist: (1) add product enumeration step, (2) loop scoring per product, (3) add roll-up step. Or scope v1 to single-product accounts only."
 ])
 
@@ -711,7 +711,7 @@ add_example_row(ca_table, [
     "The workflow runs quarterly. Metrics are compared QoQ using aligned quarterly boundaries. Data sources refresh within 72 hours of quarter-end.",
     "If run mid-quarter: partial vs full quarter comparisons produce misleading trends. If data sources have different lag: metrics from same date range represent different time windows.",
     "No",
-    "Stage 3 (date range params need freshness checks), Stage 5 (retrieval nodes need configurable dates)",
+    "Stage 3 (date range params need freshness checks), Stage 5 (retrieval actions need configurable dates)",
     "Define explicit date range params at workflow start. Add data freshness check per source. If any source lags >72hrs, flag in report header."
 ])
 
@@ -815,7 +815,7 @@ doc.add_paragraph(
 
 next_steps = [
     ("Resolve open questions.", "Any item marked 'Needs Investigation' in the Constraints and Assumptions register should be verified before proceeding. Unverified assumptions become design risks in Stage 4."),
-    ("Hand off to Stage 4: Design.", "The completed Scope Document is the primary input for Stage 4, where the workflow map is translated into a LangGraph agent architecture. The designer will use your step-by-step map to define nodes and edges, your boundary tags to place interrupt checkpoints, your data inventory to specify tools, and your constraints to shape the state schema."),
+    ("Hand off to Stage 4: Design.", "The completed Scope Document is the primary input for Stage 4, where the workflow map is translated into an agent architecture on the platform your team has chosen. The designer will use your step-by-step map to define actions and edges, your boundary tags to place HIL checkpoints, your data inventory to specify tools, and your constraints to shape the memory schema."),
     ("Retain this document as a living reference.", "As the agent is built and tested in Stages 5 and 6, you may discover that some assumptions were wrong or that the workflow needs adjustment. Update this document to reflect what you learn — it remains the authoritative record of what the agent is designed to do and why."),
 ]
 

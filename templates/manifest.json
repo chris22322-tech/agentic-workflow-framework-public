@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated": "2026-04-15T14:22:17Z",
+  "generated": "2026-04-16T00:58:58Z",
   "templates": [
     {
       "file": "stage1-workflow-inventory.csv",
@@ -27,7 +27,7 @@
       ],
       "methodology_hash": "4c96a63a06cc25ef7b09a46cf4efb1a078103ff6b059a08ef0989929f3e99f3a",
       "template_hash": "50e65e0c146597f07feb46ab576afa46f8a1f170a9da5097cb1de367dfaeb80f",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage1-dependencies.csv",
@@ -46,8 +46,8 @@
         "Automation Sequencing Notes"
       ],
       "methodology_hash": "4c96a63a06cc25ef7b09a46cf4efb1a078103ff6b059a08ef0989929f3e99f3a",
-      "template_hash": "f3dd9bfa32309ce588650415e52ffcb789341e30cbaa54b5e265010685202576",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "415ab28ad0d1023a31c1d4eac0944a462e5ae8a6faabcc0efa6534979b18f2c7",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage2-scoring-matrix.csv",
@@ -73,7 +73,7 @@
       ],
       "methodology_hash": "a8df8a13573ee293457c36a5404bd866a6d17608a9679e6a203ba4fac5f9a7a1",
       "template_hash": "ee875007de49c0d973dae32f8d1a312b4703f821229d22e6f5a95a49e3d14198",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage2-selection-decision-record.csv",
@@ -94,7 +94,7 @@
       ],
       "methodology_hash": "a8df8a13573ee293457c36a5404bd866a6d17608a9679e6a203ba4fac5f9a7a1",
       "template_hash": "a68befc9caad8b33c0d225bb2bd33510d6555f50329c82b4cc6aa554dea1e1f5",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage3-workflow-map.csv",
@@ -118,7 +118,7 @@
       ],
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
       "template_hash": "79e12fc0f9053aca50d594d23fea8839139e29a5cfe78bd23a9dd9d7fa5535aa",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage3-data-inventory.csv",
@@ -140,7 +140,7 @@
       ],
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
       "template_hash": "2ed1f441a8359d76f8760e3f573d89005bfd3109bdc614e08da6dfff63707357",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage3-integration-requirements.csv",
@@ -157,8 +157,8 @@
         "Notes"
       ],
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
-      "template_hash": "2a26465d7b9a6e5bccea6e8c34b63a05bd58b4e301535598266c101be872e37a",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "3704313ea9893ae9b75628ceddacd9c6389752a864db21b1b7ae09306c17fafe",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage3-constraints-and-assumptions.csv",
@@ -176,8 +176,8 @@
         "Notes"
       ],
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
-      "template_hash": "22b0537627c9f7a9da7c651859399fb311c647207c27b51e2328bb8159a4dca8",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "5e635ba1288f88006621d888e70f8f14552bbf857cb3d1efc2fb8109cd11d41d",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage4-state-schema.csv",
@@ -189,15 +189,15 @@
         "Field Name",
         "Type",
         "Category",
-        "Source (which node writes)",
-        "Consumed By (which nodes read)",
+        "Source (which action writes)",
+        "Consumed By (which actions read)",
         "Reducer",
         "Derived From (scope step Output column)",
         "Notes"
       ],
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "8ac4c992d92578a104b27a2bf438698cf16812f6e5e6e7114bfe683f4d3de83a",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "91b7a8f7001cc70151a0a38caa1f5a7c9ee521afd75f8401b91a8df43b4fa1ca",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage4-node-specifications.csv",
@@ -206,21 +206,21 @@
       "methodology_source": "docs/stages/04-design.md",
       "worked_example_source": "docs/worked-example/design.md",
       "columns": [
-        "Node Name",
+        "Action Name",
         "Purpose",
-        "Node Type",
+        "Action Type",
         "Tools",
         "Logic",
         "Prompt Pattern",
         "Error Handling",
-        "Input State Fields",
-        "Output State Fields",
+        "Input Memory Fields",
+        "Output Memory Fields",
         "Edge Type",
         "Notes"
       ],
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "1538e5d969bcf4f3d2131599003f7ea8359dd78b9e36fc81508d41bda0280020",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "ee7a5f76492a095935008ece2449b2a19523b608104d000be30b113f8a43d598",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage4-hil-interaction-design.csv",
@@ -229,18 +229,18 @@
       "methodology_source": "docs/stages/04-design.md",
       "worked_example_source": "docs/worked-example/design.md",
       "columns": [
-        "HIL Node Name",
+        "HIL Action Name",
         "HIL Pattern",
         "What Is Surfaced to Human",
         "Expected Human Input",
-        "State Fields Written",
+        "Memory Fields Written",
         "Routing After Resume",
         "Decision Options",
         "Design Rationale"
       ],
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "6f30f1883fbe67cc2555014f9b6cee9fb738b63c93ca41748f3cc549ba894c41",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "3e028852ba77d5a3b0e188303aea92bb6fb9e36b4068254535b290306ad54791",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage4-error-handling.csv",
@@ -251,7 +251,7 @@
       "columns": [
         "Failure Mode",
         "Failure Category",
-        "Which Nodes Are Affected",
+        "Which Actions Are Affected",
         "Detection Method",
         "Response Strategy",
         "Strategy Detail",
@@ -259,8 +259,8 @@
         "Notes"
       ],
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "1dad5bb9f256444f57784c19e3f775262603a5342b2790aa864d2cf4a8e15e6f",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "c0a0c99181471ece85e3dc7e509ade67b3570ee0d3c100d4fd212ecb41f2ae85",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage4-scope-to-node-mapping.csv",
@@ -272,14 +272,14 @@
         "Scope Step Number",
         "Scope Step Name",
         "Boundary Tag (from Stage 3)",
-        "Graph Node",
+        "Flow Action",
         "Consolidation Rule Applied",
         "Consolidation Rationale",
         "Notes"
       ],
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "a0730ba2dd52cb446d941047cae6ede8537ccdf67d4d0bfb79c8e900317f9c12",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "c0967ea8d51778c5ee347f3cb80300aa4befabf082f5f6f047b4c46fbf3094d6",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage6-test-cases.csv",
@@ -305,8 +305,8 @@
         "Notes"
       ],
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "6cdbfcd6762d2415ad4913b6b1bb9794d19a52402f2c5dfc5be25084b4862f73",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "18d679b64d899e38c2f800e204fbb569916b44eff92e410c60c078c70615e224",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage6-evaluation-dimensions.csv",
@@ -325,8 +325,8 @@
         "Notes"
       ],
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "3551e41a42d8df2af4a8dec78c985b75000b87a58ae522b114b67bc65b021272",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "15a62e7aebab703132ca416f1f7fc8ebc068f4a4c5b03c0606fb8e4ac02d04c0",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage6-iteration-log.csv",
@@ -350,8 +350,8 @@
         "Notes"
       ],
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "d782a92d14f378d55ea9d5b9f9d580aa0007b86e5bc7377b46e58ec2d8c1ec44",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "856f0d087d0d9a07ba3b9c261bd7bc9c1e403ceda9f3eb55f60de36d3ff47e86",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage6-graduation-checklist.csv",
@@ -370,7 +370,7 @@
       ],
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
       "template_hash": "e9759e79fdbaaf08c6e6b70090f82402d33941917039cae5afefeb87a77ab1da",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "stage6-efficiency-metrics.csv",
@@ -391,8 +391,8 @@
         "Notes"
       ],
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "cc903063c67b09e3c0d65027eca42cd4a213e37927bdcee2502aca31daa3273b",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "707a9add69a8ffd52487568bfda00775ebe4bbe3e9db85efafeea90c26bf508b",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 1 - Decompose.xlsx",
@@ -401,8 +401,8 @@
       "methodology_source": "docs/stages/01-decompose.md",
       "worked_example_source": "docs/worked-example/decompose.md",
       "methodology_hash": "4c96a63a06cc25ef7b09a46cf4efb1a078103ff6b059a08ef0989929f3e99f3a",
-      "template_hash": "cb87f5497defeac0adcdaa8dd70104ed05520d03d1162dd5b81d1f53e02e1d3e",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "b41784bafb0ce071f93440f387030d004569f6079a824a7b25b08901d7bc06cd",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 2 - Select.xlsx",
@@ -411,8 +411,8 @@
       "methodology_source": "docs/stages/02-select.md",
       "worked_example_source": "docs/worked-example/select.md",
       "methodology_hash": "a8df8a13573ee293457c36a5404bd866a6d17608a9679e6a203ba4fac5f9a7a1",
-      "template_hash": "7b0d95ce758fad5bc14b8119a775a17f7fa9aa85d692ea181b452260e770ef5e",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "4dc31df08f5d52f275df5174dbd3cbe0b69fad2c5258d0dd1d3da0a82d2bc9e0",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 3 - Scope.xlsx",
@@ -421,8 +421,8 @@
       "methodology_source": "docs/stages/03-scope.md",
       "worked_example_source": "docs/worked-example/scope.md",
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
-      "template_hash": "3c006f7c662372481cc7389d1748f67d62212b68689e59a5b05259da0b5436f3",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "261820e44eaa08d77fdaf91774a5f58e39ae2f188ee3fea5270fb5b8ea665858",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 4 - Design.xlsx",
@@ -431,8 +431,8 @@
       "methodology_source": "docs/stages/04-design.md",
       "worked_example_source": "docs/worked-example/design.md",
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "909aeb3c5602998acaed9fb4eb10611a54c16cc4c91f619232d85af8c7e56b18",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "b926a3b7a6b46d24ebae6ce6d71502b63b69299a8ab0a00eef9afff6b6d98d2a",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 6 - Evaluate.xlsx",
@@ -441,8 +441,8 @@
       "methodology_source": "docs/stages/06-evaluate.md",
       "worked_example_source": "docs/worked-example/evaluate.md",
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "362782fecd40232050beddc4c6fe3b5e76ecdb26d9bf7b480478576e2d8e0630",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "64cd8f48a974f885cd6fe4a712add89f54e5aab26fc0e2d9a930da305569a21f",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 3 - Scope - Template.docx",
@@ -451,8 +451,8 @@
       "methodology_source": "docs/stages/03-scope.md",
       "worked_example_source": "docs/worked-example/scope.md",
       "methodology_hash": "a1c1ee622e337840c10135aaf7f500d0995d1663beaccb11d654bdee468d6fce",
-      "template_hash": "add9ef41bd42620e8d0d8cd043f47f6dbbb5ea8298ceca67483f90870b412ef2",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "45e42abefa766be02476f40dd1b429b739f62513244faee0c6c2cd836dcca689",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 4 - Design - Template.docx",
@@ -461,8 +461,8 @@
       "methodology_source": "docs/stages/04-design.md",
       "worked_example_source": "docs/worked-example/design.md",
       "methodology_hash": "abdec11c58628fb05fd087e8ee3f67f7b317f5ebfac89591aa657b7ed5a54f50",
-      "template_hash": "d0ce79a57eeda2bb7f4131902ad897fa0c204cb5a542f0f18a16a2a6545e3013",
-      "last_verified": "2026-04-15T01:03:06Z"
+      "template_hash": "e082f63ec91e5da8b99d97fff46fe04f472e0010ef01ee02d7bbcd31d992dbac",
+      "last_verified": "2026-04-16T00:58:58Z"
     },
     {
       "file": "Stage 6 - Evaluate - Template.docx",
@@ -471,8 +471,8 @@
       "methodology_source": "docs/stages/06-evaluate.md",
       "worked_example_source": "docs/worked-example/evaluate.md",
       "methodology_hash": "b43fff8008ccb1323a4374f0d37d8068cf0acdb76ddcfdfbfa7377c5b90f773d",
-      "template_hash": "bbd9bcf275dae0db0e68015f4b4ea4114ad50356f9bd5414456c0f7cb1cdcdce",
-      "last_verified": "2026-04-15T14:22:17Z"
+      "template_hash": "b428756a1f39bd2be620e67c65119643299e4c120d92565ec04796bad11a5d08",
+      "last_verified": "2026-04-16T00:58:58Z"
     }
   ]
 }
