@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 8: Your First Agent — BA Learning Pathway</title>
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #121018;
+    --bg-secondary: #1a1524;
+    --bg-card: #221c30;
+    --bg-card-alt: #1e1829;
+    --text-primary: #ede8f4;
+    --text-secondary: #b0a4c4;
+    --text-muted: #7e6f99;
+    --accent: #d4a056;
+    --accent-glow: rgba(212, 160, 86, 0.15);
+    --accent-warm: #e07c4f;
+    --accent-green: #66d9a0;
+    --accent-red: #ff6b6b;
+    --accent-purple: #a78bfa;
+    --border: rgba(212, 160, 86, 0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Scroll Progress Bar ─────────────────────────────── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0;
+    width: 0%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Top Navigation ──────────────────────────────────── */
+  .top-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(18, 16, 24, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+  }
+  .top-nav-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+  .brand-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .brand-text { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand-text span { color: var(--text-muted); font-weight: 400; }
+
+  .lesson-progress { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-subtle); border: 1.5px solid var(--text-muted);
+  }
+  .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .progress-dot.completed { background: var(--accent-green); border-color: var(--accent-green); }
+
+  /* ── Section Navigation ─────────────────────────────── */
+  .section-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle); padding: 12px 24px; }
+  .section-nav-inner {
+    max-width: 960px; margin: 0 auto; display: flex; gap: 24px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .section-nav-inner::-webkit-scrollbar { display: none; }
+  .section-nav a {
+    font-size: 13px; color: var(--text-muted); text-decoration: none; white-space: nowrap;
+    padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+  }
+  .section-nav a:hover, .section-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero { padding: 80px 0 60px; text-align: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-glow); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 16px; font-size: 13px;
+    color: var(--accent); font-weight: 500; margin-bottom: 24px; letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px; color: #fff;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-subtitle { font-size: 20px; color: var(--text-secondary); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+  .hero-meta { display: flex; justify-content: center; gap: 32px; font-size: 14px; color: var(--text-muted); }
+  .hero-meta-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Section styling ─────────────────────────────────── */
+  .lesson-section { padding: 60px 0; border-top: 1px solid var(--border-subtle); }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-time { font-size: 12px; color: var(--text-muted); margin-left: 12px; font-weight: 400; letter-spacing: 0.02em; text-transform: none; }
+  h2 { font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 24px; letter-spacing: -0.01em; color: #fff; }
+  h3 { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 32px 0 16px; color: var(--text-primary); }
+  p { margin-bottom: 20px; color: var(--text-secondary); }
+  strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Callout boxes ───────────────────────────────────── */
+  .callout {
+    background: var(--bg-card); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 20px 24px; margin: 28px 0;
+  }
+  .callout p { margin-bottom: 0; color: var(--text-primary); font-size: 17px; }
+  .callout.warm { border-left-color: var(--accent-warm); }
+  .callout.green { border-left-color: var(--accent-green); }
+
+  /* ── Concept cards ───────────────────────────────────── */
+  .concept-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-alt));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px 28px 24px; margin: 32px 0; box-shadow: var(--shadow);
+  }
+  .concept-card-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .concept-card p { color: var(--text-primary); font-size: 17px; margin-bottom: 0; }
+
+  /* ── Expandable sections ─────────────────────────────── */
+  details {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin: 20px 0; overflow: hidden;
+  }
+  details summary {
+    padding: 16px 20px; cursor: pointer; font-weight: 600; font-size: 17px;
+    color: var(--text-primary); list-style: none; display: flex; align-items: center; gap: 12px;
+    transition: background 0.2s;
+  }
+  details summary:hover { background: var(--bg-card-alt); }
+  details summary::before { content: '\25B6'; font-size: 12px; color: var(--accent); transition: transform 0.2s; flex-shrink: 0; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary::-webkit-details-marker { display: none; }
+  details .details-content { padding: 0 20px 20px; color: var(--text-secondary); }
+  details .details-content p { font-size: 16px; }
+
+  /* ── Reflection Questions ────────────────────────────── */
+  .reflection { margin: 40px 0; }
+  .reflection-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0; overflow: hidden; margin-bottom: 16px;
+  }
+  .reflection-card-inner { display: flex; align-items: stretch; }
+  .reflection-number {
+    display: flex; align-items: center; justify-content: center; min-width: 56px;
+    background: var(--accent-glow); border-right: 1px solid var(--border);
+    font-size: 20px; font-weight: 700; color: var(--accent);
+  }
+  .reflection-content { padding: 20px 24px; flex: 1; }
+  .reflection-question { font-size: 17px; color: var(--text-primary); line-height: 1.6; margin-bottom: 0; }
+  .reflection-prompt { font-size: 13px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+
+  /* ── Exercise tables ─────────────────────────────────── */
+  .exercise-table-wrap {
+    margin: 28px 0; overflow-x: auto; border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .exercise-table {
+    width: 100%; border-collapse: collapse; font-size: 15px;
+    background: var(--bg-card);
+  }
+  .exercise-table th {
+    background: var(--bg-card-alt); text-align: left; padding: 14px 16px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); border-bottom: 2px solid var(--border);
+  }
+  .exercise-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary); vertical-align: top;
+  }
+  .exercise-table tr:last-child td { border-bottom: none; }
+  .exercise-table .fill-in {
+    color: var(--text-muted); font-style: italic;
+    border-bottom: 1px dashed var(--text-muted);
+  }
+  .exercise-table .pre-filled {
+    color: var(--text-primary); font-weight: 500;
+  }
+  .exercise-table .example-row td { background: rgba(212, 160, 86, 0.04); }
+
+  /* ── Step cards (for the exercise steps) ────────────── */
+  .step-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px; margin: 24px 0;
+    position: relative; overflow: hidden;
+  }
+  .step-card::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+    width: 4px; background: var(--accent);
+  }
+  .step-card.hint::before { background: var(--accent-purple); }
+  .step-card-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .step-card-label.exercise { color: var(--accent); }
+  .step-card-label.hint { color: var(--accent-purple); }
+  .step-card p { font-size: 16px; margin-bottom: 12px; }
+  .step-card p:last-child { margin-bottom: 0; }
+
+  /* ── Checklist ──────────────────────────────────────── */
+  .checklist { list-style: none; margin: 24px 0; }
+  .checklist li {
+    padding: 10px 0; font-size: 16px; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 12px; line-height: 1.6;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: ''; flex-shrink: 0; width: 20px; height: 20px; margin-top: 3px;
+    border-radius: 4px; border: 2px solid var(--text-muted);
+    background: transparent;
+  }
+
+  /* ── Prev/Next Navigation ──────────────────────────── */
+  .lesson-nav {
+    padding: 60px 0 80px; border-top: 1px solid var(--border-subtle);
+    display: flex; justify-content: space-between; gap: 20px;
+  }
+  .lesson-nav a {
+    display: inline-flex; align-items: center; gap: 12px;
+    text-decoration: none; font-size: 17px; font-weight: 600;
+    padding: 16px 28px; border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .lesson-nav a:hover { transform: translateY(-2px); }
+  .lesson-nav .prev {
+    color: var(--text-secondary); background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .lesson-nav .prev:hover { box-shadow: var(--shadow); }
+  .lesson-nav .prev .arrow { font-size: 20px; transition: transform 0.2s; }
+  .lesson-nav .prev:hover .arrow { transform: translateX(-4px); }
+  .lesson-nav .next {
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(212, 160, 86, 0.25);
+  }
+  .lesson-nav .next:hover { box-shadow: 0 8px 30px rgba(212, 160, 86, 0.35); }
+  .lesson-nav .next .arrow { font-size: 20px; transition: transform 0.2s; }
+  .lesson-nav .next:hover .arrow { transform: translateX(4px); }
+  .nav-label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 2px; font-weight: 400; }
+  .lesson-nav .next .nav-label { color: rgba(255,255,255,0.7); }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 17px; }
+    .hero-meta { flex-direction: column; gap: 8px; align-items: center; }
+    .lesson-section { padding: 40px 0; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+    .reflection-card-inner { flex-direction: column; }
+    .reflection-number { min-width: auto; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); }
+    .section-nav-inner { gap: 16px; }
+    .lesson-nav { flex-direction: column; }
+    .exercise-table { font-size: 13px; }
+    .exercise-table th, .exercise-table td { padding: 10px 12px; }
+  }
+  @media (max-width: 480px) {
+    .top-nav-inner { height: 52px; }
+    .brand-text { font-size: 13px; }
+    .lesson-progress { display: none; }
+    .page-wrapper { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-icon">BA</div>
+      <div class="brand-text">BA Learning Pathway <span>/ Lesson 8</span></div>
+    </a>
+    <div class="lesson-progress">
+      <span>Lesson 8 of 8</span>
+      <div class="progress-dots">
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot active"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Section Navigation -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a href="#overview" class="active">Overview</a>
+    <a href="#stage1-exercise">Stage 1: Decompose</a>
+    <a href="#stage2-exercise">Stage 2: Select</a>
+    <a href="#stage3-exercise">Stage 3: Scope</a>
+    <a href="#self-check">Self-check</a>
+    <a href="#next-steps">Next steps</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">Lesson 8 of 8 &mdash; Guided Exercise</div>
+    <h1>Your first agent:<br><em>Stages 1&ndash;3 in practice</em></h1>
+    <p class="hero-subtitle">
+      You have learned the methodology. Now apply it. This lesson walks you through Stages 1&ndash;3 with a real BA workflow&mdash;New Feature Request Intake&mdash;so you produce actual artifacts, not just understanding.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span>&#9202;</span>
+        <span>~20 minutes</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#9999;</span>
+        <span>Hands-on exercise</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#128196;</span>
+        <span>Produces 3 artifacts</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: Exercise Overview -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="overview">
+    <div class="section-label">Exercise Overview <span class="section-time">2 min read</span></div>
+    <h2>What you will produce in this lesson</h2>
+
+    <p>
+      This is not a lecture. You are going to work through Stages 1&ndash;3 of the framework and produce three concrete artifacts&mdash;the same artifacts a BA would hand off to an engineer (or use to self-build on a low-code platform).
+    </p>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">Your three deliverables</div>
+      <p><strong>1. Workflow Inventory Table</strong> (Stage 1)&mdash;five BA workflows broken out with triggers, frequency, time, and automation potential.<br><br>
+      <strong>2. Selection Decision Record</strong> (Stage 2)&mdash;three candidates scored across six dimensions, with a justified winner.<br><br>
+      <strong>3. Workflow Step Map</strong> (Stage 3)&mdash;five steps of the chosen workflow mapped with inputs, outputs, decision logic, and automation boundaries.</p>
+    </div>
+
+    <p>
+      Each exercise section gives you a template, hints to get you started, and a collapsible example so you can check your work. The example uses New Feature Request Intake&mdash;the same workflow from the BA worked examples you have seen throughout this pathway.
+    </p>
+
+    <div class="callout reveal">
+      <p>Work with <strong>your own workflows</strong> if you can. The templates and hints use feature request intake as the reference, but the exercise is most valuable when you apply it to the BA workflows you actually do every week.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Stage 1 Exercise — Decompose -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="stage1-exercise">
+    <div class="section-label">Stage 1 Exercise <span class="section-time">5 min</span></div>
+    <h2>Decompose: list five BA workflows</h2>
+
+    <p>
+      In Lesson 2, you learned the four-angle technique for breaking your role into discrete workflows. Now apply it. Use the four angles below as prompts, then fill in the inventory table.
+    </p>
+
+    <h3>The four angles</h3>
+
+    <div class="step-card hint reveal">
+      <div class="step-card-label hint">Angle prompts</div>
+      <p><strong>Calendar &amp; cadence:</strong> What do you do every sprint, every month, every quarter? Sprint planning prep, velocity reports, stakeholder updates?</p>
+      <p><strong>Triggers &amp; requests:</strong> What lands in your inbox or Jira queue? Feature requests, change requests, ad-hoc analysis asks?</p>
+      <p><strong>Systems &amp; tools:</strong> Open your browser tabs. Jira, Confluence, your roadmap tool, a BI dashboard&mdash;what workflows use each one?</p>
+      <p><strong>Deliverables &amp; handoffs:</strong> What documents or artifacts leave your desk? Requirements specs, impact assessments, status reports, grooming summaries?</p>
+    </div>
+
+    <h3>Fill in: Workflow Inventory Table</h3>
+
+    <p>
+      List five workflows. For each one, capture the trigger, how often it happens, how long it takes, which systems you touch, and your gut-feel automation potential (High, Medium, or Low).
+    </p>
+
+    <div class="exercise-table-wrap reveal">
+      <table class="exercise-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Workflow</th>
+            <th>Trigger</th>
+            <th>Frequency</th>
+            <th>Avg Time</th>
+            <th>Systems</th>
+            <th>Automation Potential</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="example-row">
+            <td class="pre-filled">1</td>
+            <td class="pre-filled">New Feature Request Intake</td>
+            <td class="pre-filled">Incoming Jira/email/Slack request</td>
+            <td class="pre-filled">3&ndash;5x/week</td>
+            <td class="pre-filled">2&ndash;3 hrs</td>
+            <td class="pre-filled">Jira, Confluence, Roadmap tool, OKR tracker</td>
+            <td class="pre-filled">High</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td class="fill-in">your workflow</td>
+            <td class="fill-in">what starts it</td>
+            <td class="fill-in">how often</td>
+            <td class="fill-in">hours</td>
+            <td class="fill-in">tools</td>
+            <td class="fill-in">H / M / L</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td class="fill-in">your workflow</td>
+            <td class="fill-in">what starts it</td>
+            <td class="fill-in">how often</td>
+            <td class="fill-in">hours</td>
+            <td class="fill-in">tools</td>
+            <td class="fill-in">H / M / L</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td class="fill-in">your workflow</td>
+            <td class="fill-in">what starts it</td>
+            <td class="fill-in">how often</td>
+            <td class="fill-in">hours</td>
+            <td class="fill-in">tools</td>
+            <td class="fill-in">H / M / L</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td class="fill-in">your workflow</td>
+            <td class="fill-in">what starts it</td>
+            <td class="fill-in">how often</td>
+            <td class="fill-in">hours</td>
+            <td class="fill-in">tools</td>
+            <td class="fill-in">H / M / L</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="reveal">
+      <summary>Stuck? Here are five common BA workflows to consider</summary>
+      <div class="details-content">
+        <p><strong>Backlog Grooming Prep</strong> &mdash; pull ticket statuses, flag stale items, compile a grooming summary. Biweekly, 1&ndash;2 hours. High potential.</p>
+        <p><strong>Sprint Velocity Analysis</strong> &mdash; gather sprint data, compute velocity trends, write the report. Biweekly, 1&ndash;2 hours. High potential.</p>
+        <p><strong>Stakeholder Progress Report</strong> &mdash; pull data from Jira and roadmap tools, compile a narrative update. Monthly, 4&ndash;5 hours. Medium potential.</p>
+        <p><strong>Change Request Impact Assessment</strong> &mdash; trace dependencies, estimate disruption, produce an impact document. Ad hoc, 3&ndash;5 hours. Medium potential.</p>
+        <p><strong>Sprint Planning Prep</strong> &mdash; compile capacity, priorities, and dependency flags into a planning brief. Biweekly, 2&ndash;3 hours. High potential.</p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>How to judge automation potential</summary>
+      <div class="details-content">
+        <p>Ask yourself: <strong>if two BAs with the same data did this workflow independently, would they produce roughly the same output?</strong> If yes, it is likely High. If the output depends heavily on the BA&rsquo;s personal relationships, political awareness, or interpretive judgement, it is likely Medium or Low.</p>
+        <p><strong>High:</strong> Steps follow documented criteria applied to structured data. Example: duplicate checking against a backlog, computing velocity from Jira metrics.</p>
+        <p><strong>Medium:</strong> Mix of structured steps and contextual interpretation. Example: impact assessment that includes both technical tracing and organisational judgement.</p>
+        <p><strong>Low:</strong> Value comes from live interaction or unique synthesis. Example: facilitating a requirements review meeting, conducting a novel gap analysis.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Stage 2 Exercise — Select -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="stage2-exercise">
+    <div class="section-label">Stage 2 Exercise <span class="section-time">5 min</span></div>
+    <h2>Select: score three candidates and pick one</h2>
+
+    <p>
+      From your inventory, pick the three workflows that scored High or Medium automation potential. Score each one across six dimensions using the table below. The weights are pre-filled&mdash;they match the framework&rsquo;s recommended defaults.
+    </p>
+
+    <div class="callout warm reveal">
+      <p>Remember the disqualification check from Lesson 3: if the workflow&rsquo;s core value comes from live human interaction (facilitation, negotiation, relationship-building), it should not be a candidate regardless of its scores.</p>
+    </div>
+
+    <h3>Fill in: Scoring Table</h3>
+
+    <div class="exercise-table-wrap reveal">
+      <table class="exercise-table">
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th>Weight</th>
+            <th>Candidate A<br><span class="fill-in" style="text-transform:none;letter-spacing:0">name</span></th>
+            <th>Candidate B<br><span class="fill-in" style="text-transform:none;letter-spacing:0">name</span></th>
+            <th>Candidate C<br><span class="fill-in" style="text-transform:none;letter-spacing:0">name</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pre-filled">Impact</td>
+            <td class="pre-filled">30%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr>
+            <td class="pre-filled">Feasibility</td>
+            <td class="pre-filled">25%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr>
+            <td class="pre-filled">Risk Tolerance</td>
+            <td class="pre-filled">20%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr>
+            <td class="pre-filled">Complexity</td>
+            <td class="pre-filled">10%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr>
+            <td class="pre-filled">Learning Value</td>
+            <td class="pre-filled">5%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr>
+            <td class="pre-filled">Organisational Readiness</td>
+            <td class="pre-filled">10%</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+            <td class="fill-in">1&ndash;5</td>
+          </tr>
+          <tr style="background: var(--accent-glow);">
+            <td class="pre-filled" style="font-weight:700;">Weighted Score</td>
+            <td></td>
+            <td class="fill-in" style="font-weight:700;">total</td>
+            <td class="fill-in" style="font-weight:700;">total</td>
+            <td class="fill-in" style="font-weight:700;">total</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="step-card reveal">
+      <div class="step-card-label exercise">Calculate your weighted score</div>
+      <p>Weighted Score = (Impact &times; 0.30) + (Feasibility &times; 0.25) + (Risk Tolerance &times; 0.20) + (Complexity &times; 0.10) + (Learning Value &times; 0.05) + (Org Readiness &times; 0.10)</p>
+    </div>
+
+    <details class="reveal">
+      <summary>Scoring guidance: what does a 4 vs. a 5 look like?</summary>
+      <div class="details-content">
+        <p><strong>Impact:</strong> 5 = saves 15+ hours/month with high frequency or an instance multiplier. 4 = saves 8&ndash;15 hours/month. 3 = saves 4&ndash;8 hours/month. Below 3 = probably not worth automating first.</p>
+        <p><strong>Feasibility:</strong> 5 = all data sources have APIs, all inputs are structured. 4 = one data source requires scraping or manual export. 3 = multiple data quality or access challenges.</p>
+        <p><strong>Risk Tolerance:</strong> 5 = output is reviewed before anyone outside your team sees it. 4 = output goes to internal stakeholders with your name on it. 3 = output affects external parties or financial decisions.</p>
+        <p><strong>Complexity:</strong> 5 = linear flow, no LLM judgement steps. 4 = linear flow with one or two interpretation steps. 3 = branching logic or multiple LLM judgement steps. Below 3 = dynamic routing or heavy conditional logic.</p>
+        <p><strong>Learning Value:</strong> 5 = pattern transfers to 3+ other workflows. 4 = transfers to 1&ndash;2 workflows. 3 = useful but specific to this workflow.</p>
+        <p><strong>Organisational Readiness:</strong> 5 = stakeholders are asking for this. 4 = stakeholders are supportive. 3 = neutral. Below 3 = resistance expected.</p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Example: how New Feature Request Intake scored 4.35</summary>
+      <div class="details-content">
+        <p><strong>Impact: 4</strong> &mdash; ~15 occurrences/month &times; 1.5 hours saved = ~22 hours theoretical, but the BA review loop reduces net savings to 8&ndash;12 hours.</p>
+        <p><strong>Feasibility: 5</strong> &mdash; Jira, Confluence, roadmap tool, and OKR tracker all have REST APIs. Every input is structured.</p>
+        <p><strong>Risk Tolerance: 5</strong> &mdash; The impact assessment is reviewed by the BA before the prioritisation committee sees it. Errors are caught internally.</p>
+        <p><strong>Complexity: 3</strong> &mdash; Linear flow, but duplicate detection requires semantic matching and alignment assessment involves LLM interpretation.</p>
+        <p><strong>Learning Value: 4</strong> &mdash; The &ldquo;triage, assess, and recommend&rdquo; pattern transfers to change request assessment, backlog grooming, and sprint planning.</p>
+        <p><strong>Organisational Readiness: 4</strong> &mdash; The prioritisation committee has expressed frustration with inconsistent assessment quality and welcomes a more structured approach.</p>
+        <p><strong>Weighted: 4.35</strong> = (4 &times; 0.30) + (5 &times; 0.25) + (5 &times; 0.20) + (3 &times; 0.10) + (4 &times; 0.05) + (4 &times; 0.10)</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Stage 3 Exercise — Scope -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="stage3-exercise">
+    <div class="section-label">Stage 3 Exercise <span class="section-time">5 min</span></div>
+    <h2>Scope: map five steps of your chosen workflow</h2>
+
+    <p>
+      Take the winning workflow from Stage 2. Map the first five steps as you actually perform them today. For each step, capture the action, what goes in, what comes out, the decision logic (if any), and where you would draw the automation boundary.
+    </p>
+
+    <div class="callout reveal">
+      <p>You are documenting <strong>how you do it now</strong>, not how the agent will do it. The boundary column is your judgement about which steps the agent could handle. Use three tags: <strong>AUTOMATE</strong> (agent does it), <strong>HIL</strong> (agent drafts, you review), or <strong>MANUAL</strong> (you do it yourself).</p>
+    </div>
+
+    <h3>Fill in: Workflow Step Map</h3>
+
+    <div class="exercise-table-wrap reveal">
+      <table class="exercise-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Step</th>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Decision Logic</th>
+            <th>Boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="example-row">
+            <td class="pre-filled">1</td>
+            <td class="pre-filled">Receive feature request</td>
+            <td class="pre-filled">Incoming request (Jira, email, or Slack)</td>
+            <td class="pre-filled">Captured request with source, requester, description</td>
+            <td class="pre-filled">None &mdash; trigger detection</td>
+            <td class="pre-filled">AUTOMATE</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td class="fill-in">what you do</td>
+            <td class="fill-in">what you need</td>
+            <td class="fill-in">what you produce</td>
+            <td class="fill-in">rules or judgement?</td>
+            <td class="fill-in">AUTO / HIL / MANUAL</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td class="fill-in">what you do</td>
+            <td class="fill-in">what you need</td>
+            <td class="fill-in">what you produce</td>
+            <td class="fill-in">rules or judgement?</td>
+            <td class="fill-in">AUTO / HIL / MANUAL</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td class="fill-in">what you do</td>
+            <td class="fill-in">what you need</td>
+            <td class="fill-in">what you produce</td>
+            <td class="fill-in">rules or judgement?</td>
+            <td class="fill-in">AUTO / HIL / MANUAL</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td class="fill-in">what you do</td>
+            <td class="fill-in">what you need</td>
+            <td class="fill-in">what you produce</td>
+            <td class="fill-in">rules or judgement?</td>
+            <td class="fill-in">AUTO / HIL / MANUAL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="reveal">
+      <summary>Hint: how to decide the boundary for each step</summary>
+      <div class="details-content">
+        <p>Ask three questions about each step:</p>
+        <p><strong>1. Is this data retrieval or transformation?</strong> If the step is &ldquo;open a system, run a query, return the results,&rdquo; it is AUTOMATE. No judgement involved&mdash;if the query succeeds, the output is correct.</p>
+        <p><strong>2. Does this step apply documented criteria to structured data?</strong> If you could write down the rules and two BAs would reach the same answer, it is AUTOMATE. If you could write down the rules but the answer also depends on context you carry in your head, it is HIL.</p>
+        <p><strong>3. Does the value of this step come from your personal relationships, political awareness, or live interaction?</strong> If yes, it is MANUAL. No amount of data will replace what you know from hallway conversations and stakeholder history.</p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Example: five steps of New Feature Request Intake</summary>
+      <div class="details-content">
+        <p><strong>Step 1 &mdash; Receive feature request:</strong> Detect incoming request from Jira webhook, Slack message, or shared inbox. Input: incoming request. Output: captured request with source and description. Boundary: AUTOMATE (trigger detection, no judgement).</p>
+        <p><strong>Step 2 &mdash; Normalise and log in Jira:</strong> Parse request into standard Jira fields; create ticket if request arrived outside Jira. Input: raw request. Output: normalised Jira ticket. Boundary: AUTOMATE (data transformation).</p>
+        <p><strong>Step 3 &mdash; Search backlog for duplicates:</strong> Query existing backlog using keyword, component, and semantic similarity matching. Input: Jira ticket. Output: duplicate candidates ranked by similarity score. Boundary: AUTOMATE (flagging step, not deciding step&mdash;the BA validates in a later review).</p>
+        <p><strong>Step 4 &mdash; Pull roadmap and planning context:</strong> Query roadmap tool and Confluence for strategic context in the same feature area. Input: feature area keywords. Output: related roadmap items and recent planning decisions. Boundary: AUTOMATE (data retrieval).</p>
+        <p><strong>Step 5 &mdash; Estimate complexity:</strong> Compare request against historical story point data using four factors: component count, median story points, schema changes, external dependencies. Input: request details and architecture context. Output: complexity tier (Small/Medium/Large/X-Large). Boundary: AUTOMATE (criteria-based&mdash;given the same inputs, two BAs would produce the same tier).</p>
+      </div>
+    </details>
+
+    <div class="step-card hint reveal">
+      <div class="step-card-label hint">Common mistake to avoid</div>
+      <p>Do not map your workflow as you <em>wish</em> it worked. Map it as you <em>actually</em> do it today, including the messy parts. If you always check Slack for context that is not in Jira, that is a step. If you mentally adjust a complexity estimate because you know the team is burned out, that is decision logic. Honest mapping produces better agents.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: Self-check -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="self-check">
+    <div class="section-label">Self-check <span class="section-time">2 min</span></div>
+    <h2>Review your work against the quality criteria</h2>
+
+    <p>
+      Before you consider your artifacts done, walk through this checklist. Each item maps to a quality criterion from the framework methodology. If you cannot check an item, go back and strengthen that part of your artifact.
+    </p>
+
+    <h3>Stage 1: Workflow Inventory</h3>
+
+    <ul class="checklist reveal">
+      <li>Each workflow has a clear, unambiguous trigger (not &ldquo;various&rdquo; or &ldquo;as needed&rdquo;)</li>
+      <li>Frequency is specific enough to estimate monthly volume (e.g., &ldquo;biweekly&rdquo; not &ldquo;regular&rdquo;)</li>
+      <li>Time estimates reflect the full workflow, not just the hard part</li>
+      <li>Automation potential ratings are justified by structure, not by how much you dislike the task</li>
+      <li>You used at least three of the four angles to surface workflows you might have missed</li>
+    </ul>
+
+    <h3>Stage 2: Selection Scores</h3>
+
+    <ul class="checklist reveal">
+      <li>Every score has a one-sentence rationale (not just a number)</li>
+      <li>Impact reflects <em>realised</em> savings, accounting for human review time</li>
+      <li>Feasibility is based on actual data source accessibility, not assumptions</li>
+      <li>You checked for disqualifiers before scoring (core value is not relational or live-interaction)</li>
+      <li>The winner is justified by its overall profile, not just the highest single score</li>
+    </ul>
+
+    <h3>Stage 3: Workflow Step Map</h3>
+
+    <ul class="checklist reveal">
+      <li>Steps describe what you <em>actually</em> do, not an idealised process</li>
+      <li>Every step has both an input and an output&mdash;no orphan steps</li>
+      <li>Decision logic distinguishes between &ldquo;no logic (data retrieval)&rdquo; and &ldquo;criteria-based&rdquo; and &ldquo;contextual judgement&rdquo;</li>
+      <li>Boundary tags (AUTOMATE / HIL / MANUAL) match the decision logic&mdash;judgement steps are not marked AUTOMATE</li>
+      <li>At least one step is marked HIL or MANUAL&mdash;if everything is AUTOMATE, you probably missed the judgement layer</li>
+    </ul>
+
+    <div class="callout green reveal">
+      <p>If you checked every item, your artifacts are ready. If you are working with your own workflows (not just the example), you now have a genuine Stage 1&ndash;3 pass that you could hand to an engineer or use to start a low-code build.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: Next Steps -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="next-steps">
+    <div class="section-label">Next Steps <span class="section-time">1 min read</span></div>
+    <h2>What to do with your completed artifacts</h2>
+
+    <p>
+      You have finished the BA Learning Pathway. Here is what you can do with what you have produced:
+    </p>
+
+    <div class="reflection reveal">
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">1</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Hand off to engineering</p>
+            <p class="reflection-prompt">Your scope document (Stage 3) is the input for Stage 4: Design. Share it with an engineer and use it as the basis for a design conversation. The worked example shows exactly what a completed scope document looks like.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">2</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Self-build on a low-code platform</p>
+            <p class="reflection-prompt">If you want to build it yourself without code, pick a low-code agent builder (see [Getting Started: Choose a Platform](../../getting-started/choose-a-platform.md) for current options) and use the framework&rsquo;s [Stage 5: Build](../../stages/05-build.md) methodology to translate your scope and design into the builder&rsquo;s configuration. Your step map becomes the agent&rsquo;s process flow.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">3</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Expand your inventory</p>
+            <p class="reflection-prompt">You mapped five workflows in Stage 1. Your role probably has ten or more. Go back and complete the full inventory. The second and third passes get faster&mdash;you already know the four-angle method and what a good entry looks like.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">4</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Share the framework with your team</p>
+            <p class="reflection-prompt">The methodology works for any role with repeatable workflows. Product managers, project managers, and customer success teams can all use Stages 1&ndash;3 with their own workflows. Point them to the learning pathway that fits their role.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">What you have accomplished</div>
+      <p>You started this pathway knowing your workflows were repetitive. You now have a structured method for turning that knowledge into a blueprint an AI agent can execute. The thinking was always yours&mdash;the framework just gave it a format that engineers, tools, and agents can act on.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Navigation -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <nav class="lesson-nav">
+    <a href="07-evaluate-and-iterate.html" class="prev">
+      <span class="arrow">&#10142;</span>
+      <div>
+        <span class="nav-label">Previous</span>
+        Lesson 7: Evaluate and Iterate
+      </div>
+    </a>
+    <a href="../../enablement/ba/" class="next">
+      <div>
+        <span class="nav-label">Back to pathway</span>
+        BA Learning Pathway
+      </div>
+      <span class="arrow">&#10142;</span>
+    </a>
+  </nav>
+
+</div>
+
+<script>
+  // Scroll progress bar
+  function updateProgress() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = window.scrollY;
+    var pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+  }
+
+  // Scroll-triggered reveal
+  function revealOnScroll() {
+    var reveals = document.querySelectorAll('.reveal');
+    var trigger = window.innerHeight * 0.88;
+    reveals.forEach(function(el) {
+      if (el.getBoundingClientRect().top < trigger) el.classList.add('visible');
+    });
+  }
+
+  // Active section nav highlighting
+  function updateSectionNav() {
+    var sections = ['overview', 'stage1-exercise', 'stage2-exercise', 'stage3-exercise', 'self-check', 'next-steps'];
+    var links = document.querySelectorAll('.section-nav a');
+    var current = sections[0];
+    for (var i = sections.length - 1; i >= 0; i--) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) { current = sections[i]; break; }
+    }
+    links.forEach(function(link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', function() { updateProgress(); revealOnScroll(); updateSectionNav(); }, { passive: true });
+  updateProgress();
+  revealOnScroll();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page 2: Running Layer 1 &mdash; Personalise Learning Pathway</title>
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0f1923;
+    --bg-secondary: #162231;
+    --bg-card: #1c2d3f;
+    --bg-card-alt: #1a2738;
+    --text-primary: #e8edf2;
+    --text-secondary: #9aacbd;
+    --text-muted: #6b8299;
+    --accent: #4fc3f7;
+    --accent-glow: rgba(79, 195, 247, 0.15);
+    --accent-warm: #ff9f43;
+    --accent-green: #66d9a0;
+    --accent-red: #ff6b6b;
+    --border: rgba(79, 195, 247, 0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Scroll Progress Bar ─────────────────────────────── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-green));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Top Navigation ──────────────────────────────────── */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 25, 35, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+  }
+
+  .top-nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-text span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .lesson-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-subtle);
+    border: 1.5px solid var(--text-muted);
+  }
+
+  .progress-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .progress-dot.completed {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+  }
+
+  /* ── Section Navigation (breadcrumb) ─────────────────── */
+  .section-nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 24px;
+  }
+
+  .section-nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .section-nav-inner::-webkit-scrollbar { display: none; }
+
+  .section-nav a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .section-nav a:hover,
+  .section-nav a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  .page-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-meta-icon {
+    font-size: 16px;
+  }
+
+  /* ── Section styling ─────────────────────────────────── */
+  .lesson-section {
+    padding: 60px 0;
+    border-top: 1px solid var(--border-subtle);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .lesson-section:nth-child(1) { animation-delay: 0.1s; }
+  .lesson-section:nth-child(2) { animation-delay: 0.15s; }
+  .lesson-section:nth-child(3) { animation-delay: 0.2s; }
+  .lesson-section:nth-child(4) { animation-delay: 0.25s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scroll-triggered fade-in */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 12px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 32px 0 16px;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ── Highlight boxes ─────────────────────────────────── */
+  .callout {
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .callout p {
+    margin-bottom: 0;
+    color: var(--text-primary);
+    font-size: 17px;
+  }
+
+  .callout.warm {
+    border-left-color: var(--accent-warm);
+  }
+
+  .callout.green {
+    border-left-color: var(--accent-green);
+  }
+
+  /* ── Concept cards ───────────────────────────────────── */
+  .concept-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-alt));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    margin: 32px 0;
+    box-shadow: var(--shadow);
+  }
+
+  .concept-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .concept-card p {
+    color: var(--text-primary);
+    font-size: 17px;
+    margin-bottom: 0;
+  }
+
+  /* ── Config Section Cards ────────────────────────────── */
+  .config-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .config-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-green));
+  }
+
+  .config-section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .config-section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .config-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .config-section p {
+    font-size: 17px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .config-section p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Example Block ───────────────────────────────────── */
+  .example-block {
+    background: rgba(79, 195, 247, 0.04);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+  }
+
+  .example-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* ── Tip Box ─────────────────────────────────────────── */
+  .tip-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255, 159, 67, 0.06);
+    border: 1px solid rgba(255, 159, 67, 0.2);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .tip-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    margin-top: 2px;
+  }
+
+  .tip-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .tip-text strong {
+    color: var(--accent-warm);
+  }
+
+  /* ── Mini Table ──────────────────────────────────────── */
+  .mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+
+  .mini-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mini-table td {
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .mini-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .mini-table .api-yes {
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+
+  /* ── Tabs ─────────────────────────────────────────────── */
+  .tab-container {
+    margin: 32px 0;
+  }
+
+  .tab-buttons {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border-subtle);
+    margin-bottom: 0;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: inherit;
+  }
+
+  .tab-btn:hover {
+    color: var(--text-secondary);
+  }
+
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab-panel {
+    display: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 28px;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .tab-panel h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .tab-panel p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .tab-panel p:last-child {
+    margin-bottom: 0;
+  }
+
+  .tab-difficulty {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+
+  .tab-difficulty.easy {
+    background: rgba(102, 217, 160, 0.12);
+    color: var(--accent-green);
+  }
+
+  .tab-difficulty.medium {
+    background: var(--accent-glow);
+    color: var(--accent);
+  }
+
+  .tab-difficulty.advanced {
+    background: rgba(255, 159, 67, 0.12);
+    color: var(--accent-warm);
+  }
+
+  /* ── Code Block ──────────────────────────────────────── */
+  .code-block {
+    background: #0b1219;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    margin: 14px 0;
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--accent);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .code-block .comment {
+    color: var(--text-muted);
+  }
+
+  /* ── Output Structure Cards ─────────────────────────── */
+  .output-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .output-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .output-card:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+  }
+
+  .output-card-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .output-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .output-card-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 0;
+  }
+
+  /* ── Numbered Steps List ─────────────────────────────── */
+  .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0;
+    counter-reset: step-counter;
+  }
+
+  .steps-list li {
+    counter-increment: step-counter;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .steps-list li:last-child {
+    border-bottom: none;
+  }
+
+  .steps-list li::before {
+    content: counter(step-counter);
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    border: 1.5px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  /* ── Next/Prev Navigation ────────────────────────────── */
+  .page-nav {
+    padding: 60px 0 80px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .page-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 14px 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+
+  .page-nav-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .page-nav-link.next {
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.25);
+  }
+
+  .page-nav-link.next:hover {
+    box-shadow: 0 8px 30px rgba(79, 195, 247, 0.35);
+    color: #fff;
+  }
+
+  .page-nav-link .arrow {
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+
+  .page-nav-link .arrow {
+    display: inline-block;
+  }
+
+  .page-nav-link.prev .arrow {
+    transform: rotate(180deg);
+  }
+
+  .page-nav-link:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .page-nav-link.prev:hover .arrow {
+    transform: rotate(180deg) translateX(4px);
+  }
+
+  .page-nav-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── Metaphor box ────────────────────────────────────── */
+  .metaphor-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 28px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .metaphor-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .metaphor-text {
+    flex: 1;
+  }
+
+  .metaphor-text strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 16px;
+    color: var(--accent);
+  }
+
+  .metaphor-text p {
+    font-size: 16px;
+    margin-bottom: 0;
+  }
+
+  /* ── Step Header ─────────────────────────────────────── */
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .step-number-large {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #0288d1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 0 24px var(--accent-glow);
+  }
+
+  .step-header h2 {
+    margin-bottom: 0;
+  }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 17px; }
+    .hero-meta { flex-direction: column; gap: 8px; align-items: center; }
+
+    .lesson-section { padding: 40px 0; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+
+    .output-grid { grid-template-columns: 1fr; }
+
+    .tab-buttons { overflow-x: auto; }
+    .tab-btn { padding: 10px 16px; font-size: 13px; }
+
+    .page-nav { flex-direction: column; gap: 12px; }
+    .page-nav-link { width: 100%; justify-content: center; }
+
+    .config-section { padding: 20px; }
+
+    .metaphor-box { flex-direction: column; }
+
+    .step-header { gap: 12px; }
+    .step-number-large { width: 44px; height: 44px; font-size: 20px; }
+
+    .section-nav-inner { gap: 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .top-nav-inner { height: 52px; }
+    .brand-text { font-size: 13px; }
+    .lesson-progress { display: none; }
+    .page-wrapper { padding: 0 16px; }
+    .tab-btn { padding: 8px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-icon">WF</div>
+      <div class="brand-text">Personalise Pathway <span>/ Page 2</span></div>
+    </a>
+    <div class="lesson-progress">
+      <span>Page 2 of 4</span>
+      <div class="progress-dots">
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Section Navigation -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a href="#step-1" class="active">Step 1: Org Config</a>
+    <a href="#step-2">Step 2: Run the Prompt</a>
+    <a href="#step-3">Step 3: What You Get</a>
+    <a href="#step-4">Step 4: What to Do With It</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">Hands-on Walkthrough</div>
+    <h1>Running Layer 1:<br><em>Your Application Guide</em></h1>
+    <p class="hero-subtitle">
+      From a config file to a tailored automation strategy in under 2 hours.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#9202;</span>
+        <span>~15 minutes</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#128736;</span>
+        <span>4 practical steps</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#9745;</span>
+        <span>Produces a real deliverable</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: Step 1 — Fill In Your Org Config -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="step-1">
+    <div class="section-label">Step 1 <span class="section-time">5 min read</span></div>
+
+    <div class="step-header">
+      <div class="step-number-large">1</div>
+      <h2>Fill in your Org Config</h2>
+    </div>
+
+    <p>
+      The org config file is a simple YAML file that tells the AI about your organisation, your team, and your goals. Think of it as a brief for a very capable new hire who is about to write you a personalised automation strategy.
+    </p>
+
+    <p>
+      There are five sections. None of them take more than a minute. The more honest and specific you are, the better the output will be.
+    </p>
+
+    <!-- Your Organisation -->
+    <div class="config-section reveal">
+      <div class="config-section-header">
+        <div class="config-section-icon">&#127970;</div>
+        <div class="config-section-title">Your Organisation</div>
+      </div>
+      <p>
+        Company name, industry, and division &mdash; just the basics. This information appears throughout your personalised guide, so it reads like something written for your team rather than a generic template.
+      </p>
+      <div class="example-block"><span class="example-label">Example</span>company_name: Acme Corp
+industry: Financial Services
+division: Client Implementation</div>
+    </div>
+
+    <!-- Your Roles -->
+    <div class="config-section reveal">
+      <div class="config-section-header">
+        <div class="config-section-icon">&#128101;</div>
+        <div class="config-section-title">Your Roles</div>
+      </div>
+      <p>
+        List 2&ndash;5 roles on your team. For each one, write 2&ndash;3 sentences about what they do day-to-day. Not the HR job description &mdash; what they actually spend their hours doing.
+      </p>
+      <div class="example-block"><span class="example-label">Example Role Description</span>Implementation Manager: Manages client implementation
+projects from kickoff to go-live. Coordinates across
+engineering, product, and client teams. Owns delivery
+timelines and risk registers.</div>
+      <div class="tip-box">
+        <span class="tip-icon">&#128161;</span>
+        <div class="tip-text">
+          <strong>Tip:</strong> Write it the way you would describe the role to a new hire, not the way HR wrote the job description. The AI uses these descriptions to identify which workflows belong to which role, so natural language works best.
+        </div>
+      </div>
+    </div>
+
+    <!-- Your Systems -->
+    <div class="config-section reveal">
+      <div class="config-section-header">
+        <div class="config-section-icon">&#128421;</div>
+        <div class="config-section-title">Your Systems</div>
+      </div>
+      <p>
+        List every system your team uses regularly. If you know whether it has an API, note that too. If you do not know, just list the system &mdash; the AI will figure out the integration story.
+      </p>
+      <table class="mini-table">
+        <thead>
+          <tr>
+            <th>System</th>
+            <th>Has API?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Jira</td>
+            <td class="api-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Salesforce</td>
+            <td class="api-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Shared Google Sheets</td>
+            <td class="api-yes">Yes (Google Sheets API)</td>
+          </tr>
+          <tr>
+            <td>Slack</td>
+            <td class="api-yes">Yes</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tip-box">
+        <span class="tip-icon">&#128161;</span>
+        <div class="tip-text">
+          <strong>Tip:</strong> If you do not know about APIs, just list the systems. The AI will figure out the rest. Most popular business tools have APIs &mdash; the AI knows about them already.
+        </div>
+      </div>
+    </div>
+
+    <!-- Your Constraints -->
+    <div class="config-section reveal">
+      <div class="config-section-header">
+        <div class="config-section-icon">&#128274;</div>
+        <div class="config-section-title">Your Constraints</div>
+      </div>
+      <p>
+        This is where you describe the guardrails your team operates within. Regulatory environment, data sensitivity levels, whether outputs go directly to clients, approval chains &mdash; all of it matters.
+      </p>
+      <p>
+        These constraints shape the guardrails section of your personalised guide. Be honest &mdash; the AI produces better output when it knows your real constraints rather than the idealised version.
+      </p>
+      <div class="example-block"><span class="example-label">Example Constraints</span>regulatory: FCA-regulated environment
+data_sensitivity: Client financial data, PII
+client_facing: Yes, reports go directly to clients
+approvals: All client deliverables require manager sign-off</div>
+    </div>
+
+    <!-- Your Goals -->
+    <div class="config-section reveal">
+      <div class="config-section-header">
+        <div class="config-section-icon">&#127919;</div>
+        <div class="config-section-title">Your Goals</div>
+      </div>
+      <p>
+        What are you trying to achieve? Be specific. &ldquo;Save time on weekly reporting&rdquo; is far more useful than &ldquo;implement AI.&rdquo; The AI uses your goals to prioritise which workflows to recommend automating first.
+      </p>
+      <div class="example-block"><span class="example-label">Example Goals</span>- Reduce time spent on weekly client status reports
+- Standardise onboarding documentation across the team
+- Get early warning when implementations fall behind schedule
+- Free up senior staff for strategic client conversations</div>
+    </div>
+
+    <div class="callout green reveal">
+      <p>That is the entire config. Five sections, each a few lines. If you can describe your team to a colleague, you can fill in this file.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Step 2 — Run the Prompt -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="step-2">
+    <div class="section-label">Step 2 <span class="section-time">5 min read</span></div>
+
+    <div class="step-header">
+      <div class="step-number-large">2</div>
+      <h2>Run the Prompt</h2>
+    </div>
+
+    <p>
+      Once your config file is ready, you have three ways to run Layer 1. Each produces the same output &mdash; a personalised Application Guide &mdash; but they differ in effort and output quality. Pick the one that matches your comfort level.
+    </p>
+
+    <!-- Tabs -->
+    <div class="tab-container reveal">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-browser')">Browser</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-cli')">CLI</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-github')">GitHub Action</button>
+      </div>
+
+      <!-- Browser Tab -->
+      <div class="tab-panel active" id="tab-browser">
+        <span class="tab-difficulty easy">Easiest</span>
+        <h4>Run it in your browser</h4>
+        <p>No setup, no installation. Just copy and paste.</p>
+        <ol class="steps-list">
+          <li>Open <strong>Claude.ai</strong> or <strong>ChatGPT</strong> in your browser</li>
+          <li>Paste the contents of your <strong>org-config.yaml</strong> file into the chat</li>
+          <li>Paste the <strong>application guide prompt</strong> after it</li>
+          <li>Wait approximately <strong>10&ndash;15 minutes</strong> while the AI generates your guide</li>
+          <li><strong>Copy the output</strong> into a new document &mdash; that is your Application Guide</li>
+        </ol>
+        <div class="tip-box">
+          <span class="tip-icon">&#128161;</span>
+          <div class="tip-text">
+            <strong>Tip:</strong> For best results, paste both the config and the prompt in a single message. This gives the AI the full context in one shot.
+          </div>
+        </div>
+      </div>
+
+      <!-- CLI Tab -->
+      <div class="tab-panel" id="tab-cli">
+        <span class="tab-difficulty medium">Faster, better output</span>
+        <h4>Run it from the command line</h4>
+        <p>If you have Claude Code installed, the CLI gives the AI direct access to the framework documentation &mdash; which means richer context and better output.</p>
+        <div class="code-block">claude -p "$(cat personalise/prompts/application-guide.md)" --max-turns 30</div>
+        <p>The AI reads the framework docs directly, understands the full structure, and writes a more comprehensive guide. Output is written to:</p>
+        <div class="code-block">personalise/output/APPLICATION-GUIDE.md</div>
+        <div class="tip-box">
+          <span class="tip-icon">&#128161;</span>
+          <div class="tip-text">
+            <strong>Tip:</strong> The <code style="background: rgba(79, 195, 247, 0.1); padding: 2px 6px; border-radius: 4px; font-size: 13px;">--max-turns 30</code> flag gives the AI enough room to read through all the framework files before writing. Do not reduce it or the output may be truncated.
+          </div>
+        </div>
+      </div>
+
+      <!-- GitHub Action Tab -->
+      <div class="tab-panel" id="tab-github">
+        <span class="tab-difficulty advanced">Zero-touch</span>
+        <h4>Let GitHub Actions do it for you</h4>
+        <p>If you have forked the framework repository, you can trigger Layer 1 automatically:</p>
+        <ol class="steps-list">
+          <li><strong>Fork the repo</strong> and add your completed org-config.yaml</li>
+          <li><strong>Push your config</strong> to the repository</li>
+          <li>The GitHub Action <strong>runs automatically</strong> on push</li>
+          <li>Your personalised guide <strong>appears in the repo</strong> when the action completes</li>
+        </ol>
+        <p>This approach is ideal if you plan to run Layer 1 for multiple teams or want to keep your configs and outputs version-controlled.</p>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <p>Whichever path you choose, the output is the same: a comprehensive, personalised Application Guide that maps the framework to your specific organisation.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Step 3 — What You Get -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="step-3">
+    <div class="section-label">Step 3 <span class="section-time">3 min read</span></div>
+
+    <div class="step-header">
+      <div class="step-number-large">3</div>
+      <h2>What You Get</h2>
+    </div>
+
+    <p>
+      The Application Guide is a single document, typically 15&ndash;30 pages, structured to be immediately actionable. Here is what each section contains:
+    </p>
+
+    <div class="output-grid reveal">
+      <div class="output-card">
+        <div class="output-card-icon">&#128220;</div>
+        <div class="output-card-title">Executive Summary</div>
+        <p class="output-card-desc">A one-page overview you can share with leadership. Covers the opportunity, recommended approach, and expected timeline.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#128197;</div>
+        <div class="output-card-title">Rollout Plan</div>
+        <p class="output-card-desc">A phased timeline showing which workflows to automate first, second, and third &mdash; with dependencies mapped out.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#128214;</div>
+        <div class="output-card-title">Role Playbooks</div>
+        <p class="output-card-desc">One playbook per role, with scored workflows showing automation potential, effort, and expected time savings.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#9889;</div>
+        <div class="output-card-title">Quick Wins</div>
+        <p class="output-card-desc">The top 5 workflows across all roles that offer the highest return for the lowest effort. Start here.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#128274;</div>
+        <div class="output-card-title">Data Sensitivity Classification</div>
+        <p class="output-card-desc">Every data source classified by sensitivity level, with handling recommendations for each tier.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#128737;</div>
+        <div class="output-card-title">Guardrails &amp; Policies</div>
+        <p class="output-card-desc">Recommended policies for human-in-the-loop checkpoints, data access, and output review &mdash; shaped by your constraints.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#9888;</div>
+        <div class="output-card-title">Risk Register</div>
+        <p class="output-card-desc">Potential risks identified from your config, with mitigations and owners suggested for each.</p>
+      </div>
+      <div class="output-card">
+        <div class="output-card-icon">&#128736;</div>
+        <div class="output-card-title">Framework Enhancement Recommendations</div>
+        <p class="output-card-desc">Suggestions for extending the framework based on patterns unique to your organisation and industry.</p>
+      </div>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">Key Insight</div>
+      <p>The guide is not a generic report. Because it is built from your config, every recommendation references your actual roles, your actual systems, and your actual constraints. That is what makes it immediately usable rather than something you file away and forget.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Step 4 — What to Do With It -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="step-4">
+    <div class="section-label">Step 4 <span class="section-time">2 min read</span></div>
+
+    <div class="step-header">
+      <div class="step-number-large">4</div>
+      <h2>What to Do With It</h2>
+    </div>
+
+    <p>
+      You have your Application Guide. Now what? Here are five concrete next steps, in order. You do not need to do all five today &mdash; but the first two should happen within a week while the context is fresh.
+    </p>
+
+    <ol class="steps-list reveal">
+      <li>
+        <div>
+          <strong>Share the executive summary with your manager.</strong>
+          <br>It is written to be self-explanatory. You should not need to present it &mdash; just send it with a one-line note: &ldquo;I ran our team through the automation framework. Here is what it recommends.&rdquo;
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Share role playbooks with 1&ndash;2 people per role for an accuracy check.</strong>
+          <br>The AI does a good job, but the people doing the work know best. Ask them: &ldquo;Does this match what you actually do? What did it miss?&rdquo; Mark up the playbook with their feedback.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Use the quick wins to pick your first workflow.</strong>
+          <br>Do not try to automate everything at once. The quick wins section ranks workflows by effort-to-value ratio. Pick the top one. That is your pilot.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Schedule a team session to walk through the guide together.</strong>
+          <br>Thirty minutes is enough. Share the guide in advance and use the session to discuss priorities, answer questions, and build buy-in. People support what they help shape.
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Move to Layer 2 to generate training materials.</strong>
+          <br>Once the guide is validated, Layer 2 takes each workflow and produces step-by-step training content your team can actually use. That is the next page in this pathway.
+        </div>
+      </li>
+    </ol>
+
+    <div class="callout green reveal">
+      <p>The goal is not perfection &mdash; it is momentum. A good-enough guide that your team has seen and validated is worth infinitely more than a perfect guide sitting in a folder.</p>
+    </div>
+
+    <div class="metaphor-box reveal">
+      <div class="metaphor-icon">&#127937;</div>
+      <div class="metaphor-text">
+        <strong>You have just completed the hardest part</strong>
+        <p>Filling in the config and running the prompt takes less than an hour. Reviewing and sharing the output takes another hour. In under two hours, you have gone from &ldquo;we should probably look into AI&rdquo; to a concrete, personalised strategy. That is Layer 1.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Navigation -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-nav">
+    <a href="01-why-personalise.html" class="page-nav-link prev">
+      <span class="arrow">&#10142;</span>
+      <div>
+        Page 1: Why Personalise
+        <span class="page-nav-meta">Previous page</span>
+      </div>
+    </a>
+    <a href="03-training-materials.html" class="page-nav-link next">
+      <div>
+        Page 3: Generating Training Materials
+        <span class="page-nav-meta">Next page</span>
+      </div>
+      <span class="arrow">&#10142;</span>
+    </a>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Scripts (inline, no dependencies) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+  // Scroll progress bar
+  function updateProgress() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = window.scrollY;
+    var pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+  }
+
+  // Scroll-triggered reveal
+  function revealOnScroll() {
+    var reveals = document.querySelectorAll('.reveal');
+    var trigger = window.innerHeight * 0.88;
+    reveals.forEach(function(el) {
+      var top = el.getBoundingClientRect().top;
+      if (top < trigger) {
+        el.classList.add('visible');
+      }
+    });
+  }
+
+  // Active section nav highlighting
+  function updateSectionNav() {
+    var sections = ['step-1', 'step-2', 'step-3', 'step-4'];
+    var links = document.querySelectorAll('.section-nav a');
+    var current = sections[0];
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  // Tab switching
+  function switchTab(event, tabId) {
+    // Deactivate all buttons and panels
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-panel').forEach(function(panel) {
+      panel.classList.remove('active');
+    });
+
+    // Activate clicked button and corresponding panel
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  window.addEventListener('scroll', function() {
+    updateProgress();
+    revealOnScroll();
+    updateSectionNav();
+  }, { passive: true });
+
+  // Initial calls
+  updateProgress();
+  revealOnScroll();
+</script>
+
+</body>
+</html>

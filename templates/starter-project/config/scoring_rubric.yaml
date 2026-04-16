@@ -1,0 +1,72 @@
+# Scoring Rubric — Example Configuration
+# ========================================
+# This file externalises the criteria-based Decision Logic entries from
+# your Stage 3 Scope Document. When business rules change, you edit this
+# file — not your code.
+#
+# Replace these examples with your actual scoring criteria, thresholds,
+# and tier-based variants from your Scope Document.
+#
+# Methodology reference:
+#   - Stage 3: Scope → Decision Logic, scoring criteria, thresholds
+#   - Stage 5: Build → "Config separate from code" convention
+#   - Stage 5: Build → Externalising Domain Expertise as Config
+
+# ── Overall Scoring Thresholds ────────────────────────────────────────
+# Define what score ranges map to which tier labels.
+# Your analysis node reads these to produce consistent assessments.
+scoring:
+  tiers:
+    - label: "High"
+      min_score: 8
+      description: "Exceeds expectations across most criteria"
+    - label: "Medium"
+      min_score: 5
+      description: "Meets expectations with some areas for improvement"
+    - label: "Low"
+      min_score: 0
+      description: "Below expectations — requires attention"
+
+# ── Evaluation Criteria ───────────────────────────────────────────────
+# Each criterion maps to a dimension your analysis evaluates.
+# Weights determine how much each criterion contributes to the overall score.
+criteria:
+  - name: "completeness"
+    weight: 0.3
+    description: "How complete and thorough is the data?"
+    scoring_guide:
+      high: "All required data points present and current"
+      medium: "Most data points present, some gaps"
+      low: "Significant data gaps or stale information"
+
+  - name: "quality"
+    weight: 0.3
+    description: "How reliable and consistent is the data?"
+    scoring_guide:
+      high: "Data is consistent across sources, no contradictions"
+      medium: "Minor inconsistencies that don't affect conclusions"
+      low: "Major contradictions or unreliable sources"
+
+  - name: "relevance"
+    weight: 0.2
+    description: "How relevant is the data to the analysis objective?"
+    scoring_guide:
+      high: "All data directly supports the analysis"
+      medium: "Some data is tangentially relevant"
+      low: "Significant noise in the data set"
+
+  - name: "timeliness"
+    weight: 0.2
+    description: "How current is the data?"
+    scoring_guide:
+      high: "All data from the target period"
+      medium: "Some data outside the target period"
+      low: "Mostly outdated data"
+
+# ── Benchmarks ────────────────────────────────────────────────────────
+# Reference values your analysis prompt can use for comparison.
+# Replace with your domain-specific benchmarks.
+benchmarks:
+  response_time_target_hours: 24
+  completion_rate_target_pct: 95
+  quality_score_target: 8.0

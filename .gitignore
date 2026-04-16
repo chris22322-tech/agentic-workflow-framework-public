@@ -1,0 +1,32 @@
+# Personalisation output — org-specific, not for the open-source repo
+personalise/output/
+personalise/output/site/
+personalise/org-config.yaml
+
+# MkDocs build output
+site/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Loop outputs and logs
+autonomous-loop/snapshots/
+autonomous-loop/logs/
+autonomous-loop/STOP
+research-loop/logs/
+research-implementer/logs/
+spec-implementer/logs/
+personalise-implementer/logs/
+org-applicator/logs/
+org-applicator/STOP
+
+# TM guide build output
+tm-guide/site/
+
+# Environment
+.env
+
+# OS files
+.DS_Store

@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page 3: Generating Training Materials — Personalisation Enablement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #1e293b;
+    --bg-card-alt: #1a2332;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.15);
+    --accent-warm: #fb923c;
+    --accent-green: #4ade80;
+    --accent-red: #f87171;
+    --accent-purple: #a78bfa;
+    --border: rgba(34, 211, 238, 0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Scroll Progress Bar ─────────────────────────────── */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-green));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Top Navigation ──────────────────────────────────── */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+  }
+
+  .top-nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #0891b2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-text span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .lesson-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-subtle);
+    border: 1.5px solid var(--text-muted);
+  }
+
+  .progress-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .progress-dot.completed {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+  }
+
+  /* ── Section Navigation (breadcrumb) ─────────────────── */
+  .section-nav {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 12px 24px;
+  }
+
+  .section-nav-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .section-nav-inner::-webkit-scrollbar { display: none; }
+
+  .section-nav a {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .section-nav a:hover,
+  .section-nav a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  .page-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-glow);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-meta-icon {
+    font-size: 16px;
+  }
+
+  /* ── Section styling ─────────────────────────────────── */
+  .lesson-section {
+    padding: 60px 0;
+    border-top: 1px solid var(--border-subtle);
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .lesson-section:nth-child(1) { animation-delay: 0.1s; }
+  .lesson-section:nth-child(2) { animation-delay: 0.15s; }
+  .lesson-section:nth-child(3) { animation-delay: 0.2s; }
+  .lesson-section:nth-child(4) { animation-delay: 0.25s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scroll-triggered fade-in */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .section-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 12px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 32px 0 16px;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ── Highlight boxes ─────────────────────────────────── */
+  .callout {
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .callout p {
+    margin-bottom: 0;
+    color: var(--text-primary);
+    font-size: 17px;
+  }
+
+  .callout.warm {
+    border-left-color: var(--accent-warm);
+  }
+
+  .callout.green {
+    border-left-color: var(--accent-green);
+  }
+
+  .callout.purple {
+    border-left-color: var(--accent-purple);
+  }
+
+  /* ── Key concept cards ───────────────────────────────── */
+  .concept-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-alt));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    margin: 32px 0;
+    box-shadow: var(--shadow);
+  }
+
+  .concept-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .concept-card p {
+    color: var(--text-primary);
+    font-size: 17px;
+    margin-bottom: 0;
+  }
+
+  /* ── Outputs list cards ──────────────────────────────── */
+  .output-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 28px 0;
+  }
+
+  .output-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .output-item:hover {
+    border-color: var(--border);
+    transform: translateX(4px);
+  }
+
+  .output-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .output-text {
+    flex: 1;
+  }
+
+  .output-text strong {
+    display: block;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .output-text p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Transform Visual ────────────────────────────────── */
+  .transform-visual {
+    margin: 40px 0;
+    padding: 32px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow);
+  }
+
+  .transform-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .transform-pair {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .transform-box {
+    border-radius: var(--radius-sm);
+    padding: 24px 20px;
+    position: relative;
+  }
+
+  .transform-box.generic {
+    background: rgba(248, 113, 113, 0.06);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+  }
+
+  .transform-box.personalised {
+    background: rgba(74, 222, 128, 0.06);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .transform-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .generic .transform-box-label { color: var(--accent-red); }
+  .personalised .transform-box-label { color: var(--accent-green); }
+
+  .transform-box p {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  .generic p { color: var(--text-muted); }
+  .personalised p { color: var(--text-primary); }
+
+  .transform-arrow {
+    font-size: 28px;
+    color: var(--accent);
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* ── Prompt cards ────────────────────────────────────── */
+  .prompt-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 20px 0;
+    transition: border-color 0.2s;
+  }
+
+  .prompt-card:hover {
+    border-color: var(--border);
+  }
+
+  .prompt-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .prompt-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .prompt-card-icon.role { background: rgba(34, 211, 238, 0.12); border: 1px solid rgba(34, 211, 238, 0.25); }
+  .prompt-card-icon.workshop { background: rgba(251, 146, 60, 0.12); border: 1px solid rgba(251, 146, 60, 0.25); }
+  .prompt-card-icon.champion { background: rgba(167, 139, 250, 0.12); border: 1px solid rgba(167, 139, 250, 0.25); }
+
+  .prompt-card-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .prompt-card-path {
+    display: block;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(34, 211, 238, 0.08);
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+
+  .prompt-card-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .prompt-card-output {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  .prompt-card-output strong {
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  /* ── Timeline Visual ─────────────────────────────────── */
+  .timeline {
+    margin: 40px 0;
+    padding: 32px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow);
+  }
+
+  .timeline-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .timeline-bar {
+    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 24px;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .timeline-segment {
+    height: 12px;
+    border-radius: 6px;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+
+  .timeline-segment.prework { background: var(--accent-purple); flex: 15; }
+  .timeline-segment.session1 { background: var(--accent); flex: 30; margin-left: 2px; }
+  .timeline-segment.session2 { background: var(--accent-green); flex: 30; margin-left: 2px; }
+  .timeline-segment.session3 { background: var(--accent-warm); flex: 30; margin-left: 2px; }
+  .timeline-segment.session4 { background: #f472b6; flex: 15; margin-left: 2px; }
+
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .timeline-item:last-child {
+    border-bottom: none;
+  }
+
+  .timeline-time {
+    flex-shrink: 0;
+    width: 60px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+    padding-top: 1px;
+  }
+
+  .timeline-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .timeline-item:nth-child(1) .timeline-dot { background: var(--accent-purple); }
+  .timeline-item:nth-child(1) .timeline-time { color: var(--accent-purple); }
+  .timeline-item:nth-child(2) .timeline-dot { background: var(--accent); }
+  .timeline-item:nth-child(2) .timeline-time { color: var(--accent); }
+  .timeline-item:nth-child(3) .timeline-dot { background: var(--accent-green); }
+  .timeline-item:nth-child(3) .timeline-time { color: var(--accent-green); }
+  .timeline-item:nth-child(4) .timeline-dot { background: var(--accent-warm); }
+  .timeline-item:nth-child(4) .timeline-time { color: var(--accent-warm); }
+  .timeline-item:nth-child(5) .timeline-dot { background: #f472b6; }
+  .timeline-item:nth-child(5) .timeline-time { color: #f472b6; }
+
+  .timeline-content {
+    flex: 1;
+  }
+
+  .timeline-content strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .timeline-content p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  .timeline-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+  }
+
+  .timeline-footer p {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 0;
+  }
+
+  .timeline-footer strong {
+    color: var(--accent);
+  }
+
+  /* ── Adoption grid ───────────────────────────────────── */
+  .adoption-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 28px 0;
+  }
+
+  .adoption-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .adoption-card:hover {
+    border-color: var(--border);
+    transform: translateY(-2px);
+  }
+
+  .adoption-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+
+  .adoption-card:nth-child(1) .adoption-card-icon { background: rgba(34, 211, 238, 0.12); }
+  .adoption-card:nth-child(2) .adoption-card-icon { background: rgba(251, 146, 60, 0.12); }
+  .adoption-card:nth-child(3) .adoption-card-icon { background: rgba(74, 222, 128, 0.12); }
+  .adoption-card:nth-child(4) .adoption-card-icon { background: rgba(167, 139, 250, 0.12); }
+
+  .adoption-card strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .adoption-card p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Standalone quote ────────────────────────────────── */
+  .standalone-quote {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+    max-width: 680px;
+    margin: 40px auto;
+    padding: 32px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    line-height: 1.6;
+    position: relative;
+  }
+
+  .standalone-quote::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-green));
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  /* ── Next Lesson CTA ─────────────────────────────────── */
+  .next-lesson {
+    padding: 60px 0 80px;
+    text-align: center;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .next-lesson-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .next-lesson a {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--accent), #0891b2);
+    color: #fff;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 32px;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(34, 211, 238, 0.25);
+  }
+
+  .next-lesson a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(34, 211, 238, 0.35);
+  }
+
+  .next-lesson a .arrow {
+    font-size: 20px;
+    transition: transform 0.2s;
+  }
+
+  .next-lesson a:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  /* ── Prev link ───────────────────────────────────────── */
+  .prev-lesson {
+    margin-top: 16px;
+  }
+
+  .prev-lesson a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+  }
+
+  .prev-lesson a:hover {
+    color: var(--accent);
+  }
+
+  .prev-lesson a .arrow {
+    font-size: 16px;
+    transition: transform 0.2s;
+  }
+
+  .prev-lesson a:hover .arrow {
+    transform: translateX(-4px);
+  }
+
+  /* ── Divider ─────────────────────────────────────────── */
+  .section-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 0;
+    border: none;
+  }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 17px; }
+    .hero-meta { flex-direction: column; gap: 8px; align-items: center; }
+
+    .lesson-section { padding: 40px 0; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+
+    .transform-pair { grid-template-columns: 1fr; gap: 12px; }
+    .transform-arrow { transform: rotate(90deg); }
+
+    .adoption-grid { grid-template-columns: 1fr; }
+
+    .timeline { padding: 20px 16px; }
+    .timeline-bar { display: none; }
+
+    .section-nav-inner { gap: 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .top-nav-inner { height: 52px; }
+    .brand-text { font-size: 13px; }
+    .lesson-progress { display: none; }
+    .page-wrapper { padding: 0 16px; }
+    .timeline-time { width: 48px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-icon">WF</div>
+      <div class="brand-text">Personalisation Enablement <span>/ Page 3</span></div>
+    </a>
+    <div class="lesson-progress">
+      <span>Page 3 of 4</span>
+      <div class="progress-dots">
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Section Navigation -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a href="#what-layer-2-produces" class="active">What Layer 2 produces</a>
+    <a href="#running-the-prompts">Running the prompts</a>
+    <a href="#workshop-format">Workshop format</a>
+    <a href="#sustaining-adoption">Sustaining adoption</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">Page 3 of 4</div>
+    <h1>Layer 2: Training That<br><em>Speaks Their Language</em></h1>
+    <p class="hero-subtitle">
+      Generate role-specific learning materials your team will actually use&mdash;not generic decks they skim and forget.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#9202;</span>
+        <span>~12 minutes</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#128218;</span>
+        <span>Covers prompts, workshops, and adoption</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-icon">&#9745;</span>
+        <span>Practical and ready to run</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: What Layer 2 Produces -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="what-layer-2-produces">
+    <div class="section-label">Section 1 <span class="section-time">3 min read</span></div>
+    <h2>What Layer 2 produces</h2>
+
+    <p>
+      Layer 1 gave you the config&mdash;a structured description of your organisation, its roles, its systems, and its workflows. Layer 2 takes that config and turns it into learning materials that are specific to each role.
+    </p>
+
+    <p>
+      For every role defined in your org config, the AI generates a complete set of training materials:
+    </p>
+
+    <div class="output-list reveal">
+      <div class="output-item">
+        <div class="output-icon">&#128075;</div>
+        <div class="output-text">
+          <strong>A role introduction</strong>
+          <p>Grounded in THEIR responsibilities, not a generic overview. The learner sees their own job title and their actual context from the first paragraph.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-icon">&#128736;</div>
+        <div class="output-text">
+          <strong>Stage 1&ndash;3 walkthroughs</strong>
+          <p>Using THEIR workflows as examples. When an Implementation Manager reads Stage 1, they see deployment workflows&mdash;not account health reviews.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-icon">&#128196;</div>
+        <div class="output-text">
+          <strong>A complete worked example</strong>
+          <p>Built from one of THEIR real workflows, taken end-to-end through the framework. Concrete, specific, and immediately applicable.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-icon">&#9999;</div>
+        <div class="output-text">
+          <strong>Practice exercises</strong>
+          <p>Tied to THEIR systems and data. Not hypotheticals&mdash;actual workflows they can decompose using the tools they already know.</p>
+        </div>
+      </div>
+      <div class="output-item">
+        <div class="output-icon">&#127919;</div>
+        <div class="output-text">
+          <strong>An assessment rubric</strong>
+          <p>Calibrated to THEIR context so managers can evaluate progress using criteria that make sense for the role.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Generic vs personalised: the difference matters</h3>
+
+    <p>
+      The generic framework teaches concepts well. But when someone reads a worked example about a role that is not theirs, they have to do extra cognitive work to translate. Personalised materials eliminate that translation step.
+    </p>
+
+    <div class="transform-visual reveal">
+      <div class="transform-label">The same concept, two versions</div>
+      <div class="transform-pair">
+        <div class="transform-box generic">
+          <div class="transform-box-label">Generic</div>
+          <p>&ldquo;A CSM reviews account health by pulling data from the CRM, checking support ticket trends, and drafting a summary for the customer.&rdquo;</p>
+        </div>
+        <div class="transform-arrow">&#10142;</div>
+        <div class="transform-box personalised">
+          <div class="transform-box-label">Personalised</div>
+          <p>&ldquo;An Implementation Manager at Acme reviews client deployment status by pulling data from Jira, checking milestone completion in Confluence, and drafting a progress update for the project sponsor.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout reveal">
+      <p>The second version takes zero extra thought. The reader sees their own role, their own tools, their own deliverable. They are learning the framework without realising they are translating anything.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Running the Prompts -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="running-the-prompts">
+    <div class="section-label">Section 2 <span class="section-time">4 min read</span></div>
+    <h2>Running the prompts</h2>
+
+    <p>
+      Layer 2 uses three prompts. Each one takes your org config as input and produces a specific set of training outputs. You run them one at a time, review the results, and iterate if needed.
+    </p>
+
+    <div class="prompt-card reveal">
+      <div class="prompt-card-header">
+        <div class="prompt-card-icon role">&#128100;</div>
+        <div class="prompt-card-title">Role Learning Path</div>
+      </div>
+      <code class="prompt-card-path">personalise/prompts/learning/role-path.md</code>
+      <div class="prompt-card-desc">
+        Generates a complete learning pathway for a single role. Includes the role introduction, stage walkthroughs, worked example, practice exercises, and assessment rubric&mdash;all grounded in that role's workflows and systems from your org config.
+      </div>
+      <div class="prompt-card-output">
+        <strong>Produces:</strong> One complete learning module per role (run once per role in your config)
+      </div>
+    </div>
+
+    <div class="prompt-card reveal">
+      <div class="prompt-card-header">
+        <div class="prompt-card-icon workshop">&#128101;</div>
+        <div class="prompt-card-title">Workshop Plan</div>
+      </div>
+      <code class="prompt-card-path">personalise/prompts/learning/workshop.md</code>
+      <div class="prompt-card-desc">
+        Generates a facilitator guide for a 2-hour hands-on workshop. Includes pre-work instructions, session plans with timing, group activities, and a take-home assignment. Designed to be run by a champion or team lead, not an external trainer.
+      </div>
+      <div class="prompt-card-output">
+        <strong>Produces:</strong> A facilitator guide + participant handout + pre-work email template
+      </div>
+    </div>
+
+    <div class="prompt-card reveal">
+      <div class="prompt-card-header">
+        <div class="prompt-card-icon champion">&#127942;</div>
+        <div class="prompt-card-title">Champion Programme</div>
+      </div>
+      <code class="prompt-card-path">personalise/prompts/learning/champion-programme.md</code>
+      <div class="prompt-card-desc">
+        Generates a champion enablement programme: selection criteria, training plan for champions, monthly office hours format, and an adoption dashboard template. Champions become your internal multipliers.
+      </div>
+      <div class="prompt-card-output">
+        <strong>Produces:</strong> Champion selection guide + training plan + office hours agenda template
+      </div>
+    </div>
+
+    <div class="callout warm reveal">
+      <p><strong>Tip:</strong> Start with one role. Run the role-path prompt, review the output, and refine your org config if the results feel off. Then generate for the other roles. Trying to do them all at once means you will not catch issues early.</p>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">How it works in practice</div>
+      <p>Feed your org-config.yaml to the prompt. The AI reads your role definitions, workflows, and systems, then generates materials that reference those specifics throughout. If your config says an Implementation Manager uses Jira and Confluence, every example in their learning path will use Jira and Confluence&mdash;not Salesforce and Google Sheets.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: The Workshop Format -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="workshop-format">
+    <div class="section-label">Section 3 <span class="section-time">3 min read</span></div>
+    <h2>The workshop format</h2>
+
+    <p>
+      The workshop is a 2-hour hands-on session designed to get a team from "I have heard of this framework" to "I have completed Stage 1 for one of my own workflows." It is practical by design&mdash;no slides-only presentations.
+    </p>
+
+    <div class="timeline reveal">
+      <div class="timeline-label">2-hour workshop structure</div>
+      <div class="timeline-bar">
+        <div class="timeline-segment prework"></div>
+        <div class="timeline-segment session1"></div>
+        <div class="timeline-segment session2"></div>
+        <div class="timeline-segment session3"></div>
+        <div class="timeline-segment session4"></div>
+      </div>
+      <div class="timeline-items">
+        <div class="timeline-item">
+          <div class="timeline-time">15 min</div>
+          <div class="timeline-dot-col">
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <strong>Pre-work</strong>
+            <p>Each participant lists 3 workflows they do regularly. No detail needed yet&mdash;just the names. This primes their thinking before the session starts.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">30 min</div>
+          <div class="timeline-dot-col">
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <strong>Session 1: Group Stage 1 walkthrough</strong>
+            <p>The facilitator takes one participant's role and walks through Stage 1 (Decompose) live with the group. Everyone sees the process in action before trying it themselves.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">30 min</div>
+          <div class="timeline-dot-col">
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <strong>Session 2: Individual practice</strong>
+            <p>Everyone completes their own workflow inventory. Using their pre-work list, each person works through Stage 1 for their own role. The facilitator circulates and helps.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">30 min</div>
+          <div class="timeline-dot-col">
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <strong>Session 3: Pairs</strong>
+            <p>Participants pair up to score and compare candidates. Each pair reviews the other's inventory, applies the selection criteria from Stage 2, and debates which workflows are the best candidates.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">15 min</div>
+          <div class="timeline-dot-col">
+            <div class="timeline-dot"></div>
+          </div>
+          <div class="timeline-content">
+            <strong>Session 4: Group discussion</strong>
+            <p>Pairs share their selections with the group. The facilitator captures shared systems and common workflow patterns across roles&mdash;these become candidates for org-wide automation.</p>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-footer">
+        <p><strong>Takeaway:</strong> Every participant leaves with a completed Stage 1 inventory and a shortlisted automation candidate.</p>
+      </div>
+    </div>
+
+    <p>
+      The pre-work is essential. Without it, participants spend the first 20 minutes of the session trying to think of workflows on the spot, which wastes group time. A short email three days before the workshop is enough.
+    </p>
+
+    <div class="callout green reveal">
+      <p>The workshop prompt generates all of this for you: the facilitator guide, the participant handout, the pre-work email template, and the timing notes. You do not need to design it from scratch.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Sustaining Adoption -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="sustaining-adoption">
+    <div class="section-label">Section 4 <span class="section-time">2 min read</span></div>
+    <h2>Sustaining adoption</h2>
+
+    <p>
+      Training without follow-through is a waste of everyone's time. The workshop gets people started, but sustained adoption requires lightweight structures that keep momentum going without becoming overhead.
+    </p>
+
+    <div class="adoption-grid reveal">
+      <div class="adoption-card">
+        <div class="adoption-card-icon">&#127942;</div>
+        <strong>Champions</strong>
+        <p>1&ndash;2 per team, trained first. They run monthly office hours where teammates can bring questions, share progress, and troubleshoot. Low effort, high impact.</p>
+      </div>
+      <div class="adoption-card">
+        <div class="adoption-card-icon">&#129309;</div>
+        <strong>Buddy system</strong>
+        <p>Pairs review each other's artifacts. When someone completes a workflow decomposition, their buddy checks it. Peer review catches gaps and builds shared understanding.</p>
+      </div>
+      <div class="adoption-card">
+        <div class="adoption-card-icon">&#128257;</div>
+        <strong>Spaced repetition</strong>
+        <p>15-minute micro-exercises at weeks 1, 2, and 4 after the workshop. Short enough that nobody skips them, spaced enough that the concepts stick.</p>
+      </div>
+      <div class="adoption-card">
+        <div class="adoption-card-icon">&#128202;</div>
+        <strong>Adoption tracker</strong>
+        <p>Measure how many people completed each stage. Not as surveillance&mdash;as visibility. Teams that can see progress tend to maintain momentum.</p>
+      </div>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">The pattern</div>
+      <p>Train champions first. Champions run workshops. Workshops create buddies. Buddies sustain each other. The adoption tracker lets leadership see progress without micromanaging. Each layer reinforces the next.</p>
+    </div>
+
+    <div class="standalone-quote reveal">
+      &ldquo;The goal is not 100% completion in week one. The goal is steady progress where each person has completed at least Stage 1 within a month&mdash;and has a buddy who has reviewed their work.&rdquo;
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Next Lesson CTA -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="next-lesson">
+    <div class="next-lesson-label">Up next</div>
+    <a href="04-your-own-site.html">
+      Page 4: Creating Your Own Version of the Site
+      <span class="arrow">&#10142;</span>
+    </a>
+    <div class="prev-lesson">
+      <a href="02-org-config.html">
+        <span class="arrow">&#10140;</span>
+        Page 2: Building Your Org Config
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- Scripts (inline, no dependencies) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+  // Scroll progress bar
+  function updateProgress() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = window.scrollY;
+    var pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+  }
+
+  // Scroll-triggered reveal
+  function revealOnScroll() {
+    var reveals = document.querySelectorAll('.reveal');
+    var trigger = window.innerHeight * 0.88;
+    reveals.forEach(function(el) {
+      var top = el.getBoundingClientRect().top;
+      if (top < trigger) {
+        el.classList.add('visible');
+      }
+    });
+  }
+
+  // Active section nav highlighting
+  function updateSectionNav() {
+    var sections = ['what-layer-2-produces', 'running-the-prompts', 'workshop-format', 'sustaining-adoption'];
+    var links = document.querySelectorAll('.section-nav a');
+    var current = sections[0];
+
+    for (var i = sections.length - 1; i >= 0; i--) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) {
+        current = sections[i];
+        break;
+      }
+    }
+
+    links.forEach(function(link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', function() {
+    updateProgress();
+    revealOnScroll();
+    updateSectionNav();
+  }, { passive: true });
+
+  // Initial calls
+  updateProgress();
+  revealOnScroll();
+</script>
+
+</body>
+</html>

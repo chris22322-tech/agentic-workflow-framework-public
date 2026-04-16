@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2: Finding Your Workflows | CSM Learning Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CSM Learning Path — Design System
+   Dark theme, Inter font, cyan accent (#22d3ee)
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary:    #0f172a;
+  --bg-secondary:  #1e293b;
+  --bg-tertiary:   #334155;
+  --bg-card:       #1e293b;
+  --border-subtle: #334155;
+  --border-medium: #475569;
+  --text-primary:  #f1f5f9;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+  --accent:        #22d3ee;
+  --accent-dim:    rgba(34,211,238,0.12);
+  --accent-mid:    rgba(34,211,238,0.25);
+  --green:         #4ade80;
+  --green-dim:     rgba(74,222,128,0.12);
+  --red:           #f87171;
+  --red-dim:       rgba(248,113,113,0.12);
+  --amber:         #fbbf24;
+  --amber-dim:     rgba(251,191,36,0.12);
+  --purple:        #a78bfa;
+  --purple-dim:    rgba(167,139,250,0.12);
+  --rose:          #fb7185;
+  --rose-dim:      rgba(251,113,133,0.12);
+  --font-sans:     'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+  --shadow-card:   0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-lg:     0 10px 30px rgba(0,0,0,0.4);
+  --max-width:     820px;
+  --transition:    0.2s ease;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Top progress bar ---- */
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3px;
+  background: var(--bg-secondary);
+}
+.progress-bar {
+  height: 100%;
+  width: 25%;  /* Lesson 2 of 8 */
+  background: linear-gradient(90deg, var(--accent), #06b6d4);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.4s ease;
+}
+
+/* ---- Top nav ---- */
+.top-nav {
+  position: sticky;
+  top: 3px;
+  z-index: 90;
+  background: rgba(15,23,42,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.75rem 1.5rem;
+}
+.top-nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color var(--transition);
+}
+.nav-link:hover { color: var(--accent); }
+.nav-link.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+.nav-progress-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---- Main container ---- */
+.lesson-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+/* ---- Lesson header ---- */
+.lesson-header {
+  margin-bottom: 3rem;
+}
+.lesson-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.lesson-stage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--purple-dim);
+  color: var(--purple);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.lesson-duration {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.lesson-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.lesson-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+/* ---- Sections ---- */
+.section {
+  margin-bottom: 3.5rem;
+}
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+.section-label .time {
+  color: var(--accent);
+}
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: var(--text-primary);
+}
+p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+p.lead {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+strong { color: var(--text-primary); font-weight: 600; }
+
+/* ---- Cards ---- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), transform var(--transition);
+}
+.card:hover {
+  border-color: var(--border-medium);
+}
+
+/* ---- Workflow Definition Test: example cards ---- */
+.definition-test-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.test-example {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  transition: border-color var(--transition);
+}
+.test-example:hover { border-color: var(--border-medium); }
+.test-example.pass {
+  background: var(--green-dim);
+  border-color: rgba(74,222,128,0.2);
+}
+.test-example.fail {
+  background: var(--red-dim);
+  border-color: rgba(248,113,113,0.15);
+}
+.test-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.test-example.pass .test-icon {
+  background: rgba(74,222,128,0.2);
+  color: var(--green);
+}
+.test-example.fail .test-icon {
+  background: rgba(248,113,113,0.2);
+  color: var(--red);
+}
+.test-content { flex: 1; }
+.test-input {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+.test-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 100px;
+  margin-bottom: 0.5rem;
+}
+.test-example.pass .test-label {
+  background: rgba(74,222,128,0.15);
+  color: var(--green);
+}
+.test-example.fail .test-label {
+  background: rgba(248,113,113,0.15);
+  color: var(--red);
+}
+.test-reason {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Property tags row */
+.property-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+.property-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+.property-tag.present {
+  background: rgba(74,222,128,0.12);
+  color: var(--green);
+}
+.property-tag.missing {
+  background: rgba(248,113,113,0.1);
+  color: var(--red);
+  text-decoration: line-through;
+}
+
+/* ---- Key concept callout ---- */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: 1.5rem 0;
+}
+.callout p { color: var(--text-secondary); margin: 0; }
+.callout strong { color: var(--accent); }
+.callout.tip {
+  border-left-color: var(--amber);
+  background: var(--amber-dim);
+}
+.callout.tip strong { color: var(--amber); }
+.callout.reflection {
+  border-left-color: var(--purple);
+  background: var(--purple-dim);
+}
+.callout.reflection strong { color: var(--purple); }
+
+/* ---- Four-Angle Cards ---- */
+.four-angle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+@media (max-width: 640px) {
+  .four-angle-grid { grid-template-columns: 1fr; }
+}
+.angle-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.angle-card:hover {
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+}
+.angle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.angle-card.time::before    { background: linear-gradient(90deg, var(--accent), #06b6d4); }
+.angle-card.trigger::before { background: linear-gradient(90deg, var(--amber), #f59e0b); }
+.angle-card.output::before  { background: linear-gradient(90deg, var(--green), #22c55e); }
+.angle-card.system::before  { background: linear-gradient(90deg, var(--purple), #8b5cf6); }
+
+.angle-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+.angle-card.time .angle-icon    { background: var(--accent-dim); }
+.angle-card.trigger .angle-icon { background: var(--amber-dim); }
+.angle-card.output .angle-icon  { background: var(--green-dim); }
+.angle-card.system .angle-icon  { background: var(--purple-dim); }
+
+.angle-card h3 { margin-bottom: 0.4rem; }
+.angle-card .angle-question {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+.angle-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.angle-card li {
+  position: relative;
+  padding-left: 1.2rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.angle-card li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.angle-card.time li::before    { background: var(--accent); }
+.angle-card.trigger li::before { background: var(--amber); }
+.angle-card.output li::before  { background: var(--green); }
+.angle-card.system li::before  { background: var(--purple); }
+
+/* ---- Inventory Table ---- */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  min-width: 700px;
+}
+.inventory-table thead {
+  background: var(--bg-tertiary);
+}
+.inventory-table th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+.inventory-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.inventory-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.inventory-table .example-row {
+  background: var(--accent-dim);
+}
+.inventory-table .example-row td {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.inventory-table .blank-row td {
+  color: var(--text-muted);
+  font-style: italic;
+  height: 48px;
+  background: var(--bg-card);
+}
+.inventory-table .blank-row:nth-child(even) td {
+  background: rgba(30,41,59,0.5);
+}
+.inventory-table .row-num {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  width: 30px;
+  text-align: center;
+}
+
+/* ---- Scoring section ---- */
+.signal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.signal-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  transition: border-color var(--transition);
+}
+.signal-card:hover { border-color: var(--border-medium); }
+.signal-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border-radius: 50%;
+}
+.signal-info h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.signal-info .signal-example {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.signal-info .signal-example em {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.signal-strength {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.signal-strength.strong {
+  background: var(--green-dim);
+  color: var(--green);
+}
+.signal-strength.weak {
+  background: var(--red-dim);
+  color: var(--red);
+}
+
+/* Scoring legend */
+.scoring-legend {
+  display: flex;
+  gap: 1rem;
+  margin: 1.25rem 0;
+  flex-wrap: wrap;
+}
+.scoring-level {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.scoring-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.scoring-dot.high   { background: var(--green); }
+.scoring-dot.medium { background: var(--amber); }
+.scoring-dot.low    { background: var(--red); }
+
+/* ---- Reflection cards ---- */
+.reflection-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+.reflection-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--purple-dim);
+  border: 1px solid rgba(167,139,250,0.15);
+  transition: border-color var(--transition);
+}
+.reflection-card:hover { border-color: rgba(167,139,250,0.3); }
+.reflection-card .reflection-q {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-style: italic;
+  line-height: 1.6;
+}
+.reflection-card .reflection-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--purple);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.05em;
+}
+.reflection-insight {
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.reflection-insight p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ---- Bottom nav ---- */
+.bottom-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-decoration: none;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  transition: border-color var(--transition), transform var(--transition);
+  min-width: 180px;
+}
+.bottom-nav-link:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.bottom-nav-link.next { text-align: right; margin-left: auto; }
+.bottom-nav-link .nav-dir {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.bottom-nav-link .nav-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.bottom-nav-link .nav-arrow {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ---- Divider ---- */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 3rem 0;
+}
+
+/* ---- Utility ---- */
+.mono { font-family: var(--font-mono); }
+.text-accent { color: var(--accent); }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+/* ---- Three-property row ---- */
+.properties-row {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+.property-pill {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+}
+.property-pill .pill-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: var(--accent-dim);
+  flex-shrink: 0;
+}
+.property-pill .pill-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.property-pill .pill-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .lesson-title { font-size: 1.65rem; }
+  h2 { font-size: 1.25rem; }
+  .properties-row { flex-direction: column; }
+  .bottom-nav { flex-direction: column; }
+  .bottom-nav-link.next { text-align: left; }
+  .signal-card { grid-template-columns: 1fr; gap: 0.5rem; }
+  .signal-strength { justify-self: start; }
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar-container">
+  <div class="progress-bar"></div>
+</div>
+
+<!-- Top navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="01-introduction.html" class="nav-link">
+      <span>&larr;</span> Lesson 1
+    </a>
+    <span class="nav-progress-label">Lesson 2 of 8</span>
+    <a href="03-choosing-what-to-automate.html" class="nav-link">
+      Lesson 3 <span>&rarr;</span>
+    </a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main class="lesson-container">
+
+  <!-- Header -->
+  <header class="lesson-header">
+    <div class="lesson-meta">
+      <span class="lesson-badge">Lesson 2</span>
+      <span class="lesson-stage">Stage 1: Decompose</span>
+      <span class="lesson-duration">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ~30 minutes
+      </span>
+    </div>
+    <h1 class="lesson-title">Finding Your Workflows</h1>
+    <p class="lesson-subtitle">
+      Before you can automate anything, you need to know what you actually do. This lesson gives you a systematic method to surface the workflows you run on autopilot and evaluate which ones are worth automating.
+    </p>
+  </header>
+
+  <!-- ============================================================
+       SECTION 1: The Workflow Definition Test
+       ============================================================ -->
+  <section class="section" id="definition-test">
+    <div class="section-label">
+      Section 1 &middot; <span class="time">5 min</span>
+    </div>
+    <h2>The Workflow Definition Test</h2>
+
+    <p class="lead">
+      Not everything you do is a workflow. Before building an inventory, you need a precise filter. A <strong>workflow</strong> must have exactly three properties:
+    </p>
+
+    <div class="properties-row">
+      <div class="property-pill">
+        <div class="pill-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div>
+          <div class="pill-text">A Trigger</div>
+          <div class="pill-desc">Something that starts it</div>
+        </div>
+      </div>
+      <div class="property-pill">
+        <div class="pill-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/><polyline points="15 18 21 12 15 6"/></svg>
+        </div>
+        <div>
+          <div class="pill-text">Repeatable Steps</div>
+          <div class="pill-desc">A sequence you follow</div>
+        </div>
+      </div>
+      <div class="property-pill">
+        <div class="pill-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="pill-text">A Concrete Output</div>
+          <div class="pill-desc">Something it produces</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Key distinction:</strong> If any of the three properties is missing, what you have is a <strong>responsibility</strong> (too broad) or a <strong>task</strong> (too narrow) &mdash; not a workflow.</p>
+    </div>
+
+    <h3>Test It: Three Examples</h3>
+
+    <div class="definition-test-grid">
+
+      <!-- Example 1: Fail -->
+      <div class="test-example fail">
+        <div class="test-icon">&times;</div>
+        <div class="test-content">
+          <div class="test-label">Responsibility</div>
+          <div class="test-input">"Manage accounts"</div>
+          <div class="test-reason">
+            No specific trigger, no defined sequence of steps, no concrete output. This is a <strong>responsibility</strong> &mdash; a category of work, not something you can automate.
+          </div>
+          <div class="property-tags">
+            <span class="property-tag missing">Trigger</span>
+            <span class="property-tag missing">Steps</span>
+            <span class="property-tag missing">Output</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 2: Fail -->
+      <div class="test-example fail">
+        <div class="test-icon">&times;</div>
+        <div class="test-content">
+          <div class="test-label">Task</div>
+          <div class="test-input">"Reply to a customer email"</div>
+          <div class="test-reason">
+            Has a trigger (email arrives) and an output (the reply), but <strong>no repeatable steps</strong> &mdash; every reply is different. This is a <strong>task</strong> within a larger workflow.
+          </div>
+          <div class="property-tags">
+            <span class="property-tag present">Trigger</span>
+            <span class="property-tag missing">Steps</span>
+            <span class="property-tag present">Output</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example 3: Pass -->
+      <div class="test-example pass">
+        <div class="test-icon">&check;</div>
+        <div class="test-content">
+          <div class="test-label">Workflow</div>
+          <div class="test-input">"Prepare weekly check-in summary"</div>
+          <div class="test-reason">
+            <strong>Trigger:</strong> Monday morning.
+            <strong>Steps:</strong> Pull CRM data, check ticket status, review usage metrics, compile notes.
+            <strong>Output:</strong> Summary document with talking points. This is a real workflow you can map and potentially automate.
+          </div>
+          <div class="property-tags">
+            <span class="property-tag present">Trigger</span>
+            <span class="property-tag present">Steps</span>
+            <span class="property-tag present">Output</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============================================================
+       SECTION 2: The Four-Angle Method
+       ============================================================ -->
+  <section class="section" id="four-angle-method">
+    <div class="section-label">
+      Section 2 &middot; <span class="time">10 min</span>
+    </div>
+    <h2>The Four-Angle Method</h2>
+
+    <p class="lead">
+      Most workflows live below conscious thought &mdash; you do them on autopilot. The trick to surfacing them is to approach your work from <strong>four different angles</strong>. Each angle catches workflows the others miss.
+    </p>
+
+    <div class="four-angle-grid">
+
+      <!-- Time-based -->
+      <div class="angle-card time">
+        <div class="angle-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Time-Based</h3>
+        <p class="angle-question">"What do I do every Monday? Every month-end? Every quarter?"</p>
+        <ul>
+          <li>Weekly check-in preparation (every Monday)</li>
+          <li>Monthly account health review (first of month)</li>
+          <li>Quarterly Business Review deck assembly (end of quarter)</li>
+        </ul>
+      </div>
+
+      <!-- Trigger-based -->
+      <div class="angle-card trigger">
+        <div class="angle-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3>Trigger-Based</h3>
+        <p class="angle-question">"What do I do when a ticket escalates? When a renewal is 90 days out?"</p>
+        <ul>
+          <li>Escalation response package (when a P1 ticket is filed)</li>
+          <li>Renewal risk assessment (90 days before renewal)</li>
+          <li>New customer onboarding sequence (when contract is signed)</li>
+        </ul>
+      </div>
+
+      <!-- Output-based -->
+      <div class="angle-card output">
+        <div class="angle-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3>Output-Based</h3>
+        <p class="angle-question">"What reports, documents, or summaries do I produce regularly?"</p>
+        <ul>
+          <li>Client health scorecard (updated weekly)</li>
+          <li>Stakeholder update email with usage summary</li>
+          <li>Internal handoff brief when transferring an account</li>
+        </ul>
+      </div>
+
+      <!-- System-based -->
+      <div class="angle-card system">
+        <div class="angle-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>System-Based</h3>
+        <p class="angle-question">"Why do I open Salesforce? What do I do in Jira? Why am I in Slack?"</p>
+        <ul>
+          <li>Salesforce: Logging activity notes after every client call</li>
+          <li>Jira/Zendesk: Compiling ticket digest before a check-in</li>
+          <li>Slack: Gathering internal context from product and engineering channels</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <p><strong>The point is to surface workflows you do on autopilot.</strong> If you sat down and asked only "What are my workflows?", you would miss half of them. The four angles force you to approach the question from different directions, catching the ones that are invisible because they are habitual.</p>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============================================================
+       SECTION 3: Interactive Exercise — Build Your Inventory
+       ============================================================ -->
+  <section class="section" id="build-inventory">
+    <div class="section-label">
+      Section 3 &middot; <span class="time">10 min</span>
+    </div>
+    <h2>Build Your Workflow Inventory</h2>
+
+    <p class="lead">
+      Time to apply the method. Below is an inventory table. The first row is filled in as an example. Your job is to add 5&ndash;8 workflows of your own using the four angles you just learned.
+    </p>
+
+    <h3>Worked Example</h3>
+    <p>Let's walk through filling in one row together. Think about <strong>weekly client check-in preparation</strong> &mdash; a workflow most CSMs run on autopilot:</p>
+
+    <div class="table-wrapper">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Workflow Name</th>
+            <th>Trigger</th>
+            <th>Frequency</th>
+            <th>Avg Time</th>
+            <th>Systems Touched</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Worked example row -->
+          <tr class="example-row">
+            <td class="row-num">Ex</td>
+            <td>Weekly client check-in preparation</td>
+            <td>Monday AM / calendar reminder</td>
+            <td>Weekly per client</td>
+            <td>45 min</td>
+            <td>Salesforce, Zendesk, Slack, Google Sheets</td>
+            <td>Check-in agenda with talking points</td>
+          </tr>
+
+          <!-- Blank rows for the learner -->
+          <tr class="blank-row">
+            <td class="row-num">1</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">2</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">3</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">4</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">5</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">6</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">7</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+          <tr class="blank-row">
+            <td class="row-num">8</td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout tip">
+      <p><strong>Calibration check:</strong> If you have fewer than 5 workflows, you are probably being too broad &mdash; break your responsibilities down further. If you have more than 15, you may be listing individual tasks rather than workflows. The sweet spot for most CSMs is 6&ndash;12.</p>
+    </div>
+
+    <p>
+      Use the four angles as your guide: walk through your calendar (time), your notification triggers, the documents you produce (outputs), and the tools you open each day (systems). Write each workflow into the table before moving on.
+    </p>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============================================================
+       SECTION 4: Scoring Automation Potential
+       ============================================================ -->
+  <section class="section" id="scoring">
+    <div class="section-label">
+      Section 4 &middot; <span class="time">5 min</span>
+    </div>
+    <h2>Scoring Automation Potential</h2>
+
+    <p class="lead">
+      Not every workflow should be automated. Look for four signals that indicate whether a workflow is a good candidate. For each signal, score the workflow <strong>High</strong>, <strong>Medium</strong>, or <strong>Low</strong>.
+    </p>
+
+    <div class="signal-grid">
+
+      <!-- Signal 1 -->
+      <div class="signal-card">
+        <div class="signal-num">1</div>
+        <div class="signal-info">
+          <h4>Structural Repeatability</h4>
+          <p class="signal-example">
+            <em>"Weekly check-in prep follows the same pattern every time."</em><br>
+            The steps are nearly identical across clients and weeks. This means the workflow has a stable structure that automation can replicate.
+          </p>
+        </div>
+        <span class="signal-strength strong">Strong</span>
+      </div>
+
+      <!-- Signal 2 -->
+      <div class="signal-card">
+        <div class="signal-num">2</div>
+        <div class="signal-info">
+          <h4>Determinism</h4>
+          <p class="signal-example">
+            <em>"Deciding whether to escalate requires reading the room."</em><br>
+            If a step depends on judgment, intuition, or context that is hard to encode, the workflow scores low on determinism. Automation struggles here.
+          </p>
+        </div>
+        <span class="signal-strength weak">Weak</span>
+      </div>
+
+      <!-- Signal 3 -->
+      <div class="signal-card">
+        <div class="signal-num">3</div>
+        <div class="signal-info">
+          <h4>Data Availability</h4>
+          <p class="signal-example">
+            <em>"Usage metrics are in a dashboard with an API."</em><br>
+            If the data you need is programmatically accessible (APIs, databases, structured exports), automation can pull it. If it is in someone's head or buried in email threads, it cannot.
+          </p>
+        </div>
+        <span class="signal-strength strong">Strong</span>
+      </div>
+
+      <!-- Signal 4 -->
+      <div class="signal-card">
+        <div class="signal-num">4</div>
+        <div class="signal-info">
+          <h4>Error Recoverability</h4>
+          <p class="signal-example">
+            <em>"The summary is reviewed before the meeting."</em><br>
+            If there is a natural review step where errors can be caught and corrected before they matter, the workflow is safer to automate. The human stays in the loop where it counts.
+          </p>
+        </div>
+        <span class="signal-strength strong">Strong</span>
+      </div>
+
+    </div>
+
+    <h3>How to Score</h3>
+    <p>
+      Go back to your inventory table. For each workflow, assess the four signals and assign an overall automation potential:
+    </p>
+
+    <div class="scoring-legend">
+      <div class="scoring-level">
+        <span class="scoring-dot high"></span>
+        <span><strong>High</strong> &mdash; 3&ndash;4 strong signals</span>
+      </div>
+      <div class="scoring-level">
+        <span class="scoring-dot medium"></span>
+        <span><strong>Medium</strong> &mdash; 2 strong signals</span>
+      </div>
+      <div class="scoring-level">
+        <span class="scoring-dot low"></span>
+        <span><strong>Low</strong> &mdash; 0&ndash;1 strong signals</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Remember:</strong> A "Low" score does not mean the workflow is unimportant. It means automation is not the right lever for improving it. Some workflows are better improved through process redesign or better tooling.</p>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ============================================================
+       SECTION 5: Reflection
+       ============================================================ -->
+  <section class="section" id="reflection">
+    <div class="section-label">
+      Section 5 &middot; <span class="time">Reflection</span>
+    </div>
+    <h2>Pause and Reflect</h2>
+
+    <p class="lead">
+      Before moving on, sit with your inventory for a moment. Three questions:
+    </p>
+
+    <div class="reflection-grid">
+      <div class="reflection-card">
+        <div class="reflection-num">Question 01</div>
+        <p class="reflection-q">"Look at your inventory. Which workflow scored highest for automation potential? Does that surprise you?"</p>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-num">Question 02</div>
+        <p class="reflection-q">"Which workflow did you <em>want</em> to score highest? Is it the same one?"</p>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-num">Question 03</div>
+        <p class="reflection-q">"If they are different, why? What made you want to automate the other one &mdash; frustration? Time cost? Visibility?"</p>
+      </div>
+    </div>
+
+    <div class="reflection-insight">
+      <p>
+        If your highest-scoring workflow is not the one you most wanted to automate, <strong>the framework just saved you from automating the wrong thing</strong>. Desire to automate often tracks with frustration, not feasibility. The inventory and scoring process separates the two &mdash; and that distinction is exactly where failed automation projects begin.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Bottom Navigation
+       ============================================================ -->
+  <nav class="bottom-nav">
+    <a href="01-introduction.html" class="bottom-nav-link prev">
+      <span class="nav-dir">&larr; Previous</span>
+      <span class="nav-title">Lesson 1: What Is a Workflow?</span>
+    </a>
+    <a href="03-choosing-what-to-automate.html" class="bottom-nav-link next">
+      <span class="nav-dir">Next &rarr;</span>
+      <span class="nav-title">Lesson 3: Selecting a Workflow</span>
+    </a>
+  </nav>
+
+</main>
+
+</body>
+</html>

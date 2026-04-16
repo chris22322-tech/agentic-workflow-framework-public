@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 4: Scope: Mapping Technical Workflows — SWE Learning Pathway</title>
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: #1c2129;
+    --bg-card-alt: #171d25;
+    --text-primary: #e6edf3;
+    --text-secondary: #9eaab8;
+    --text-muted: #6e7a88;
+    --accent: #4ecdc4;
+    --accent-glow: rgba(78, 205, 196, 0.15);
+    --accent-warm: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --accent-purple: #a78bfa;
+    --border: rgba(78, 205, 196, 0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Scroll Progress Bar ─────────────────────────────── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0;
+    width: 0%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Top Navigation ──────────────────────────────────── */
+  .top-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+  }
+  .top-nav-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+  .brand-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .brand-text { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand-text span { color: var(--text-muted); font-weight: 400; }
+
+  .lesson-progress { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-subtle); border: 1.5px solid var(--text-muted);
+  }
+  .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .progress-dot.completed { background: var(--accent-green); border-color: var(--accent-green); }
+
+  /* ── Section Navigation ─────────────────────────────── */
+  .section-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle); padding: 12px 24px; }
+  .section-nav-inner {
+    max-width: 960px; margin: 0 auto; display: flex; gap: 24px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .section-nav-inner::-webkit-scrollbar { display: none; }
+  .section-nav a {
+    font-size: 13px; color: var(--text-muted); text-decoration: none; white-space: nowrap;
+    padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+  }
+  .section-nav a:hover, .section-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero { padding: 80px 0 60px; text-align: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-glow); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 16px; font-size: 13px;
+    color: var(--accent); font-weight: 500; margin-bottom: 24px; letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px; color: #fff;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-subtitle { font-size: 20px; color: var(--text-secondary); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+  .hero-meta { display: flex; justify-content: center; gap: 32px; font-size: 14px; color: var(--text-muted); }
+  .hero-meta-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Section styling ─────────────────────────────────── */
+  .lesson-section { padding: 60px 0; border-top: 1px solid var(--border-subtle); }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-time { font-size: 12px; color: var(--text-muted); margin-left: 12px; font-weight: 400; letter-spacing: 0.02em; text-transform: none; }
+  h2 { font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 24px; letter-spacing: -0.01em; color: #fff; }
+  h3 { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 32px 0 16px; color: var(--text-primary); }
+  p { margin-bottom: 20px; color: var(--text-secondary); }
+  strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Callout boxes ───────────────────────────────────── */
+  .callout {
+    background: var(--bg-card); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 20px 24px; margin: 28px 0;
+  }
+  .callout p { margin-bottom: 0; color: var(--text-primary); font-size: 17px; }
+  .callout.warm { border-left-color: var(--accent-warm); }
+  .callout.green { border-left-color: var(--accent-green); }
+
+  /* ── Concept cards ───────────────────────────────────── */
+  .concept-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-alt));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px 28px 24px; margin: 32px 0; box-shadow: var(--shadow);
+  }
+  .concept-card-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .concept-card p { color: var(--text-primary); font-size: 17px; margin-bottom: 0; }
+
+  /* ── Workflow Step Visual ─────────────────────────────── */
+  .step-visual {
+    margin: 40px 0; padding: 32px; background: var(--bg-card);
+    border-radius: var(--radius); border: 1px solid var(--border-subtle); box-shadow: var(--shadow);
+  }
+  .step-visual-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 28px;
+  }
+  .step-track { display: flex; gap: 0; align-items: stretch; position: relative; flex-wrap: wrap; justify-content: center; }
+  .step-item { text-align: center; position: relative; padding: 8px 6px; flex: 0 0 auto; min-width: 88px; }
+  .step-number {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; margin: 0 auto 10px; border: 2px solid; transition: transform 0.2s;
+  }
+  .step-item:hover .step-number { transform: scale(1.1); }
+  .step-item.auto .step-number { background: var(--accent); border-color: var(--accent); color: var(--bg-primary); box-shadow: 0 0 16px var(--accent-glow); }
+  .step-item.hil .step-number { background: var(--accent-warm); border-color: var(--accent-warm); color: var(--bg-primary); }
+  .step-item.manual .step-number { background: transparent; border-color: var(--text-muted); color: var(--text-muted); }
+  .step-name { font-size: 11px; font-weight: 600; margin-bottom: 4px; line-height: 1.3; }
+  .step-item.auto .step-name { color: var(--text-primary); }
+  .step-item.hil .step-name { color: var(--text-primary); }
+  .step-item.manual .step-name { color: var(--text-muted); }
+  .step-tag {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px;
+  }
+  .step-item.auto .step-tag { background: var(--accent-glow); color: var(--accent); }
+  .step-item.hil .step-tag { background: rgba(88, 166, 255, 0.15); color: var(--accent-warm); }
+  .step-item.manual .step-tag { background: rgba(255,255,255,0.04); color: var(--text-muted); }
+
+  /* ── Data Inventory Table ───────────────────────────── */
+  .data-table {
+    width: 100%; border-collapse: collapse; margin: 32px 0;
+    font-size: 15px; line-height: 1.5;
+  }
+  .data-table th {
+    text-align: left; padding: 12px 16px; font-size: 12px;
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); background: var(--bg-card);
+    border-bottom: 2px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary); vertical-align: top;
+  }
+  .data-table tr:hover td { background: var(--bg-card-alt); }
+  .data-table code {
+    font-size: 13px; background: rgba(78, 205, 196, 0.08);
+    padding: 2px 6px; border-radius: 4px; color: var(--accent);
+  }
+
+  /* ── Decision Logic Cards ──────────────────────────── */
+  .decision-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin: 20px 0;
+    position: relative; overflow: hidden;
+  }
+  .decision-card::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .decision-card.rule::before { background: var(--accent); }
+  .decision-card.llm::before { background: var(--accent-purple); }
+  .decision-card.human::before { background: var(--accent-warm); }
+  .decision-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .decision-card-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+  }
+  .decision-card.rule .decision-card-badge { background: var(--accent-glow); color: var(--accent); }
+  .decision-card.llm .decision-card-badge { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); }
+  .decision-card.human .decision-card-badge { background: rgba(88, 166, 255, 0.15); color: var(--accent-warm); }
+  .decision-card-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+  .decision-card p { font-size: 15px; color: var(--text-secondary); margin-bottom: 0; }
+
+  /* ── Boundary Visual ────────────────────────────────── */
+  .boundary-visual {
+    margin: 40px 0; padding: 32px; background: var(--bg-card);
+    border-radius: var(--radius); border: 1px solid var(--border-subtle); box-shadow: var(--shadow);
+  }
+  .boundary-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 24px;
+  }
+  .boundary-zones { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch; }
+  .boundary-zone { padding: 24px; }
+  .boundary-zone.automate { background: rgba(78, 205, 196, 0.04); border-radius: var(--radius) 0 0 var(--radius); }
+  .boundary-zone.human-zone { background: rgba(88, 166, 255, 0.04); border-radius: 0 var(--radius) var(--radius) 0; }
+  .boundary-divider {
+    width: 3px; background: repeating-linear-gradient(
+      to bottom, var(--accent-red) 0, var(--accent-red) 8px, transparent 8px, transparent 16px
+    );
+    position: relative;
+  }
+  .boundary-divider-label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: var(--bg-card); padding: 4px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent-red); white-space: nowrap;
+    border: 1px solid rgba(248, 81, 73, 0.3);
+  }
+  .boundary-zone-header {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; margin-bottom: 16px;
+  }
+  .boundary-zone.automate .boundary-zone-header { color: var(--accent); }
+  .boundary-zone.human-zone .boundary-zone-header { color: var(--accent-warm); }
+  .boundary-list { list-style: none; }
+  .boundary-list li {
+    padding: 6px 0; font-size: 14px; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+  }
+  .boundary-list li::before {
+    content: ''; flex-shrink: 0; width: 6px; height: 6px;
+    border-radius: 2px; margin-top: 8px;
+  }
+  .boundary-zone.automate .boundary-list li::before { background: var(--accent); }
+  .boundary-zone.human-zone .boundary-list li::before { background: var(--accent-warm); }
+
+  /* ── Expandable sections ─────────────────────────────── */
+  details {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin: 20px 0; overflow: hidden;
+  }
+  details summary {
+    padding: 16px 20px; cursor: pointer; font-weight: 600; font-size: 17px;
+    color: var(--text-primary); list-style: none; display: flex; align-items: center; gap: 12px;
+    transition: background 0.2s;
+  }
+  details summary:hover { background: var(--bg-card-alt); }
+  details summary::before { content: '\25B6'; font-size: 12px; color: var(--accent); transition: transform 0.2s; flex-shrink: 0; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary::-webkit-details-marker { display: none; }
+  details .details-content { padding: 0 20px 20px; color: var(--text-secondary); }
+  details .details-content p { font-size: 16px; }
+
+  /* ── Reflection Questions ────────────────────────────── */
+  .reflection { margin: 40px 0; }
+  .reflection-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0; overflow: hidden; margin-bottom: 16px;
+  }
+  .reflection-card-inner { display: flex; align-items: stretch; }
+  .reflection-number {
+    display: flex; align-items: center; justify-content: center; min-width: 56px;
+    background: var(--accent-glow); border-right: 1px solid var(--border);
+    font-size: 20px; font-weight: 700; color: var(--accent);
+  }
+  .reflection-content { padding: 20px 24px; flex: 1; }
+  .reflection-question { font-size: 17px; color: var(--text-primary); line-height: 1.6; margin-bottom: 0; }
+  .reflection-prompt { font-size: 13px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+
+  /* ── Key Takeaway ───────────────────────────────────── */
+  .key-takeaway {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(88, 166, 255, 0.06));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px; margin: 40px 0; box-shadow: var(--shadow);
+  }
+  .key-takeaway-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .key-takeaway p { color: var(--text-primary); font-size: 17px; margin-bottom: 12px; }
+  .key-takeaway p:last-child { margin-bottom: 0; }
+
+  /* ── Learning Objectives ────────────────────────────── */
+  .objectives {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px; margin: 32px 0;
+  }
+  .objectives-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent-green); margin-bottom: 16px;
+  }
+  .objectives-list { list-style: none; }
+  .objectives-list li {
+    padding: 8px 0; font-size: 16px; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 12px; line-height: 1.5;
+  }
+  .objectives-list li::before {
+    content: '\2713'; flex-shrink: 0; color: var(--accent-green);
+    font-weight: 700; margin-top: 1px;
+  }
+
+  /* ── Prev/Next Navigation ───────────────────────────── */
+  .lesson-nav { padding: 60px 0 80px; border-top: 1px solid var(--border-subtle); }
+  .lesson-nav-inner {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  }
+  .lesson-nav a {
+    display: inline-flex; align-items: center; gap: 10px;
+    text-decoration: none; font-size: 16px; font-weight: 600;
+    padding: 14px 24px; border-radius: 10px; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .lesson-nav a:hover { transform: translateY(-2px); }
+  .lesson-nav .prev {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .lesson-nav .prev:hover { box-shadow: var(--shadow); }
+  .lesson-nav .next {
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    color: #fff; box-shadow: 0 4px 20px rgba(78, 205, 196, 0.25);
+  }
+  .lesson-nav .next:hover { box-shadow: 0 8px 30px rgba(78, 205, 196, 0.35); }
+  .lesson-nav .arrow { font-size: 18px; transition: transform 0.2s; }
+  .lesson-nav .next:hover .arrow { transform: translateX(4px); }
+  .lesson-nav .prev:hover .arrow { transform: translateX(-4px); }
+
+  /* ── Inline code ────────────────────────────────────── */
+  code {
+    font-size: 15px; background: rgba(78, 205, 196, 0.08);
+    padding: 2px 6px; border-radius: 4px; color: var(--accent);
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+
+  /* ── Ordered step list ──────────────────────────────── */
+  .step-list { list-style: none; counter-reset: step-counter; margin: 28px 0; }
+  .step-list li {
+    counter-increment: step-counter; padding: 12px 0 12px 48px;
+    position: relative; color: var(--text-secondary); font-size: 16px; line-height: 1.6;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before {
+    content: counter(step-counter);
+    position: absolute; left: 0; top: 12px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent-glow); border: 1.5px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: var(--accent);
+  }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 17px; }
+    .hero-meta { flex-direction: column; gap: 8px; align-items: center; }
+    .lesson-section { padding: 40px 0; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+    .step-track { flex-direction: column; gap: 8px; }
+    .step-item { display: flex; align-items: center; gap: 12px; text-align: left; min-width: auto; }
+    .step-number { margin: 0; flex-shrink: 0; }
+    .boundary-zones { grid-template-columns: 1fr; }
+    .boundary-divider { width: auto; height: 3px; background: repeating-linear-gradient(
+      to right, var(--accent-red) 0, var(--accent-red) 8px, transparent 8px, transparent 16px
+    ); }
+    .boundary-divider-label { top: auto; left: 50%; transform: translateX(-50%); }
+    .data-table { font-size: 13px; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+    .reflection-card-inner { flex-direction: column; }
+    .reflection-number { min-width: auto; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); }
+    .section-nav-inner { gap: 16px; }
+    .lesson-nav-inner { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .top-nav-inner { height: 52px; }
+    .brand-text { font-size: 13px; }
+    .lesson-progress { display: none; }
+    .page-wrapper { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-icon">SE</div>
+      <div class="brand-text">SWE Learning Pathway <span>/ Lesson 4</span></div>
+    </a>
+    <div class="lesson-progress">
+      <span>Lesson 4 of 8</span>
+      <div class="progress-dots">
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Section Navigation -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a href="#what-is-scoping" class="active">What is scoping</a>
+    <a href="#step-by-step">Step-by-step mapping</a>
+    <a href="#decision-logic">Decision logic</a>
+    <a href="#data-inventory">Data inventory</a>
+    <a href="#boundaries">Boundary tagging</a>
+    <a href="#self-check">Self-check</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">Lesson 4 of 8</div>
+    <h1>Scope: Mapping <em>Technical Workflows</em></h1>
+    <p class="hero-subtitle">
+      You selected Release Notes Compilation as your best automation candidate. Now you map every step of how it actually works&mdash;inputs, outputs, decision logic, data sources, and the line between what the agent handles and what stays with you.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span>&#9202;</span>
+        <span>~30 minutes</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#128736;</span>
+        <span>Produces a scope document</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#9745;</span>
+        <span>Ends with a self-check</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Learning Objectives -->
+  <div class="objectives reveal">
+    <div class="objectives-label">Learning Objectives</div>
+    <ul class="objectives-list">
+      <li>Map a complete engineering workflow step by step, with one action per step</li>
+      <li>Identify the data sources and API boundaries each step depends on</li>
+      <li>Document decision logic: rule-based categorisation, LLM fallbacks, and human judgement</li>
+      <li>Apply boundary tags (AUTOMATE, HIL, MANUAL) with explicit reasoning</li>
+      <li>Build a data inventory that becomes the integration spec for Stage 4: Design</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: What is scoping? -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="what-is-scoping">
+    <div class="section-label">Section 1 <span class="section-time">5 min read</span></div>
+    <h2>From &ldquo;good candidate&rdquo; to build-ready spec</h2>
+
+    <p>
+      In Lesson 3, you scored Release Notes Compilation as the strongest automation candidate. High repeatability, low complexity, structured data throughout. But &ldquo;this workflow is automatable&rdquo; is not the same as &ldquo;here is exactly what to build.&rdquo; Scoping bridges that gap.
+    </p>
+
+    <p>
+      A scope document is a <strong>step-by-step map of how the workflow actually works today</strong>, annotated with enough detail that an engineer (or your future self in Stage 5) can translate it directly into a graph architecture. Every step has one action, one input, one output, and a boundary tag that says who handles it.
+    </p>
+
+    <div class="callout reveal">
+      <p>The scope document is your build spec. If the engineer has to guess how a step works, the scope is incomplete. If a step hides two different operations, it needs to be split. One step, one action, one boundary tag.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>How is this different from a technical design doc?</summary>
+      <div class="details-content">
+        <p>
+          A design doc describes <em>how the agent will be implemented</em>&mdash;graph nodes, state schema, conditional edges. A scope document describes <em>how the workflow works today as a human performs it</em>. The scope comes first. It captures the domain logic, decision criteria, and data dependencies that the design then translates into architecture. If you skip the scope and go straight to design, you are encoding assumptions about the workflow instead of documenting what actually happens. Stage 4 (Design) takes the scope document as its input.
+        </p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Why one action per step?</summary>
+      <div class="details-content">
+        <p>
+          Because each step gets exactly one boundary tag: AUTOMATE, HIL, or MANUAL. If a step contains both &ldquo;fetch PRs from GitHub&rdquo; (AUTOMATE) and &ldquo;decide which PRs are user-facing&rdquo; (also AUTOMATE, but different decision logic), you cannot assign a single boundary tag without hiding complexity. Worse, during Design, each step maps to a node or part of a node in the agent graph. A step that does two things becomes a node that does two things&mdash;harder to test, harder to debug, harder to iterate on.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: Step-by-step mapping -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="step-by-step">
+    <div class="section-label">Section 2 <span class="section-time">8 min read</span></div>
+    <h2>The Release Notes workflow, step by step</h2>
+
+    <p>
+      Here is the complete workflow as an engineer performs it today. Eleven steps, from trigger detection to publication. Notice how each step has a single, specific action&mdash;not &ldquo;gather data and classify it,&rdquo; but separate steps for each retrieval and each transformation.
+    </p>
+
+    <!-- 11-step visual -->
+    <div class="step-visual reveal">
+      <div class="step-visual-label">Release Notes Compilation &mdash; 11 steps</div>
+      <div class="step-track">
+        <div class="step-item auto">
+          <div class="step-number">1</div>
+          <div>
+            <div class="step-name">Identify<br>release scope</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">2</div>
+          <div>
+            <div class="step-name">Fetch<br>merged PRs</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">3</div>
+          <div>
+            <div class="step-name">Fetch<br>linked issues</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">4</div>
+          <div>
+            <div class="step-name">Categorise<br>changes</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">5</div>
+          <div>
+            <div class="step-name">Filter<br>user-facing</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">6</div>
+          <div>
+            <div class="step-name">Extract<br>summaries</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">7</div>
+          <div>
+            <div class="step-name">Group<br>&amp; sort</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">8</div>
+          <div>
+            <div class="step-name">Generate<br>draft</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item auto">
+          <div class="step-number">9</div>
+          <div>
+            <div class="step-name">Migration<br>notes</div>
+            <div class="step-tag">Automate</div>
+          </div>
+        </div>
+        <div class="step-item hil">
+          <div class="step-number">10</div>
+          <div>
+            <div class="step-name">Review<br>&amp; refine</div>
+            <div class="step-tag">HIL</div>
+          </div>
+        </div>
+        <div class="step-item manual">
+          <div class="step-number">11</div>
+          <div>
+            <div class="step-name">Publish</div>
+            <div class="step-tag">Manual</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>
+      Nine automated steps, one human-in-the-loop review, one manual publication. That ratio&mdash;9 AUTOMATE, 1 HIL, 1 MANUAL&mdash;is what made this workflow score so well in Stage 2. Let us walk through three key steps in detail to see <em>what good scoping looks like</em>.
+    </p>
+
+    <h3>Step 2: Fetch merged PRs since last release</h3>
+
+    <p>
+      This step sounds simple: &ldquo;get the PRs.&rdquo; But scoping forces you to document <em>exactly how</em>:
+    </p>
+
+    <ol class="step-list reveal">
+      <li><strong>Input:</strong> The current tag and previous tag from Step 1 (e.g., <code>v2.4.0</code> and <code>v2.3.0</code>)</li>
+      <li><strong>Action:</strong> Call the GitHub Compare API (<code>/repos/{owner}/{repo}/compare/{base}...{head}</code>) to get the commit range, then resolve each merge commit to its PR via <code>/commits/{sha}/pulls</code></li>
+      <li><strong>Edge case &mdash; squash merges:</strong> One commit maps directly to one PR. Clean.</li>
+      <li><strong>Edge case &mdash; rebase merges:</strong> Each rebased commit is separate. Must query per-commit and deduplicate by PR number to avoid listing the same PR twice.</li>
+      <li><strong>Output:</strong> List of merged PRs, each with: PR number, title, author, labels, merge commit SHA, branch name, description body, merge timestamp</li>
+    </ol>
+
+    <div class="callout warm reveal">
+      <p>Notice the merge strategy edge case. If you wrote &ldquo;fetch PRs between two tags,&rdquo; you would miss the fact that rebase-merged PRs require per-commit resolution and deduplication. The engineer building this in Stage 5 needs to know that, or the agent will list the same PR three times for a rebased branch with three commits.</p>
+    </div>
+
+    <h3>Step 4: Categorise changes by type</h3>
+
+    <p>
+      This is the most complex automated step. Not because it is hard to implement, but because it has <strong>four classification strategies applied in priority order</strong>:
+    </p>
+
+    <div class="decision-card rule reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Strategy 1 &mdash; Rule</div>
+        <div class="decision-card-title">Label match</div>
+      </div>
+      <p>Map PR labels to categories: <code>feature</code>/<code>enhancement</code> &rarr; New Features, <code>bug</code>/<code>bugfix</code> &rarr; Bug Fixes, <code>security</code> &rarr; Security, <code>breaking-change</code> &rarr; Breaking Changes. If multiple labels match, prefer the highest-severity category.</p>
+    </div>
+
+    <div class="decision-card rule reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Strategy 2 &mdash; Rule</div>
+        <div class="decision-card-title">Conventional commit prefix</div>
+      </div>
+      <p>If no label matched, parse the PR title for a conventional commit prefix: <code>feat:</code> &rarr; New Features, <code>fix:</code> &rarr; Bug Fixes, <code>perf:</code> &rarr; Performance, <code>docs:</code> &rarr; Documentation, <code>chore:</code>/<code>ci:</code> &rarr; Internal.</p>
+    </div>
+
+    <div class="decision-card llm reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Strategy 3 &mdash; LLM</div>
+        <div class="decision-card-title">LLM classification</div>
+      </div>
+      <p>If neither label nor prefix matched, send the PR title, description (first 500 characters), and linked issue types to the LLM: &ldquo;Classify this PR into exactly one category. If ambiguous, classify as Other and flag for manual review.&rdquo; Log every LLM-classified PR.</p>
+    </div>
+
+    <div class="decision-card rule reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Strategy 4 &mdash; Rule</div>
+        <div class="decision-card-title">Breaking change override</div>
+      </div>
+      <p>Regardless of primary category, if any commit message contains <code>BREAKING:</code> or <code>BREAKING CHANGE:</code>, add the PR to Breaking Changes as well. A PR can appear in both its primary category and Breaking Changes.</p>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">Why this matters for scoping</div>
+      <p>Without the scope document, an engineer might implement a single classification call to the LLM for every PR. That works, but it is slower, more expensive, and less deterministic than checking labels first. The priority chain&mdash;labels &rarr; commit prefixes &rarr; LLM&mdash;is a design decision that <em>must</em> be captured in the scope, because it comes from understanding how the team actually works, not from technical architecture.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>Why is Step 4 tagged AUTOMATE if it uses an LLM?</summary>
+      <div class="details-content">
+        <p>
+          Because categorisation here is a <em>flagging</em> step, not a <em>deciding</em> step. The agent proposes a category; the engineer validates it in Step 10. A miscategorised PR appears in the wrong section of the draft&mdash;that is caught in seconds during review. The cost of a wrong classification is a minor correction, not a wrong decision shipped to users. The boundary would only move to HIL if categorisation errors had consequences beyond &ldquo;the reviewer fixes it.&rdquo;
+        </p>
+      </div>
+    </details>
+
+    <h3>Step 10: Review and refine (the single HIL checkpoint)</h3>
+
+    <p>
+      This is the <em>only</em> human-in-the-loop step in the entire workflow. The engineer validates six dimensions:
+    </p>
+
+    <ol class="step-list reveal">
+      <li><strong>Categorisation accuracy</strong> &mdash; Any PRs in the wrong section? Common error: an <code>enhancement</code>-labelled PR that is actually a bug fix.</li>
+      <li><strong>Summary quality</strong> &mdash; Do the one-liners accurately describe the change for users? LLM summaries may be too vague (&ldquo;Improved performance&rdquo;) or too technical.</li>
+      <li><strong>Excluded changes</strong> &mdash; Review the exclusion list for false exclusions: internal-labelled PRs with user-facing side effects.</li>
+      <li><strong>Breaking change completeness</strong> &mdash; Is every breaking change accounted for? Are the migration notes accurate?</li>
+      <li><strong>Ordering and emphasis</strong> &mdash; Does the section order reflect what users care about? Move the headline feature to the top.</li>
+      <li><strong>Tone and audience fit</strong> &mdash; Internal platform notes differ from public API notes.</li>
+    </ol>
+
+    <div class="callout green reveal">
+      <p>One HIL checkpoint instead of three scattered ones. This works because errors in the release notes workflow do not compound&mdash;a miscategorised PR does not cause other PRs to be miscategorised. Each error is independent and catchable in a single review pass.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Decision logic deep dive -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="decision-logic">
+    <div class="section-label">Section 3 <span class="section-time">6 min read</span></div>
+    <h2>Decision logic: the part most people skip</h2>
+
+    <p>
+      Every step with non-trivial logic gets a Decision Logic entry in the scope document. This is where you capture the <em>rules</em>&mdash;not just &ldquo;categorise the PR,&rdquo; but the exact criteria, the priority order, and the fallback chain. The engineer should be able to implement the step from this column alone.
+    </p>
+
+    <h3>Three types of decision logic in engineering workflows</h3>
+
+    <div class="decision-card rule reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Type 1</div>
+        <div class="decision-card-title">Rule-based (deterministic)</div>
+      </div>
+      <p>Label <code>bug</code> &rarr; category Bug Fixes. Label <code>no-release-notes</code> &rarr; exclude from output. PR with &gt;10 files changed &rarr; sort higher. These are lookup tables and threshold checks. Zero ambiguity, zero LLM involvement. Most of Steps 4, 5, and 7 are rule-based.</p>
+    </div>
+
+    <div class="decision-card llm reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Type 2</div>
+        <div class="decision-card-title">LLM-assisted (probabilistic with logging)</div>
+      </div>
+      <p>When rules cannot decide, the LLM fills the gap. Step 4 uses it for unlabelled PRs. Step 6 uses it for vague titles. Step 9 uses it for sparse migration instructions. Every LLM call is <strong>logged</strong>&mdash;which PRs required it, what the LLM returned&mdash;so the team can improve their labelling and PR templates over time.</p>
+    </div>
+
+    <div class="decision-card human reveal">
+      <div class="decision-card-header">
+        <div class="decision-card-badge">Type 3</div>
+        <div class="decision-card-title">Human judgement (irreducible)</div>
+      </div>
+      <p>Step 10: is the tone right for the audience? Step 11: should we publish now or wait for the deploy to succeed? Should the Slack announcement emphasise the security fix? These decisions require context the agent cannot access&mdash;the political landscape, the deployment status, the audience expectations.</p>
+    </div>
+
+    <h3>Breaking change detection: a known gap</h3>
+
+    <p>
+      Good scoping documents the things that <em>will not work perfectly</em>. Breaking change detection has a gap: the agent detects breaking changes via two signals&mdash;the <code>breaking-change</code> label and the <code>BREAKING:</code> commit prefix. Both require the PR author to explicitly flag the change. If the author forgets both, the agent misses it.
+    </p>
+
+    <div class="callout warm reveal">
+      <p>This is a process gap, not a solvable one at the agent level. The engineer&rsquo;s review in Step 10 is the safety net. Documenting this gap in the scope document means the engineer knows it exists and can add heuristics later&mdash;like flagging PRs that modify public API route definitions or change exported function signatures.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>Could the LLM detect breaking changes from diffs?</summary>
+      <div class="details-content">
+        <p>
+          In theory, yes&mdash;you could send the diff to an LLM and ask &ldquo;does this change break backward compatibility?&rdquo; In practice, this crosses the metadata/meaning line from Lesson 3. The LLM would need to understand what the code does, not just read labels and titles. That is a different class of complexity, with higher token cost, higher latency, and lower reliability. The scope document draws the boundary at metadata. If the team later wants diff-level analysis, that is a v2 scope expansion&mdash;documented as a known gap, not ignored.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Data inventory -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="data-inventory">
+    <div class="section-label">Section 4 <span class="section-time">5 min read</span></div>
+    <h2>Data inventory: what the agent needs to read</h2>
+
+    <p>
+      Every automated step needs data from somewhere. The data inventory catalogues every external system the agent will talk to&mdash;the access method, the auth requirements, and the gotchas. This becomes the integration spec for Stage 4: Design.
+    </p>
+
+    <table class="data-table reveal">
+      <thead>
+        <tr>
+          <th>Data Source</th>
+          <th>Access Method</th>
+          <th>Auth</th>
+          <th>Key Gotcha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>GitHub API</strong><br>(PRs, commits, labels)</td>
+          <td>REST v3 or GraphQL v4</td>
+          <td>PAT or GitHub App token</td>
+          <td>Compare API returns max 250 commits. GraphQL is more efficient&mdash;one query for PR metadata, labels, and commits. Rate limit: 5,000 req/hr.</td>
+        </tr>
+        <tr>
+          <td><strong>Issue tracker</strong><br>(Jira or Linear)</td>
+          <td>REST (Jira v3) or GraphQL (Linear)</td>
+          <td>API token / key</td>
+          <td>Jira custom fields have system-generated IDs like <code>customfield_10016</code> that vary per instance. Discover via the field metadata endpoint.</td>
+        </tr>
+        <tr>
+          <td><strong>CI/CD pipeline</strong><br>(GitHub Actions, CircleCI)</td>
+          <td>REST API</td>
+          <td>Same GitHub token (Actions) or separate API token</td>
+          <td>Verify the release tag&rsquo;s build passed before generating notes. A failed CI run should halt or flag a warning.</td>
+        </tr>
+        <tr>
+          <td><strong>Previous release notes</strong></td>
+          <td>File system (<code>CHANGELOG.md</code>) or GitHub Releases API</td>
+          <td>Same GitHub token</td>
+          <td>Needed to match formatting conventions. Parse the latest entry to detect heading style, bullet format, section ordering.</td>
+        </tr>
+        <tr>
+          <td><strong>Git repository</strong><br>(tags, commit history)</td>
+          <td>Git CLI or GitHub API</td>
+          <td>File system access or GitHub token</td>
+          <td>Tag &rarr; commit SHA resolution anchors the entire PR query range. Local access is faster; remote works from any environment.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">Why the data inventory matters</div>
+      <p>Each row in this table becomes an integration point in the agent graph. If a data source requires a separate API token, the agent needs a credential. If a data source has a rate limit, the agent needs retry logic. If a data source has a gotcha (Jira&rsquo;s custom field IDs), the agent needs a discovery step. None of this is visible from &ldquo;fetch the PRs.&rdquo; It only becomes visible when you catalogue the sources.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>What about data sensitivity?</summary>
+      <div class="details-content">
+        <p>
+          The scope document also catalogues what data gets sent to the LLM. PR descriptions may contain security fix details or references to vulnerabilities. Issue tracker content may include customer-reported bugs with PII. Security-labelled PRs should bypass LLM classification and be manually categorised instead. These governance constraints are captured in the scope&rsquo;s Constraints and Assumptions section&mdash;not as an afterthought, but as a prerequisite for build.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: Boundary tagging -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="boundaries">
+    <div class="section-label">Section 5 <span class="section-time">4 min read</span></div>
+    <h2>Boundary tagging: drawing the automation line</h2>
+
+    <p>
+      Every step gets exactly one boundary tag. The tag answers a single question: <strong>who executes this step?</strong>
+    </p>
+
+    <!-- Boundary visual -->
+    <div class="boundary-visual reveal">
+      <div class="boundary-label">Release Notes &mdash; Automation Boundary</div>
+      <div class="boundary-zones">
+        <div class="boundary-zone automate">
+          <div class="boundary-zone-header">Agent handles (AUTOMATE)</div>
+          <ul class="boundary-list">
+            <li>Step 1: Detect release tag event</li>
+            <li>Step 2: Fetch merged PRs via GitHub API</li>
+            <li>Step 3: Resolve linked issues from tracker</li>
+            <li>Step 4: Categorise by labels, prefixes, LLM</li>
+            <li>Step 5: Filter to user-facing changes</li>
+            <li>Step 6: Extract one-line change summaries</li>
+            <li>Step 7: Group by category, sort by impact</li>
+            <li>Step 8: Generate formatted Markdown draft</li>
+            <li>Step 9: Generate migration notes (if breaking)</li>
+          </ul>
+        </div>
+        <div class="boundary-divider">
+          <div class="boundary-divider-label">Boundary</div>
+        </div>
+        <div class="boundary-zone human-zone">
+          <div class="boundary-zone-header">You handle (HIL + MANUAL)</div>
+          <ul class="boundary-list">
+            <li>Step 10: Validate categorisation accuracy</li>
+            <li>Step 10: Rewrite vague summaries</li>
+            <li>Step 10: Check excluded list for false exclusions</li>
+            <li>Step 10: Verify breaking changes are complete</li>
+            <li>Step 10: Adjust ordering and emphasis</li>
+            <li>Step 10: Confirm tone fits the audience</li>
+            <li>Step 11: Decide when and where to publish</li>
+            <li>Step 11: Frame the announcement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <h3>Why only one HIL checkpoint?</h3>
+
+    <p>
+      Other workflows in the framework have three or four HIL checkpoints. Release notes has one. The reason is <strong>error independence</strong>. In a workflow where a wrong assessment in Step 5 cascades through Steps 6, 7, and 8, you need early checkpoints to prevent compounding. In release notes, a miscategorised PR in Step 4 does not cause other PRs to be miscategorised. Each PR&rsquo;s classification, summary, and position are independent. All errors can be caught in a single review pass.
+    </p>
+
+    <div class="callout reveal">
+      <p>The boundary should err toward more human involvement in early versions. If the team&rsquo;s labelling discipline is poor and the LLM fallback produces frequent errors, add a checkpoint after Step 4&mdash;&ldquo;review the categorisation before generating summaries.&rdquo; Start with a tighter boundary and relax it as you gain confidence.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>When would Step 11 (Publish) become AUTOMATE?</summary>
+      <div class="details-content">
+        <p>
+          When the team adopts a convention where every release is published immediately after approval, and the distribution channels are always the same (GitHub Release + CHANGELOG.md commit). At that point, publishing becomes a deterministic API call with no judgement involved. But start MANUAL until the team confirms the publishing decision is always the same. Premature or misdirected publication is difficult to reverse.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: Self-check -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="self-check">
+    <div class="section-label">Section 6 <span class="section-time">3 min</span></div>
+    <h2>Self-check</h2>
+
+    <p>
+      Before moving on to the framework&rsquo;s design and build methodology pages, check your understanding of scope documents. These questions test whether you could produce one for your own workflow.
+    </p>
+
+    <div class="reflection reveal">
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">1</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Step 4 uses an LLM for ambiguous PRs, yet it is tagged AUTOMATE. What is the reasoning?</p>
+            <p class="reflection-prompt">Think about the cost of a wrong classification. Where is the error caught? What would change if the error could not be caught later?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">2</div>
+          <div class="reflection-content">
+            <p class="reflection-question">The scope document lists 5 data sources. Pick any one and explain what happens to the workflow if that source is unavailable.</p>
+            <p class="reflection-prompt">GitHub API rate-limited? Jira returning errors? The answer reveals whether you understand the error path register&mdash;which downstream steps are affected and how the workflow degrades.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">3</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Why does the release notes workflow have one HIL checkpoint while other workflows in the framework have three or four?</p>
+            <p class="reflection-prompt">The answer is not &ldquo;it is simpler.&rdquo; Think about how errors propagate. Do classification errors in Step 4 affect summary quality in Step 6?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">4</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Breaking change detection has a known gap. Why does the scope document call it out explicitly instead of trying to solve it?</p>
+            <p class="reflection-prompt">Think about the difference between a process gap and a technical limitation. Where is the safety net?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaway -->
+    <div class="key-takeaway reveal">
+      <div class="key-takeaway-label">&#128273; Key Takeaway</div>
+      <p>
+        <strong>A scope document is precise enough that the engineer never has to guess.</strong> Every step has one action, one input, one output, and one boundary tag. The decision logic captures the rules, the priority order, and the fallback chain. The data inventory catalogues every integration point with its auth requirements and gotchas. The error path register documents what breaks and how the workflow degrades.
+      </p>
+      <p>
+        The scope document you produce in Stage 3 is the single most important artifact in the framework. It is the bridge between &ldquo;this workflow is automatable&rdquo; and &ldquo;here is exactly what to build.&rdquo; If you get the scope right, Design (Stage 4) is translation. If you get it wrong, the engineer builds what they <em>think</em> you do instead of what you <em>actually</em> do.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Prev / Next Navigation -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="lesson-nav">
+    <div class="lesson-nav-inner">
+      <a href="03-select-scoring-candidates.html" class="prev">
+        <span class="arrow">&#10140;</span>
+        Lesson 3: Select: Scoring Candidates
+      </a>
+      <a href="07-evaluate-testing-iteration.html" class="next">
+        Lesson 7: Evaluate: Testing and Iteration
+        <span class="arrow">&#10142;</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Scroll progress bar
+  function updateProgress() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = window.scrollY;
+    var pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+  }
+
+  // Scroll-triggered reveal
+  function revealOnScroll() {
+    var reveals = document.querySelectorAll('.reveal');
+    var trigger = window.innerHeight * 0.88;
+    reveals.forEach(function(el) {
+      if (el.getBoundingClientRect().top < trigger) el.classList.add('visible');
+    });
+  }
+
+  // Active section nav highlighting
+  function updateSectionNav() {
+    var sections = ['what-is-scoping', 'step-by-step', 'decision-logic', 'data-inventory', 'boundaries', 'self-check'];
+    var links = document.querySelectorAll('.section-nav a');
+    var current = sections[0];
+    for (var i = sections.length - 1; i >= 0; i--) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) { current = sections[i]; break; }
+    }
+    links.forEach(function(link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', function() { updateProgress(); revealOnScroll(); updateSectionNav(); }, { passive: true });
+  updateProgress();
+  revealOnScroll();
+</script>
+
+</body>
+</html>

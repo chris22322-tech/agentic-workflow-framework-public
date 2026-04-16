@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 4: Scope the Workflow | BA Learning Path</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --border-subtle: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #22d3ee;
+            --accent-soft: rgba(34, 211, 238, 0.10);
+            --accent-med: rgba(34, 211, 238, 0.22);
+            --green: #4ade80;
+            --green-soft: rgba(74, 222, 128, 0.10);
+            --green-med: rgba(74, 222, 128, 0.22);
+            --red: #f87171;
+            --red-soft: rgba(248, 113, 113, 0.10);
+            --red-med: rgba(248, 113, 113, 0.22);
+            --amber: #fbbf24;
+            --amber-soft: rgba(251, 191, 36, 0.10);
+            --amber-med: rgba(251, 191, 36, 0.20);
+            --purple: #a78bfa;
+            --purple-soft: rgba(167, 139, 250, 0.12);
+            --purple-med: rgba(167, 139, 250, 0.22);
+            --max-width: 820px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-sans); background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+        /* Progress bar */
+        .progress-bar-track { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--bg-secondary); z-index: 1000; }
+        .progress-bar-fill { height: 100%; width: 50%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 0 2px 2px 0; }
+
+        /* Sticky top nav */
+        .sticky-nav { position: sticky; top: 4px; z-index: 999; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 10px 0; }
+        .sticky-nav-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; display: flex; justify-content: space-between; align-items: center; }
+        .sticky-nav a { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none; padding: 6px 12px; border-radius: var(--radius-sm); transition: all 0.2s; }
+        .sticky-nav a:hover { color: var(--accent); background: var(--accent-soft); }
+        .sticky-nav a svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* Header */
+        .lesson-header { background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-bottom: 1px solid var(--border-subtle); padding: 28px 0 36px; }
+        .header-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; } .breadcrumb a:hover { text-decoration: underline; } .breadcrumb .sep { color: var(--text-muted); }
+        .lesson-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+        .badge--stage { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-med); }
+        .badge--time { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .badge--lesson { background: var(--purple-soft); color: var(--purple); border: 1px solid var(--purple-med); }
+        .lesson-title { font-size: 34px; font-weight: 750; letter-spacing: -0.025em; line-height: 1.2; color: #fff; margin-bottom: 12px; }
+        .lesson-subtitle { font-size: 17px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; }
+        .progress-dots { display: flex; gap: 8px; align-items: center; margin-top: 22px; }
+        .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bg-tertiary); border: 2px solid var(--border-subtle); }
+        .progress-dot--complete { background: var(--accent); border-color: var(--accent); }
+        .progress-dot--current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .progress-dot-label { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+
+        /* Body */
+        .lesson-body { max-width: var(--max-width); margin: 0 auto; padding: 48px 28px 80px; }
+        .section { margin-bottom: 56px; opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .section.visible { opacity: 1; transform: translateY(0); }
+        .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+        .section-number { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--accent-med); color: var(--accent); font-size: 15px; font-weight: 700; flex-shrink: 0; }
+        .section-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.015em; }
+        .section-time { font-size: 12px; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+        p { margin-bottom: 16px; color: var(--text-primary); }
+        strong { color: #fff; font-weight: 650; }
+
+        /* Principle callout */
+        .principle { background: var(--accent-soft); border: 1px solid var(--accent-med); border-left: 4px solid var(--accent); border-radius: var(--radius-md); padding: 20px 24px; margin: 24px 0; }
+        .principle-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 6px; }
+        .principle-text { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.5; margin-bottom: 0; }
+
+        /* Insight / amber callout */
+        .insight { background: var(--amber-soft); border: 1px solid var(--amber-med); border-left: 4px solid var(--amber); border-radius: var(--radius-md); padding: 18px 22px; margin: 20px 0; }
+        .insight-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 6px; }
+        .insight p { font-size: 15px; margin-bottom: 0; }
+
+        /* Bullet list */
+        .bullet-list { list-style: none; margin: 16px 0; }
+        .bullet-list li { position: relative; padding-left: 20px; margin-bottom: 10px; font-size: 15px; color: var(--text-primary); }
+        .bullet-list li::before { content: ''; position: absolute; left: 0; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+        /* Expandable details */
+        .expandable { background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin: 16px 0; overflow: hidden; }
+        .expandable summary { padding: 16px 20px; font-size: 15px; font-weight: 600; color: var(--accent); cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; }
+        .expandable summary::-webkit-details-marker { display: none; }
+        .expandable summary::before { content: '+'; width: 24px; height: 24px; border-radius: 6px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+        .expandable[open] summary::before { content: '\2212'; }
+        .expandable-content { padding: 0 20px 16px; font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+        .expandable-content p { margin-bottom: 10px; color: var(--text-secondary); }
+        .expandable-content strong { color: var(--text-primary); }
+
+        /* Boundary pills */
+        .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; font-family: var(--font-mono); }
+        .pill--automate { background: var(--green-soft); color: var(--green); border: 1px solid var(--green-med); }
+        .pill--hil { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-med); }
+        .pill--manual { background: var(--red-soft); color: var(--red); border: 1px solid var(--red-med); }
+
+        /* Boundary type cards */
+        .boundary-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px 24px; margin: 16px 0; position: relative; padding-left: 28px; }
+        .boundary-card::before { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 4px; border-radius: var(--radius-md) 0 0 var(--radius-md); }
+        .boundary-card--green::before { background: var(--green); }
+        .boundary-card--amber::before { background: var(--amber); }
+        .boundary-card--red::before { background: var(--red); }
+        .boundary-card h4 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+        .boundary-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+        .boundary-card .examples { font-size: 13px; color: var(--text-muted); }
+        .boundary-card .examples strong { color: var(--text-secondary); font-size: 13px; }
+
+        /* Walkthrough steps */
+        .walkthrough { margin: 28px 0; }
+        .walkthrough-step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border-subtle); align-items: flex-start; }
+        .walkthrough-step:last-child { border-bottom: none; }
+        .step-num { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-tertiary); color: var(--text-primary); font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+        .step-body { flex: 1; }
+        .step-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+        .step-detail { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .step-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+
+        /* Five-component list */
+        .component-list { list-style: none; margin: 20px 0; counter-reset: comp; }
+        .component-list li { position: relative; padding: 12px 16px 12px 52px; margin-bottom: 8px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-size: 15px; counter-increment: comp; }
+        .component-list li::before { content: counter(comp); position: absolute; left: 16px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--accent-med); color: var(--accent); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+        /* Data table */
+        .data-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md); }
+        .data-table th { background: var(--bg-tertiary); padding: 12px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); border-bottom: 1px solid var(--border-subtle); }
+        .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border-subtle); color: var(--text-primary); }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:nth-child(even) td { background: var(--bg-secondary); }
+        .data-table code { font-family: var(--font-mono); font-size: 12px; background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; color: var(--accent); }
+
+        /* Exercise area */
+        .exercise { background: linear-gradient(135deg, rgba(34, 211, 238, 0.06), rgba(167, 139, 250, 0.06)); border: 1px solid var(--accent-med); border-radius: var(--radius-xl); padding: 32px; margin: 24px 0; position: relative; }
+        .exercise::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius-xl) var(--radius-xl) 0 0; background: linear-gradient(90deg, var(--accent), var(--purple)); }
+        .exercise-label { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 12px; }
+        .exercise h3 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .exercise > p { color: var(--text-secondary); font-size: 15px; }
+        .exercise-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+        .exercise-table th { background: var(--bg-tertiary); padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .exercise-table td { padding: 14px 12px; border: 1px solid var(--border-subtle); background: var(--bg-secondary); color: var(--text-muted); font-style: italic; min-height: 44px; }
+
+        /* Self-check / reflection cards (purple) */
+        .self-check-card { background: var(--purple-soft); border: 1px solid var(--purple-med); border-radius: var(--radius-md); margin: 14px 0; overflow: hidden; }
+        .self-check-card summary { padding: 16px 20px; font-size: 15px; font-weight: 600; color: var(--purple); cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; }
+        .self-check-card summary::-webkit-details-marker { display: none; }
+        .self-check-card summary::before { content: '?'; width: 24px; height: 24px; border-radius: 6px; background: var(--purple-soft); border: 1px solid var(--purple-med); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; color: var(--purple); }
+        .self-check-card[open] summary::before { content: '\2212'; }
+        .self-check-card .card-answer { padding: 0 20px 16px; font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+        .self-check-card .card-answer p { color: var(--text-secondary); margin-bottom: 8px; }
+
+        /* Checklist */
+        .checklist { list-style: none; margin: 20px 0; }
+        .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 15px; color: var(--text-primary); }
+        .checklist li::before { content: '\2610'; font-size: 16px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+        /* Divider */
+        .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 32px 0; }
+
+        /* Bottom nav */
+        .lesson-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border-subtle); }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; min-width: 180px; }
+        .nav-btn:hover { border-color: var(--accent); background: var(--bg-tertiary); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .nav-btn svg { width: 16px; height: 16px; stroke: var(--text-secondary); fill: none; stroke-width: 2; flex-shrink: 0; }
+        .nav-btn--next { text-align: right; margin-left: auto; justify-content: flex-end; }
+        .nav-btn--next svg { order: 2; }
+        .nav-direction { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+        .nav-title { display: block; color: #fff; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .lesson-title { font-size: 26px; }
+            .section-title { font-size: 18px; }
+            .section-header { flex-wrap: wrap; }
+            .section-time { margin-left: 50px; }
+            .lesson-body { padding: 32px 18px 60px; }
+            .nav-btn { min-width: unset; padding: 12px 16px; }
+            .walkthrough-step { flex-direction: column; gap: 8px; }
+            .step-tags { margin-top: 8px; }
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 8px 10px; }
+            .exercise { padding: 24px 18px; }
+            .exercise-table { font-size: 12px; }
+            .boundary-card { padding: 16px 18px 16px 22px; }
+            .sticky-nav-inner { padding: 0 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar-track"><div class="progress-bar-fill"></div></div>
+
+<nav class="sticky-nav">
+    <div class="sticky-nav-inner">
+        <a href="03-select-your-first-workflow.html">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Lesson 3
+        </a>
+        <a href="05-design-the-agent.html">
+            Lesson 5
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </div>
+</nav>
+
+<header class="lesson-header">
+    <div class="header-inner">
+        <nav class="breadcrumb">
+            <a href="../../enablement/ba.md">BA Learning Path</a>
+            <span class="sep">/</span>
+            <span>Lesson 4</span>
+        </nav>
+        <div class="lesson-meta">
+            <span class="badge badge--lesson">Lesson 4 of 8</span>
+            <span class="badge badge--stage">Stage 3: Scope</span>
+            <span class="badge badge--time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ~30 min
+            </span>
+        </div>
+        <h1 class="lesson-title">Scope the Workflow</h1>
+        <p class="lesson-subtitle">You have selected your first workflow. Now you turn it into a precise specification that an engineer can build from &mdash; or that you can hand to an AI coding agent. Every gap in your scope is a gap in the agent's behaviour.</p>
+        <div class="progress-dots">
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--current"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <span class="progress-dot-label">4 / 8</span>
+        </div>
+    </div>
+</header>
+
+<main class="lesson-body">
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: Why Scope Matters More for BAs                     -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-1">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">Why Scope Matters More for BAs</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <div class="principle">
+            <div class="principle-label">Key Principle</div>
+            <p class="principle-text">For an engineer, the scope document is a planning tool. For a BA, the scope document IS the deliverable.</p>
+        </div>
+
+        <p>When a software engineer works through the framework, the scope document helps them plan what they are about to build. They will iterate on it as they code. But when you, as a BA, produce a scope document, you are handing it to someone else to build. That means your scope must be <strong>complete enough to stand on its own</strong>.</p>
+
+        <p>Think of it this way: every gap in your scope is a gap in the agent's behaviour. If you leave a decision undefined, the engineer has to guess &mdash; or come back and ask. If you leave an error path unspecified, the agent will do nothing when it encounters that failure.</p>
+
+        <p>A complete scope document has five components:</p>
+
+        <ol class="component-list">
+            <li><strong>Step-by-step workflow map</strong> &mdash; every action the agent takes, in order</li>
+            <li><strong>Decision logic</strong> &mdash; the explicit criteria for every non-trivial decision</li>
+            <li><strong>Automation boundaries</strong> &mdash; which steps are automated, human-reviewed, or fully manual</li>
+            <li><strong>Error paths</strong> &mdash; what happens when a step fails or data is missing</li>
+            <li><strong>Data inventory</strong> &mdash; every system the agent needs to access, and how</li>
+        </ol>
+
+        <p>The rest of this lesson walks through each component using the feature request intake workflow from our worked example.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: Workflow Mapping                                    -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-2">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">Workflow Mapping &mdash; The BA Advantage</h2>
+            <span class="section-time">~8 min</span>
+        </div>
+
+        <p>You already map processes. That is a core BA skill. The framework adds one thing on top of what you already do: <strong>explicit decision logic capture</strong>.</p>
+
+        <p>Most process maps describe what happens. An agentic workflow scope must describe <strong>how decisions are made</strong> &mdash; in enough detail that a machine can execute them. The difference between a good and bad scope is almost always in the decision logic.</p>
+
+        <details class="expandable">
+            <summary>Bad example: vague decision step</summary>
+            <div class="expandable-content">
+                <p><strong>"Step 3: Assess the request's complexity."</strong></p>
+                <p>This is how most process maps are written. A human reading this knows roughly what it means because they bring context. An agent reading this has nothing to work with. What factors determine complexity? What are the thresholds? What are the output categories?</p>
+                <p>This step is <strong>unimplementable</strong>. An engineer receiving this scope will either guess, make something up, or come back to ask you &mdash; burning time either way.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Good example: explicit decision logic</summary>
+            <div class="expandable-content">
+                <p><strong>"Step 3: Map to complexity tier using four factors:"</strong></p>
+                <p><strong>(1) Components affected</strong> &mdash; 1 = Small, 2&ndash;3 = Medium, 4+ = Large.</p>
+                <p><strong>(2) Historical story point baseline</strong> &mdash; pull median from last 4 sprints. Below median = Small, 1&ndash;2x median = Medium, above 2x = Large.</p>
+                <p><strong>(3) Schema change required</strong> &mdash; if yes, add one tier.</p>
+                <p><strong>(4) External integration</strong> &mdash; if yes, add one tier.</p>
+                <p>This is implementable. Every factor has a data source and a threshold. An engineer can build this without guessing. An LLM-based agent can apply these rules to structured data.</p>
+            </div>
+        </details>
+
+        <div class="insight">
+            <div class="insight-label">Key Test</div>
+            <p>If you cannot write the decision logic down, the step probably needs a Human-in-the-Loop boundary. That is not a failure &mdash; it is valuable information about where the human remains essential.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: Drawing the Automation Boundary                    -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-3">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">Drawing the Automation Boundary</h2>
+            <span class="section-time">~7 min</span>
+        </div>
+
+        <p>Every step in your workflow needs a boundary tag. There are three types:</p>
+
+        <div class="boundary-card boundary-card--green">
+            <h4><span class="pill pill--automate">AUTOMATE</span></h4>
+            <p>The step applies documented criteria to structured data. The agent can execute it without human involvement.</p>
+            <div class="examples"><strong>Examples:</strong> duplicate detection via keyword and semantic matching, complexity tier calculation using the four-factor model, data retrieval from APIs.</div>
+        </div>
+
+        <div class="boundary-card boundary-card--amber">
+            <h4><span class="pill pill--hil">HIL</span></h4>
+            <p>The agent does the work, but a human reviews and approves before the workflow proceeds. Human-in-the-Loop.</p>
+            <div class="examples"><strong>Examples:</strong> strategic alignment interpretation (agent scores, human validates), impact assessment review, any output that will be shared externally.</div>
+        </div>
+
+        <div class="boundary-card boundary-card--red">
+            <h4><span class="pill pill--manual">MANUAL</span></h4>
+            <p>The step depends on context that only a human has. The agent cannot meaningfully contribute.</p>
+            <div class="examples"><strong>Examples:</strong> submission to a governance committee, stakeholder pre-briefing, negotiation of competing priorities.</div>
+        </div>
+
+        <div class="principle">
+            <div class="principle-label">The Boundary Test</div>
+            <p class="principle-text">If the answer depends on criteria you can write down, it is AUTOMATE. If it depends on context you carry in your head, it is HIL or MANUAL.</p>
+        </div>
+
+        <p>Here is how boundary tags apply to the feature request intake workflow:</p>
+
+        <div class="walkthrough">
+            <div class="walkthrough-step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <div class="step-name">Receive feature request</div>
+                    <div class="step-detail">Detect that a new request has been submitted via the intake channel (Jira ticket creation, Slack message, or form submission).</div>
+                    <div class="step-tags"><span class="pill pill--automate">AUTOMATE</span></div>
+                    <div class="step-detail" style="margin-top: 6px;">Trigger detection on structured events. No judgement required.</div>
+                </div>
+            </div>
+            <div class="walkthrough-step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <div class="step-name">Search backlog for duplicates</div>
+                    <div class="step-detail">Query Jira for existing tickets using keyword matching and semantic similarity. Flag potential duplicates above a configurable similarity threshold.</div>
+                    <div class="step-tags"><span class="pill pill--automate">AUTOMATE</span></div>
+                    <div class="step-detail" style="margin-top: 6px;">Keyword + semantic matching with documented thresholds. Data is structured, criteria are explicit.</div>
+                </div>
+            </div>
+            <div class="walkthrough-step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <div class="step-name">Estimate complexity</div>
+                    <div class="step-detail">Apply the four-factor complexity model: components affected, historical story points, schema change flag, external integration flag.</div>
+                    <div class="step-tags"><span class="pill pill--automate">AUTOMATE</span></div>
+                    <div class="step-detail" style="margin-top: 6px;">All four factors have data sources and thresholds. Criteria-based calculation.</div>
+                </div>
+            </div>
+            <div class="walkthrough-step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <div class="step-name">Assess strategic alignment</div>
+                    <div class="step-detail">Score the request against current OKRs and roadmap priorities. The agent produces a numeric alignment score; the human interprets whether that score reflects actual strategic intent.</div>
+                    <div class="step-tags">
+                        <span class="pill pill--automate">AUTOMATE</span>
+                        <span style="font-size: 13px; color: var(--text-muted);">scoring</span>
+                        <span style="font-size: 13px; color: var(--text-muted);">/</span>
+                        <span class="pill pill--hil">HIL</span>
+                        <span style="font-size: 13px; color: var(--text-muted);">interpretation</span>
+                    </div>
+                    <div class="step-detail" style="margin-top: 6px;">Scoring uses documented criteria (OKR keyword matching). Interpretation requires organisational context the agent does not have.</div>
+                </div>
+            </div>
+            <div class="walkthrough-step">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                    <div class="step-name">Review and refine assessment</div>
+                    <div class="step-detail">BA reviews the complete draft assessment, corrects any errors, adds context from stakeholder conversations, and approves for distribution.</div>
+                    <div class="step-tags"><span class="pill pill--hil">HIL</span></div>
+                    <div class="step-detail" style="margin-top: 6px;">Validates context the agent cannot see: recent conversations, political dynamics, unstated priorities.</div>
+                </div>
+            </div>
+        </div>
+
+        <p>Notice that Step 4 has a <strong>split boundary</strong>. The scoring sub-step is automatable because OKRs are documented. The interpretation sub-step is HIL because understanding what leadership actually cares about (versus what the OKR tracker says) requires human context. Splitting a step like this is normal and expected.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: Error Paths and Data Inventory                     -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-4">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">Error Paths and Data Inventory</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <p>Most scope documents stop at the happy path. But agents encounter failures all the time &mdash; APIs go down, data is stale, inputs are malformed. If you do not specify what should happen, the agent will either crash or silently produce incomplete output.</p>
+
+        <p><strong>Error paths</strong> answer one question: when this step fails, what should the agent do?</p>
+
+        <details class="expandable">
+            <summary>Error example: Jira API fails during duplicate search</summary>
+            <div class="expandable-content">
+                <p><strong>Failure:</strong> The Jira REST API returns a 5xx error or times out during the duplicate search step.</p>
+                <p><strong>Specified behaviour:</strong> Store an error marker in the assessment output. Continue the workflow without duplicate analysis. Flag the gap clearly in the final output so the BA knows to check manually during the HIL review step.</p>
+                <p><strong>Why this matters:</strong> Without this specification, the engineer must decide: should the agent retry? Abort? Skip silently? Each choice has different consequences for the BA's review workload. This is a <strong>business decision</strong>, not a technical one.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Error example: OKR tracker returns stale data</summary>
+            <div class="expandable-content">
+                <p><strong>Failure:</strong> The OKR tracker returns data from the prior quarter because it has not been updated.</p>
+                <p><strong>Specified behaviour:</strong> The agent cannot detect staleness &mdash; it has no way to know whether Q3 OKRs are still current or should have been replaced by Q4 OKRs. The BA validates OKR currency during the HIL review step. The scope document notes this as a known limitation.</p>
+                <p><strong>Why this matters:</strong> Not every error can be handled automatically. Documenting that staleness detection is a human responsibility prevents the engineer from building a brittle freshness check that creates false confidence.</p>
+            </div>
+        </details>
+
+        <hr class="divider">
+
+        <p><strong>Data inventory</strong> lists every system the agent needs to access. This is the information an engineer needs to set up integrations.</p>
+
+        <div style="overflow-x: auto; margin: 24px 0;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Access Method</th>
+                        <th>Auth</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Jira</strong></td>
+                        <td><code>REST API v3</code></td>
+                        <td>OAuth 2.0 / API token</td>
+                        <td>Read access to project backlog; search endpoint for duplicates</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confluence</strong></td>
+                        <td><code>REST API v2</code></td>
+                        <td>OAuth 2.0 / API token</td>
+                        <td>Read access to requirements pages and decision logs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Roadmap tool</strong></td>
+                        <td><code>REST API</code></td>
+                        <td>API key</td>
+                        <td>Read access to current roadmap priorities and timeline</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OKR tracker</strong></td>
+                        <td><code>REST API</code></td>
+                        <td>API key</td>
+                        <td>Read access to current quarter OKRs; staleness not detectable via API</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="insight">
+            <div class="insight-label">BA Tip</div>
+            <p>You do not need to know the technical details of every API. Your job is to identify <strong>what</strong> the agent needs to access and <strong>why</strong>. The engineer will handle the how. But if you know the access method (e.g., "they have a REST API" vs. "we currently export CSVs manually"), include it &mdash; it saves a round of questions.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: Interactive Exercise                                -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-5">
+        <div class="section-header">
+            <span class="section-number">5</span>
+            <h2 class="section-title">Try It: Scope Your Workflow</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Hands-On Exercise
+            </div>
+            <h3>Map Your Workflow Steps with Boundary Tags</h3>
+            <p>Take the workflow you selected in Lesson 3. List each step, assign a boundary tag, and write the decision logic for any non-trivial step. Use the table below as your starting template.</p>
+
+            <div style="overflow-x: auto;">
+                <table class="exercise-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 22%;">Step Name</th>
+                            <th style="width: 13%;">Boundary</th>
+                            <th style="width: 30%;">Decision Logic / Description</th>
+                            <th style="width: 30%;">Error Path</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Your first step...</td>
+                            <td>AUTOMATE / HIL / MANUAL</td>
+                            <td>What criteria does this step use?</td>
+                            <td>What happens if this step fails?</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                            <td>...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">Copy this table into your scope document or use the <a href="../../blank-templates/scope-document.md" style="color: var(--accent);">scope document template</a>.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: Self-Check                                         -->
+    <!-- ============================================================ -->
+    <section class="section" id="section-6">
+        <div class="section-header">
+            <span class="section-number">6</span>
+            <h2 class="section-title">Self-Check</h2>
+            <span class="section-time">~3 min</span>
+        </div>
+
+        <p>Test your understanding with these reflection questions. Try to answer before expanding.</p>
+
+        <details class="self-check-card">
+            <summary>You have a step that says "determine if the request is urgent." What boundary tag should this get?</summary>
+            <div class="card-answer">
+                <p><strong>It depends.</strong> If urgency follows documented criteria &mdash; SLA breach detected, P1 keyword in the title, executive flag on the ticket &mdash; then the step is <span class="pill pill--automate">AUTOMATE</span>. The agent can check those conditions against structured data.</p>
+                <p>If urgency depends on reading organisational politics &mdash; "the VP mentioned this in a hallway conversation" or "this team is already unhappy with us" &mdash; then it is <span class="pill pill--hil">HIL</span>. The agent cannot access that context.</p>
+                <p>The key question is always: <strong>can you write the criteria down?</strong></p>
+            </div>
+        </details>
+
+        <details class="self-check-card">
+            <summary>Why do we document error paths at the scope stage instead of waiting for build?</summary>
+            <div class="card-answer">
+                <p>Error handling decisions are <strong>business decisions</strong>, not technical ones. When the Jira API fails, should the agent degrade gracefully and continue without duplicate data? Or should it abort and notify the BA? That choice affects the BA's review workload and the quality of the output.</p>
+                <p>The BA decides how the workflow should behave when data is missing &mdash; that is a <strong>requirement</strong>, not an implementation detail. If you leave it to the engineer, they will make a technical choice (retry 3 times, then throw an error) that may not match what the business actually needs (skip and flag the gap).</p>
+            </div>
+        </details>
+
+        <details class="self-check-card">
+            <summary>A step in your workflow scores as HIL. Does that mean the agent does nothing for that step?</summary>
+            <div class="card-answer">
+                <p><strong>No.</strong> HIL means the agent does the work and the human reviews it. The agent still contributes &mdash; it might draft the output, gather the data, or apply preliminary scoring. The human validates, corrects, and approves.</p>
+                <p>Only <span class="pill pill--manual">MANUAL</span> means the agent has no meaningful role. HIL is a <strong>collaboration model</strong>, not an exclusion.</p>
+            </div>
+        </details>
+
+        <hr class="divider">
+
+        <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 24px 0 12px;">What you should have after this lesson</h3>
+
+        <ul class="checklist">
+            <li>Complete step-by-step workflow map for your selected workflow</li>
+            <li>Decision logic documented for every non-trivial step</li>
+            <li>AUTOMATE / HIL / MANUAL boundary tags with justification for each step</li>
+            <li>Error paths specified for critical failure points</li>
+            <li>Data inventory listing all required systems and access methods</li>
+        </ul>
+
+        <p style="margin-top: 16px;">Reference: <a href="../../worked-example-ba/scope.md" style="color: var(--accent);">BA Worked Example &mdash; Stage 3: Scope</a> | <a href="../../blank-templates/scope-document.md" style="color: var(--accent);">Blank Scope Document Template</a></p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Bottom navigation -->
+    <nav class="lesson-nav">
+        <a href="03-select-your-first-workflow.html" class="nav-btn">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <div>
+                <span class="nav-direction">Previous</span>
+                <span class="nav-title">Lesson 3: Select Your First Workflow</span>
+            </div>
+        </a>
+        <a href="05-design-the-agent.html" class="nav-btn nav-btn--next">
+            <div>
+                <span class="nav-direction">Next</span>
+                <span class="nav-title">Lesson 5: Design the Agent</span>
+            </div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </nav>
+</main>
+
+<script>
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.section').forEach(function(s) { observer.observe(s); });
+</script>
+
+</body>
+</html>

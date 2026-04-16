@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 3: Select Your First Workflow | BA Learning Path</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           BA Learning Path — Lesson 3: Select Your First Workflow
+           Design System: Dark theme, cyan accent
+           ============================================================ */
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary:     #0f172a;
+            --bg-secondary:   #1e293b;
+            --bg-tertiary:    #334155;
+            --bg-card:        #1e293b;
+            --border-subtle:  #334155;
+            --text-primary:   #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted:     #64748b;
+            --accent:         #22d3ee;
+            --accent-soft:    rgba(34,211,238,0.12);
+            --accent-med:     rgba(34,211,238,0.22);
+            --green:          #4ade80;
+            --green-soft:     rgba(74,222,128,0.12);
+            --red:            #f87171;
+            --red-soft:       rgba(248,113,113,0.10);
+            --amber:          #fbbf24;
+            --amber-soft:     rgba(251,191,36,0.10);
+            --amber-med:      rgba(251,191,36,0.20);
+            --purple:         #a78bfa;
+            --purple-soft:    rgba(167,139,250,0.12);
+            --purple-med:     rgba(167,139,250,0.22);
+            --max-width:      820px;
+
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   14px;
+            --radius-xl:   20px;
+
+            --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md:   0 4px 12px rgba(0,0,0,0.35);
+            --shadow-lg:   0 8px 30px rgba(0,0,0,0.4);
+
+            --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --font-mono:   'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Progress Bar --- */
+        .progress-bar-track {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 4px; background: var(--bg-tertiary); z-index: 1000;
+        }
+        .progress-bar-fill {
+            height: 100%; width: 37.5%;
+            background: linear-gradient(90deg, var(--accent), var(--green));
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* --- Sticky Top Nav --- */
+        .sticky-nav {
+            position: sticky; top: 4px; z-index: 999;
+            background: rgba(15,23,42,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 10px 28px;
+        }
+        .sticky-nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sticky-nav a {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            transition: color 0.2s, background 0.2s;
+        }
+        .sticky-nav a:hover {
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+        .sticky-nav a svg {
+            width: 14px; height: 14px;
+            stroke: currentColor; fill: none; stroke-width: 2;
+        }
+        .sticky-nav-title {
+            font-size: 13px; font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* --- Lesson Header --- */
+        .lesson-header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 28px 0 36px;
+        }
+        .header-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+        .breadcrumb {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: var(--text-muted); }
+
+        .lesson-meta {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 12px; font-weight: 600;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            padding: 4px 10px; border-radius: 100px;
+        }
+        .badge--stage { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-med); }
+        .badge--time { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .badge--lesson { background: var(--purple-soft); color: var(--purple); border: 1px solid var(--purple-med); }
+
+        .lesson-title {
+            font-size: 34px; font-weight: 750;
+            letter-spacing: -0.025em; line-height: 1.2;
+            color: #fff; margin-bottom: 12px;
+        }
+        .lesson-subtitle {
+            font-size: 17px; color: var(--text-secondary);
+            line-height: 1.6; max-width: 640px;
+        }
+
+        .progress-dots { display: flex; gap: 8px; align-items: center; margin-top: 22px; }
+        .progress-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--bg-tertiary); border: 2px solid var(--border-subtle);
+        }
+        .progress-dot--complete { background: var(--accent); border-color: var(--accent); }
+        .progress-dot--current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .progress-dot-label { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+
+        /* --- Lesson Body --- */
+        .lesson-body {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 48px 28px 80px;
+        }
+
+        /* --- Sections --- */
+        .section { margin-bottom: 56px; }
+        .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+        .section-number {
+            display: flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--accent-soft); border: 1px solid var(--accent-med);
+            color: var(--accent); font-size: 15px; font-weight: 700; flex-shrink: 0;
+        }
+        .section-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.015em; }
+        .section-time { font-size: 12px; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+
+        p { margin-bottom: 16px; color: var(--text-primary); }
+        strong { color: #fff; font-weight: 650; }
+
+        /* --- Callout Boxes --- */
+        .callout {
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        .callout-label {
+            font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+        .callout-text {
+            font-size: 17px; font-weight: 600; color: #fff;
+            line-height: 1.5; margin-bottom: 0;
+        }
+
+        .callout--principle {
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-med);
+            border-left: 4px solid var(--accent);
+        }
+        .callout--principle .callout-label { color: var(--accent); }
+
+        .callout--insight {
+            background: var(--amber-soft);
+            border: 1px solid var(--amber-med);
+            border-left: 4px solid var(--amber);
+        }
+        .callout--insight .callout-label { color: var(--amber); }
+        .callout--insight .callout-text { font-size: 15px; font-weight: 500; }
+
+        /* --- Scoring Dimension Cards --- */
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .score-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .score-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .score-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+        }
+        .score-card:nth-child(1)::before { background: var(--accent); }
+        .score-card:nth-child(2)::before { background: var(--amber); }
+        .score-card:nth-child(3)::before { background: var(--green); }
+        .score-card:nth-child(4)::before { background: var(--red); }
+        .score-card:nth-child(5)::before { background: var(--purple); }
+        .score-card:nth-child(6)::before { background: var(--accent); }
+        .score-card-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 10px;
+        }
+        .score-icon {
+            font-size: 26px; line-height: 1;
+        }
+        .score-name {
+            font-size: 15px; font-weight: 700; color: #fff;
+        }
+        .score-desc {
+            font-size: 14px; color: var(--text-secondary);
+            line-height: 1.55; margin-bottom: 10px;
+        }
+        .score-ba-example {
+            font-size: 13px; color: var(--text-muted);
+            line-height: 1.5;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .score-ba-example strong { color: var(--text-secondary); font-size: 13px; }
+
+        /* --- Comparison Table --- */
+        .comparison-table-wrap { overflow-x: auto; margin: 24px 0; }
+        .comparison-table {
+            width: 100%; border-collapse: collapse; font-size: 14px;
+            border-radius: var(--radius-lg); overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-md);
+        }
+        .comparison-table th {
+            background: var(--bg-tertiary); padding: 12px 14px;
+            text-align: left; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .comparison-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: top;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:nth-child(even) td { background: var(--bg-secondary); }
+        .comparison-table .val { font-weight: 700; white-space: nowrap; }
+        .comparison-table .val.high { color: var(--green); }
+        .comparison-table .val.med { color: var(--amber); }
+        .comparison-table .val.low { color: var(--red); }
+        .comparison-table .best-for { font-size: 13px; color: var(--text-secondary); }
+        .comparison-table .highlight-row td {
+            background: rgba(34,211,238,0.06);
+            border-left: 3px solid var(--accent);
+        }
+
+        /* --- Expandable Details --- */
+        .expandable {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            margin: 14px 0;
+            overflow: hidden;
+        }
+        .expandable summary {
+            padding: 14px 20px; font-size: 15px; font-weight: 600;
+            color: var(--accent); cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            list-style: none;
+            transition: background 0.2s;
+        }
+        .expandable summary:hover { background: rgba(34,211,238,0.04); }
+        .expandable summary::-webkit-details-marker { display: none; }
+        .expandable summary::before {
+            content: '+'; width: 24px; height: 24px;
+            border-radius: 6px; background: var(--accent-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700; flex-shrink: 0;
+            color: var(--accent);
+        }
+        .expandable[open] summary::before { content: '\2212'; }
+        .expandable-content {
+            padding: 0 20px 16px; font-size: 15px;
+            color: var(--text-secondary); line-height: 1.65;
+        }
+        .expandable-content p { margin-bottom: 10px; color: var(--text-secondary); }
+        .expandable-content p:last-child { margin-bottom: 0; }
+
+        /* --- Self-check / Reflection (Purple) --- */
+        .self-check {
+            background: var(--purple-soft);
+            border: 1px solid var(--purple-med);
+            border-radius: var(--radius-xl);
+            padding: 28px 28px 12px;
+            margin: 28px 0;
+        }
+        .self-check-heading {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 18px; font-weight: 700; color: var(--purple);
+            margin-bottom: 18px;
+        }
+        .self-check-heading svg {
+            width: 22px; height: 22px;
+            stroke: var(--purple); fill: none; stroke-width: 2;
+        }
+        .self-check-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+        .self-check-item summary {
+            padding: 14px 20px; font-size: 15px; font-weight: 600;
+            color: var(--purple); cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
+            list-style: none;
+            transition: background 0.2s;
+        }
+        .self-check-item summary:hover { background: rgba(167,139,250,0.06); }
+        .self-check-item summary::-webkit-details-marker { display: none; }
+        .self-check-item summary::before {
+            content: '?'; width: 24px; height: 24px;
+            border-radius: 6px; background: var(--purple-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700; flex-shrink: 0;
+            color: var(--purple);
+        }
+        .self-check-item[open] summary::before { content: '\2713'; }
+        .self-check-answer {
+            padding: 0 20px 16px; font-size: 15px;
+            color: var(--text-secondary); line-height: 1.65;
+        }
+        .self-check-answer p { margin-bottom: 0; color: var(--text-secondary); }
+
+        /* --- Rules List --- */
+        .rules-list { list-style: none; margin: 20px 0; counter-reset: rule; }
+        .rules-list li {
+            counter-increment: rule;
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 16px 20px; margin-bottom: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 15px; color: var(--text-primary); line-height: 1.55;
+        }
+        .rules-list li::before {
+            content: counter(rule);
+            display: flex; align-items: center; justify-content: center;
+            min-width: 30px; height: 30px;
+            border-radius: 50%; flex-shrink: 0;
+            background: var(--accent-soft); border: 1px solid var(--accent-med);
+            color: var(--accent); font-size: 14px; font-weight: 700;
+        }
+
+        /* --- Checklist --- */
+        .checklist { list-style: none; margin: 20px 0; }
+        .checklist li {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 8px 0; font-size: 15px; color: var(--text-primary);
+        }
+        .checklist li::before {
+            content: '\2610'; font-size: 16px;
+            color: var(--accent); flex-shrink: 0; margin-top: 1px;
+        }
+
+        /* --- Divider --- */
+        .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 32px 0; }
+
+        /* --- Bottom Nav --- */
+        .lesson-nav {
+            display: flex; justify-content: space-between;
+            align-items: center; gap: 16px;
+            margin-top: 48px; padding-top: 32px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px; font-weight: 600;
+            transition: all 0.2s;
+            min-width: 180px;
+        }
+        .nav-btn:hover {
+            border-color: var(--accent);
+            background: var(--bg-tertiary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-btn svg {
+            width: 16px; height: 16px;
+            stroke: var(--text-secondary); fill: none; stroke-width: 2;
+            flex-shrink: 0;
+        }
+        .nav-btn--next { text-align: right; margin-left: auto; justify-content: flex-end; }
+        .nav-btn--next svg { order: 2; }
+        .nav-direction {
+            font-size: 11px; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.06em; display: block;
+        }
+        .nav-title { display: block; color: #fff; }
+
+        /* --- Responsive --- */
+        @media (max-width: 640px) {
+            .lesson-title { font-size: 26px; }
+            .section-title { font-size: 18px; }
+            .section-header { flex-wrap: wrap; }
+            .section-time { margin-left: 50px; }
+            .lesson-body { padding: 32px 18px 60px; }
+            .header-inner { padding: 0 18px; }
+            .sticky-nav { padding: 10px 18px; }
+            .nav-btn { min-width: unset; padding: 12px 16px; }
+            .score-grid { grid-template-columns: 1fr; }
+            .comparison-table { font-size: 13px; }
+            .comparison-table th, .comparison-table td { padding: 10px 10px; }
+            .self-check { padding: 20px 18px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar-track"><div class="progress-bar-fill"></div></div>
+
+<!-- Sticky Top Nav -->
+<nav class="sticky-nav">
+    <div class="sticky-nav-inner">
+        <a href="02-decompose-your-role.html">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Lesson 2
+        </a>
+        <span class="sticky-nav-title">Lesson 3 of 8</span>
+        <a href="04-scope-the-workflow.html">
+            Lesson 4
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </div>
+</nav>
+
+<!-- Lesson Header -->
+<header class="lesson-header">
+    <div class="header-inner">
+        <nav class="breadcrumb">
+            <a href="../../enablement/ba.md">BA Learning Path</a>
+            <span class="sep">/</span>
+            <span>Lesson 3</span>
+        </nav>
+        <div class="lesson-meta">
+            <span class="badge badge--lesson">Lesson 3 of 8</span>
+            <span class="badge badge--stage">Stage 2: Select</span>
+            <span class="badge badge--time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ~20 min
+            </span>
+        </div>
+        <h1 class="lesson-title">Select Your First Workflow</h1>
+        <p class="lesson-subtitle">You have a list of workflows from Lesson 2. Now you need to choose which one to automate first &mdash; not the one that sounds most exciting, but the one that will teach you the most with the least risk.</p>
+        <div class="progress-dots">
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--current"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <span class="progress-dot-label">3 / 8</span>
+        </div>
+    </div>
+</header>
+
+<!-- Lesson Body -->
+<main class="lesson-body">
+
+    <!-- ============================================================
+         SECTION 1: Why Selection Matters
+         ============================================================ -->
+    <section class="section" id="section-1">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">Why Selection Matters</h2>
+            <span class="section-time">~3 min</span>
+        </div>
+
+        <p>Not every workflow should be your first agent. If you pick something too ambitious, you will spend weeks debugging integrations instead of learning the methodology. If you pick something too trivial, you will not learn anything transferable.</p>
+
+        <p>The goal of your first agent is <strong>learning</strong>, not maximum impact. You need to understand the full build-test-refine cycle before you tackle your highest-value workflow. Think of it as a training run, not a production deployment.</p>
+
+        <div class="callout callout--principle">
+            <div class="callout-label">Key Principle</div>
+            <p class="callout-text">Your first agent teaches you the process. Your second agent delivers the value.</p>
+        </div>
+
+        <p>This means you should optimise your first selection for <strong>feasibility and learning speed</strong>, not for time savings or stakeholder visibility. Those matter for your second and third agents, once you understand how the process works.</p>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: The Six Scoring Dimensions
+         ============================================================ -->
+    <section class="section" id="section-2">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">The Six Scoring Dimensions</h2>
+            <span class="section-time">~8 min</span>
+        </div>
+
+        <p>The framework uses six dimensions to evaluate each candidate workflow. Score each dimension 1&ndash;5 to get a total out of 30. The score is not about precision &mdash; it is about making the decision visible and defensible.</p>
+
+        <div class="score-grid">
+
+            <!-- Card 1: Time Savings -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#9201;</div>
+                    <div class="score-name">Time Savings</div>
+                </div>
+                <div class="score-desc">Hours saved per week. Weight frequency over single-occurrence duration: a 1-hour workflow done 5x/week saves more than a 6-hour workflow done quarterly.</div>
+                <div class="score-ba-example"><strong>BA example:</strong> Feature intake triage at 2&ndash;3 hrs per occurrence, 3&ndash;5x/week = 6&ndash;15 hrs/week. Score: High.</div>
+            </div>
+
+            <!-- Card 2: Complexity -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#128736;</div>
+                    <div class="score-name">Complexity</div>
+                </div>
+                <div class="score-desc">Number of steps, decision points, and systems involved. More complex = harder first build. Lower complexity scores higher for a first agent.</div>
+                <div class="score-ba-example"><strong>BA guidance:</strong> Start with workflows that have 5&ndash;8 clearly defined steps. Anything above 12 steps likely needs decomposition first.</div>
+            </div>
+
+            <!-- Card 3: Data Availability -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#128451;</div>
+                    <div class="score-name">Data Availability</div>
+                </div>
+                <div class="score-desc">Can the agent access the data it needs? APIs beat CSV exports, which beat wiki pages, which beat &ldquo;ask someone.&rdquo;</div>
+                <div class="score-ba-example"><strong>Check:</strong> Jira REST API? Confluence API? Roadmap tool API? If the data lives in someone's head, score Low.</div>
+            </div>
+
+            <!-- Card 4: Error Tolerance -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#128737;</div>
+                    <div class="score-name">Error Tolerance</div>
+                </div>
+                <div class="score-desc">What happens if the agent gets it wrong? Workflows where a human reviews the output before it reaches external stakeholders are forgiving.</div>
+                <div class="score-ba-example"><strong>BA example:</strong> Impact assessments reviewed by the BA before reaching the prioritisation committee = High tolerance.</div>
+            </div>
+
+            <!-- Card 5: Stakeholder Impact -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#127919;</div>
+                    <div class="score-name">Stakeholder Impact</div>
+                </div>
+                <div class="score-desc">Who benefits and how visibly? Workflows that save time AND improve quality score highest. Time savings alone is good; quality improvement alone is hard to measure.</div>
+                <div class="score-ba-example"><strong>BA example:</strong> Consistent, structured impact assessments benefit the prioritisation committee by making decisions faster and more transparent.</div>
+            </div>
+
+            <!-- Card 6: Technical Feasibility -->
+            <div class="score-card">
+                <div class="score-card-header">
+                    <div class="score-icon">&#9881;</div>
+                    <div class="score-name">Technical Feasibility</div>
+                </div>
+                <div class="score-desc">Can you build this yourself, or do you need engineering support? Code-first frameworks require programming skills. Low-code agent builders are self-service.</div>
+                <div class="score-ba-example"><strong>Consider:</strong> What platform are you using? What engineering support is available? Match ambition to your current capability.</div>
+            </div>
+
+        </div>
+
+        <div class="callout callout--insight">
+            <div class="callout-label">Key Insight</div>
+            <p class="callout-text">For BAs, the dimension that matters most for a first agent is <strong>Data Availability</strong>. You can work around moderate complexity and limited stakeholder visibility. You cannot work around data that does not exist in a system the agent can read.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: BA Candidate Comparison
+         ============================================================ -->
+    <section class="section" id="section-3">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">BA Candidate Comparison</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <p>Here are five typical BA workflows scored against the dimensions that matter most for first-agent selection. Use this as a reference when scoring your own candidates.</p>
+
+        <div class="comparison-table-wrap">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Workflow</th>
+                        <th>Time Savings</th>
+                        <th>Data Access</th>
+                        <th>Error Tolerance</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight-row">
+                        <td><strong>Feature request intake</strong></td>
+                        <td class="val high">High (frequency)</td>
+                        <td class="val med">Medium (multiple APIs)</td>
+                        <td class="val high">High (reviewed)</td>
+                        <td class="best-for">First agent &mdash; high volume, clear structure</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Backlog grooming prep</strong></td>
+                        <td class="val med">Medium (per-occ)</td>
+                        <td class="val high">High (Jira native)</td>
+                        <td class="val high">High</td>
+                        <td class="best-for">Quick win &mdash; simple, API-rich</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sprint velocity analysis</strong></td>
+                        <td class="val low">Low (may exist)</td>
+                        <td class="val high">High (Jira data)</td>
+                        <td class="val med">Medium</td>
+                        <td class="best-for">Already solved by dashboards?</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Change request impact</strong></td>
+                        <td class="val high">High (time cost)</td>
+                        <td class="val med">Medium</td>
+                        <td class="val low">Low (political)</td>
+                        <td class="best-for">Second agent &mdash; needs HIL maturity</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stakeholder progress report</strong></td>
+                        <td class="val high">High (time cost)</td>
+                        <td class="val med">Mixed</td>
+                        <td class="val med">Medium</td>
+                        <td class="best-for">Third agent &mdash; narrative synthesis</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Expandable details for each workflow -->
+        <details class="expandable">
+            <summary>Feature request intake &mdash; why it makes a strong first agent</summary>
+            <div class="expandable-content">
+                <p>Feature request intake is the classic BA first agent. It runs frequently (3&ndash;5 times per week), follows a consistent structure (gather context, check duplicates, assess impact, write up), and produces a draft that you review before it goes anywhere. The data sources &mdash; Jira, Confluence, roadmap tools &mdash; all have APIs, though you may need to integrate multiple systems. The combination of high frequency and human review before output makes it ideal for learning the build-test-refine cycle.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Backlog grooming prep &mdash; the simplest quick win</summary>
+            <div class="expandable-content">
+                <p>If feature intake feels too large for a first attempt, backlog grooming prep is a lighter alternative. The workflow is almost entirely within Jira: pull stories, check completeness, flag missing acceptance criteria, suggest priority ordering based on dependencies. Data access is excellent (single API), error tolerance is high (the output is a suggestion, not a decision), and the scope is narrow enough to build in a day. The downside: lower time savings per occurrence, so the learning value is moderate.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Sprint velocity analysis &mdash; check before you build</summary>
+            <div class="expandable-content">
+                <p>Sprint velocity analysis has excellent data availability (Jira captures everything you need) but a critical question: does this already exist? Most teams have velocity dashboards in Jira, Azure DevOps, or a third-party tool. Before scoring this workflow, check whether the problem is truly &ldquo;we do not have this data&rdquo; or &ldquo;we have this data but nobody looks at it.&rdquo; Automating something that already exists teaches you nothing and wastes political capital.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Change request impact &mdash; high value, but not first</summary>
+            <div class="expandable-content">
+                <p>Change request impact assessments are where BAs spend the most painful hours: gathering cross-system data, assessing downstream effects, writing up recommendations for governance committees. The time savings are real. But the error tolerance is low &mdash; an incorrect impact assessment can lead to bad prioritisation decisions with political consequences. This workflow benefits enormously from human-in-the-loop maturity that you develop by building your first and second agents. Save it for when you understand how to tune agent outputs and set up robust review checkpoints.</p>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Stakeholder progress report &mdash; a synthesis challenge</summary>
+            <div class="expandable-content">
+                <p>Progress reports are time-consuming because they require narrative synthesis: pulling data from multiple sources and turning it into a story for a specific audience. The data access challenge is real &mdash; some data lives in Jira, some in Confluence, some in email threads, some in people's verbal updates. The agent needs to handle mixed-quality inputs and produce coherent narratives. This is a strong third agent once you have experience with prompt engineering and multi-source integration, but it is too ambitious for a first build.</p>
+            </div>
+        </details>
+    </section>
+
+    <!-- ============================================================
+         SECTION 4: First-Agent Selection Criteria
+         ============================================================ -->
+    <section class="section" id="section-4">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">First-Agent Selection Criteria</h2>
+            <span class="section-time">~2 min</span>
+        </div>
+
+        <p>Beyond the scoring dimensions, apply these three rules to make your final selection. If a workflow fails any of these, move to your next-highest scorer.</p>
+
+        <ol class="rules-list">
+            <li><strong>Pick something with a human review step.</strong> Your first agent will make mistakes. A built-in review step before any output reaches stakeholders is your safety net. It lets you learn from agent errors without consequences.</li>
+            <li><strong>Pick something with good data availability.</strong> Avoid workflows where the critical data lives in wikis, emails, or people's heads. If the agent cannot access the data programmatically, your build will stall on integration problems rather than teaching you the methodology.</li>
+            <li><strong>Pick something you do frequently enough to iterate.</strong> You need multiple runs to improve prompts, adjust outputs, and tune the agent. A workflow you do once a quarter gives you four learning cycles per year. A workflow you do three times a week gives you over 150. Frequency is your feedback loop.</li>
+        </ol>
+
+        <div class="callout callout--insight">
+            <div class="callout-label">Practical Tip</div>
+            <p class="callout-text">If your top scorer meets all three rules, go with it. If it fails one rule, check your second-highest scorer. Do not try to force a workflow that fails on data availability &mdash; that problem does not get easier with effort.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: Self-Check
+         ============================================================ -->
+    <section class="section" id="section-5">
+        <div class="section-header">
+            <span class="section-number">5</span>
+            <h2 class="section-title">Self-Check</h2>
+            <span class="section-time">~2 min</span>
+        </div>
+
+        <div class="self-check">
+            <div class="self-check-heading">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Reflection Questions
+            </div>
+
+            <details class="self-check-item">
+                <summary>Why is &ldquo;highest time savings&rdquo; not always the best criterion for your first agent?</summary>
+                <div class="self-check-answer">
+                    <p>Your first agent teaches you the process. If the highest time-savings workflow is also the most complex, you will spend your learning phase fighting integration problems and political sensitivities instead of understanding the methodology. A moderately valuable but simple workflow lets you complete the full build-test-refine cycle, which is the real goal of your first agent. You learn the process on something manageable, then apply that knowledge to the high-value target.</p>
+                </div>
+            </details>
+
+            <details class="self-check-item">
+                <summary>A workflow scores High on time savings and stakeholder impact, but Low on data availability. Should you pick it?</summary>
+                <div class="self-check-answer">
+                    <p>Probably not for your first agent. Low data availability means the build will stall on integration problems &mdash; you will spend weeks figuring out how to get data out of systems that were not designed for automation. That is valuable engineering work, but it is not what you need to learn right now. Pick a workflow with better data access for your first agent, learn the methodology, then come back to the high-impact workflow with the skills and confidence to tackle the integration challenge.</p>
+                </div>
+            </details>
+        </div>
+
+        <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 28px 0 12px;">What you should have after this lesson</h3>
+
+        <ul class="checklist">
+            <li>Scores for your top 3&ndash;5 candidates across all 6 dimensions</li>
+            <li>A selection decision record with reasoning for each score</li>
+            <li>One workflow selected for Stages 3&ndash;6 of the methodology</li>
+        </ul>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Bottom Nav -->
+    <nav class="lesson-nav">
+        <a href="02-decompose-your-role.html" class="nav-btn">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <div>
+                <span class="nav-direction">Previous</span>
+                <span class="nav-title">Lesson 2: Decompose Your Role</span>
+            </div>
+        </a>
+        <a href="04-scope-the-workflow.html" class="nav-btn nav-btn--next">
+            <div>
+                <span class="nav-direction">Next</span>
+                <span class="nav-title">Lesson 4: Scope the Workflow</span>
+            </div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </nav>
+</main>
+
+</body>
+</html>

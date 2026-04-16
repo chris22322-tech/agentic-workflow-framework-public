@@ -1,0 +1,25 @@
+# Starter Project Dependencies
+# =============================
+# Pinned versions. Check for updates periodically and bump as needed.
+#
+# Methodology reference:
+#   - Stage 5: Build → requirements and dependency management
+
+# LangGraph — graph execution framework
+langgraph==0.3.34
+
+# Anthropic SDK — LLM calls (direct SDK, not via LangChain)
+anthropic==0.49.0
+
+# LangChain Anthropic — LLM integration via LangChain
+langchain-anthropic==0.3.14
+
+# Config and environment
+pyyaml==6.0.2
+python-dotenv==1.1.0
+
+# HTTP requests (for tools)
+requests==2.32.3
+
+# Testing
+pytest==8.3.5

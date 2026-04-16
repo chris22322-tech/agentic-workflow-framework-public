@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 8: Putting It All Together -- Your Action Plan | CSM Learning Path</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           CSM Learning Path — Design System
+           ============================================================ */
+
+        /* --- Reset & Base --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --color-bg:          #0f1117;
+            --color-surface:     #1a1d27;
+            --color-surface-2:   #222636;
+            --color-surface-3:   #2a2f42;
+            --color-border:      #2e3348;
+            --color-border-light:#3a3f56;
+
+            --color-text:        #e2e4ed;
+            --color-text-muted:  #9498af;
+            --color-text-dim:    #6b6f88;
+
+            --color-accent:      #6c8aff;
+            --color-accent-soft: rgba(108,138,255,0.12);
+            --color-accent-med:  rgba(108,138,255,0.22);
+
+            --color-green:       #34d399;
+            --color-green-soft:  rgba(52,211,153,0.12);
+            --color-green-med:   rgba(52,211,153,0.22);
+
+            --color-amber:       #fbbf24;
+            --color-amber-soft:  rgba(251,191,36,0.10);
+            --color-amber-med:   rgba(251,191,36,0.20);
+
+            --color-red:         #f87171;
+            --color-red-soft:    rgba(248,113,113,0.10);
+            --color-red-med:     rgba(248,113,113,0.20);
+
+            --color-purple:      #a78bfa;
+            --color-purple-soft: rgba(167,139,250,0.12);
+            --color-purple-med:  rgba(167,139,250,0.22);
+
+            --color-cyan:        #22d3ee;
+            --color-cyan-soft:   rgba(34,211,238,0.10);
+
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   14px;
+            --radius-xl:   20px;
+
+            --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md:   0 4px 12px rgba(0,0,0,0.35);
+            --shadow-lg:   0 8px 30px rgba(0,0,0,0.4);
+
+            --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --font-mono:   'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Top Progress Bar --- */
+        .progress-bar-track {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color-surface-2);
+            z-index: 1000;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 100%; /* 8 of 8 */
+            background: linear-gradient(90deg, var(--color-accent), var(--color-purple), var(--color-green));
+            border-radius: 0 2px 2px 0;
+            transition: width 0.4s ease;
+        }
+
+        /* --- Header --- */
+        .lesson-header {
+            background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 28px 0 36px;
+        }
+        .header-inner {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: var(--color-text-dim); }
+
+        .lesson-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+        .badge--stage {
+            background: var(--color-green-soft);
+            color: var(--color-green);
+            border: 1px solid var(--color-green-med);
+        }
+        .badge--time {
+            background: var(--color-surface-2);
+            color: var(--color-text-muted);
+            border: 1px solid var(--color-border);
+        }
+        .badge--lesson {
+            background: var(--color-purple-soft);
+            color: var(--color-purple);
+            border: 1px solid rgba(167,139,250,0.22);
+        }
+
+        .lesson-title {
+            font-size: 34px;
+            font-weight: 750;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .lesson-subtitle {
+            font-size: 17px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            max-width: 640px;
+        }
+
+        /* --- Progress Dots --- */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 22px;
+        }
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-surface-3);
+            border: 2px solid var(--color-border);
+            transition: all 0.2s;
+        }
+        .progress-dot--complete {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+        .progress-dot--current {
+            background: var(--color-green);
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 3px var(--color-green-soft);
+        }
+        .progress-dot-label {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            margin-left: 4px;
+        }
+
+        /* --- Main Content --- */
+        .lesson-body {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 48px 28px 80px;
+        }
+
+        /* --- Section --- */
+        .section {
+            margin-bottom: 56px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-accent-soft);
+            border: 1px solid var(--color-accent-med);
+            color: var(--color-accent);
+            font-size: 15px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.015em;
+        }
+        .section-time {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+        p.muted {
+            color: var(--color-text-muted);
+        }
+
+        strong { color: #fff; font-weight: 650; }
+        em { color: var(--color-text); }
+
+        /* --- Recap Cards --- */
+        .recap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 24px 0;
+        }
+
+        .recap-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .recap-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .recap-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 1px;
+        }
+
+        .recap-card:nth-child(1) .recap-num,
+        .recap-card:nth-child(2) .recap-num {
+            background: var(--color-accent-soft);
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent-med);
+        }
+
+        .recap-card:nth-child(3) .recap-num {
+            background: var(--color-amber-soft);
+            color: var(--color-amber);
+            border: 1px solid var(--color-amber-med);
+        }
+
+        .recap-card:nth-child(4) .recap-num,
+        .recap-card:nth-child(5) .recap-num,
+        .recap-card:nth-child(6) .recap-num {
+            background: var(--color-purple-soft);
+            color: var(--color-purple);
+            border: 1px solid var(--color-purple-med);
+        }
+
+        .recap-card:nth-child(7) .recap-num {
+            background: var(--color-cyan-soft);
+            color: var(--color-cyan);
+            border: 1px solid rgba(34,211,238,0.22);
+        }
+
+        .recap-card:nth-child(8) .recap-num {
+            background: var(--color-green-soft);
+            color: var(--color-green);
+            border: 1px solid var(--color-green-med);
+        }
+
+        .recap-text {
+            font-size: 14px;
+            color: var(--color-text);
+            line-height: 1.55;
+        }
+
+        .recap-text strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        @media (max-width: 720px) {
+            .recap-grid { grid-template-columns: 1fr; }
+        }
+
+        /* --- Action Checklist --- */
+        .action-list {
+            margin: 28px 0;
+        }
+
+        .action-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px 24px 24px 28px;
+            margin-bottom: 14px;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .action-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .action-item:nth-child(1)::before,
+        .action-item:nth-child(2)::before { background: var(--color-accent); }
+        .action-item:nth-child(3)::before { background: var(--color-purple); }
+        .action-item:nth-child(4)::before { background: var(--color-amber); }
+        .action-item:nth-child(5)::before { background: var(--color-green); }
+
+        .action-step-num {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .action-item:nth-child(1) .action-step-num,
+        .action-item:nth-child(2) .action-step-num {
+            background: var(--color-accent-soft);
+            border: 1px solid var(--color-accent-med);
+            color: var(--color-accent);
+        }
+        .action-item:nth-child(3) .action-step-num {
+            background: var(--color-purple-soft);
+            border: 1px solid var(--color-purple-med);
+            color: var(--color-purple);
+        }
+        .action-item:nth-child(4) .action-step-num {
+            background: var(--color-amber-soft);
+            border: 1px solid var(--color-amber-med);
+            color: var(--color-amber);
+        }
+        .action-item:nth-child(5) .action-step-num {
+            background: var(--color-green-soft);
+            border: 1px solid var(--color-green-med);
+            color: var(--color-green);
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-timeframe {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .action-item:nth-child(1) .action-timeframe,
+        .action-item:nth-child(2) .action-timeframe { color: var(--color-accent); }
+        .action-item:nth-child(3) .action-timeframe { color: var(--color-purple); }
+        .action-item:nth-child(4) .action-timeframe { color: var(--color-amber); }
+        .action-item:nth-child(5) .action-timeframe { color: var(--color-green); }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .action-desc {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .action-time-badge {
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-muted);
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        /* --- Resource Links --- */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .resource-link:hover {
+            border-color: var(--color-accent);
+            background: var(--color-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .resource-link svg {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            stroke: var(--color-accent);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .resource-link-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .resource-link-desc {
+            font-size: 12px;
+            color: var(--color-text-dim);
+        }
+
+        @media (max-width: 720px) {
+            .resource-grid { grid-template-columns: 1fr; }
+        }
+
+        /* --- Completion Card --- */
+        .completion-card {
+            background: linear-gradient(135deg, rgba(108,138,255,0.08) 0%, rgba(167,139,250,0.08) 30%, rgba(52,211,153,0.08) 100%);
+            border: 2px solid;
+            border-image: linear-gradient(135deg, var(--color-accent), var(--color-purple), var(--color-green)) 1;
+            border-radius: 0; /* border-image doesn't work with border-radius, use outline trick */
+            padding: 48px 40px;
+            margin: 40px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Rounded border workaround for gradient border */
+        .completion-card-wrapper {
+            position: relative;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .completion-card-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 2px;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, var(--color-accent), var(--color-purple), var(--color-green));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .completion-inner {
+            background: linear-gradient(135deg, rgba(108,138,255,0.06) 0%, rgba(167,139,250,0.06) 30%, rgba(52,211,153,0.06) 100%);
+            border-radius: var(--radius-xl);
+            padding: 48px 40px;
+            text-align: center;
+        }
+
+        .completion-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-purple));
+            margin-bottom: 24px;
+            box-shadow: 0 0 40px rgba(108,138,255,0.3), 0 0 80px rgba(167,139,250,0.15);
+        }
+
+        .completion-badge svg {
+            width: 40px;
+            height: 40px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2.5;
+        }
+
+        .completion-title {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--color-accent), var(--color-purple), var(--color-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .completion-subtitle {
+            font-size: 16px;
+            color: var(--color-text-muted);
+            max-width: 520px;
+            margin: 0 auto 24px;
+            line-height: 1.6;
+        }
+
+        .completion-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+        }
+
+        .completion-stat {
+            text-align: center;
+        }
+
+        .completion-stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .completion-stat-label {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+        }
+
+        /* --- Principle Callout --- */
+        .principle {
+            background: var(--color-accent-soft);
+            border: 1px solid var(--color-accent-med);
+            border-left: 4px solid var(--color-accent);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        .principle-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-accent);
+            margin-bottom: 6px;
+        }
+        .principle-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        /* --- Insight Callout --- */
+        .insight {
+            background: var(--color-amber-soft);
+            border: 1px solid var(--color-amber-med);
+            border-left: 4px solid var(--color-amber);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .insight-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-amber);
+            margin-bottom: 6px;
+        }
+        .insight p {
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+        /* --- Reflection --- */
+        .reflection {
+            background: linear-gradient(135deg, rgba(52,211,153,0.06) 0%, rgba(34,211,238,0.06) 100%);
+            border: 1px solid var(--color-green-med);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin: 32px 0;
+        }
+        .reflection h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .reflection h3 svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--color-green);
+            fill: none;
+            stroke-width: 2;
+        }
+        .reflection p {
+            font-size: 15px;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+        }
+        .reflection p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- Bullet list --- */
+        .bullet-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+        .bullet-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: var(--color-text);
+        }
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-accent);
+        }
+
+        /* --- Footer Nav --- */
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--color-border);
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            min-width: 180px;
+        }
+        .nav-btn:hover {
+            border-color: var(--color-accent);
+            background: var(--color-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--color-text-muted);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+        .nav-btn--next {
+            text-align: right;
+            margin-left: auto;
+            justify-content: flex-end;
+        }
+        .nav-btn--next svg { order: 2; }
+        .nav-btn--framework {
+            background: linear-gradient(135deg, rgba(108,138,255,0.1), rgba(167,139,250,0.1));
+            border-color: var(--color-accent-med);
+        }
+        .nav-btn--framework:hover {
+            background: linear-gradient(135deg, rgba(108,138,255,0.18), rgba(167,139,250,0.18));
+            border-color: var(--color-accent);
+        }
+        .nav-direction {
+            font-size: 11px;
+            color: var(--color-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+        }
+        .nav-title {
+            display: block;
+            color: #fff;
+        }
+
+        /* --- Utility --- */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--color-border);
+            margin: 32px 0;
+        }
+
+        /* --- Scroll Animations --- */
+        .section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 640px) {
+            .lesson-title { font-size: 26px; }
+            .section-title { font-size: 18px; }
+            .section-header { flex-wrap: wrap; }
+            .section-time { margin-left: 50px; }
+            .lesson-body { padding: 32px 18px 60px; }
+            .reflection { padding: 22px; }
+            .completion-inner { padding: 32px 22px; }
+            .completion-title { font-size: 22px; }
+            .completion-stats { gap: 20px; }
+            .completion-stat-value { font-size: 22px; }
+            .nav-btn { min-width: unset; padding: 12px 16px; }
+            .action-item { flex-wrap: wrap; }
+            .action-time-badge { align-self: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar-track">
+    <div class="progress-bar-fill"></div>
+</div>
+
+<!-- Header -->
+<header class="lesson-header">
+    <div class="header-inner">
+        <nav class="breadcrumb">
+            <a href="../index.html">CSM Learning Path</a>
+            <span class="sep">/</span>
+            <span>Lesson 8</span>
+        </nav>
+
+        <div class="lesson-meta">
+            <span class="badge badge--lesson">Lesson 8 of 8</span>
+            <span class="badge badge--stage">Final Lesson</span>
+            <span class="badge badge--time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ~10 min
+            </span>
+        </div>
+
+        <h1 class="lesson-title">Putting It All Together -- Your Action Plan</h1>
+        <p class="lesson-subtitle">Eight lessons, one methodology, and a clear path forward. Here is everything you have learned, your next five steps, and the resources to keep going.</p>
+
+        <div class="progress-dots">
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--current"></div>
+            <span class="progress-dot-label">8 / 8</span>
+        </div>
+    </div>
+</header>
+
+<!-- Body -->
+<main class="lesson-body">
+
+    <!-- ============================================================
+         SECTION 1: What You've Learned
+         ============================================================ -->
+    <section class="section" id="section-1">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">What You Have Learned</h2>
+            <span class="section-time">3 min</span>
+        </div>
+
+        <p>Eight lessons. Each one built on the last. Here is the complete picture:</p>
+
+        <div class="recap-grid">
+            <div class="recap-card">
+                <div class="recap-num">1</div>
+                <div class="recap-text">
+                    <strong>Lesson 1</strong>
+                    What an agentic workflow is and why it does not replace you -- it handles the repetitive 80% so you can focus on the high-judgement 20%.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">2</div>
+                <div class="recap-text">
+                    <strong>Lesson 2</strong>
+                    How to find your workflows using the four-angle method: time drains, repetitive patterns, multi-system work, and "I wish someone would just do this."
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">3</div>
+                <div class="recap-text">
+                    <strong>Lesson 3</strong>
+                    How to pick the right workflow to automate first using structured scoring across five dimensions -- not gut feel, not what sounds impressive.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">4</div>
+                <div class="recap-text">
+                    <strong>Lesson 4</strong>
+                    How to map your chosen workflow step by step with decision logic -- the if/then rules that govern each action.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">5</div>
+                <div class="recap-text">
+                    <strong>Lesson 5</strong>
+                    How to draw the automation boundary -- AUTOMATE, HIL, or MANUAL for every step -- using the decision tree.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">6</div>
+                <div class="recap-text">
+                    <strong>Lesson 6</strong>
+                    How to complete the scope document with error paths, data inventory, constraints, and a future-state summary.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">7</div>
+                <div class="recap-text">
+                    <strong>Lesson 7</strong>
+                    What the design, build, and evaluate stages look like from your side -- whether you configure the agent yourself or work with an engineer.
+                </div>
+            </div>
+
+            <div class="recap-card">
+                <div class="recap-num">8</div>
+                <div class="recap-text">
+                    <strong>Lesson 8</strong>
+                    This -- your action plan. The concrete steps to take this from learning into doing.
+                </div>
+            </div>
+        </div>
+
+        <div class="principle">
+            <div class="principle-label">The through-line</div>
+            <p class="principle-text">Every lesson followed the same principle: think clearly about your own work first, then decide what to automate. The framework did not ask you to learn to code. It asked you to be the expert on your own workflows -- which you already are.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: Your Next 5 Steps
+         ============================================================ -->
+    <section class="section" id="section-2">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">Your Next 5 Steps</h2>
+            <span class="section-time">5 min</span>
+        </div>
+
+        <p>Theory is done. Here is your action checklist with specific timeframes. Each step builds on the one before it.</p>
+
+        <div class="action-list">
+            <div class="action-item">
+                <div class="action-step-num">1</div>
+                <div class="action-content">
+                    <div class="action-timeframe">This week</div>
+                    <div class="action-title">Finalise your Stage 1 inventory</div>
+                    <p class="action-desc">Go back to the workflow inventory you started drafting in Lesson 2. Clean it up. Make sure each workflow has a clear name, a trigger, and a rough time estimate. This is your master list of automation candidates.</p>
+                </div>
+                <div class="action-time-badge">~1 hour</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-step-num">2</div>
+                <div class="action-content">
+                    <div class="action-timeframe">This week</div>
+                    <div class="action-title">Complete your Stage 2 scoring and pick your workflow</div>
+                    <p class="action-desc">Score each workflow from your inventory using the five-dimension framework from Lesson 3. Pick the highest-scoring one. This is the workflow you will build your first agent around.</p>
+                </div>
+                <div class="action-time-badge">~30 min</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-step-num">3</div>
+                <div class="action-content">
+                    <div class="action-timeframe">Next week</div>
+                    <div class="action-title">Complete your Stage 3 scope document</div>
+                    <p class="action-desc">Map the steps (Lesson 4), assign boundary tags (Lesson 5), add error paths, data inventory, constraints, and your future-state summary (Lesson 6). Use the scope document template from the framework resources.</p>
+                </div>
+                <div class="action-time-badge">~2-3 hours</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-step-num">4</div>
+                <div class="action-content">
+                    <div class="action-timeframe">Next week</div>
+                    <div class="action-title">Decide your path and take the first step</div>
+                    <p class="action-desc">Choose: a low-code agent builder (configure it yourself, no engineer needed) or a code-first framework (find an engineer or technical partner). If low-code, start configuring your first tool connections. If code-first, schedule the handoff meeting and walk through the scope document together. See the framework's Choose a Platform page for current options.</p>
+                </div>
+                <div class="action-time-badge">~30 min</div>
+            </div>
+
+            <div class="action-item">
+                <div class="action-step-num">5</div>
+                <div class="action-content">
+                    <div class="action-timeframe">Week 3 and ongoing</div>
+                    <div class="action-title">Build, evaluate, iterate</div>
+                    <p class="action-desc">Whether you are building it yourself or working with an engineer: build the agent, run it on 5 test accounts, evaluate the output, refine. Your first working agent is 2-3 weeks away from this point. The iteration cycle is where the real value emerges.</p>
+                </div>
+                <div class="action-time-badge">Ongoing</div>
+            </div>
+        </div>
+
+        <div class="insight">
+            <div class="insight-label">A note on pacing</div>
+            <p>These timeframes assume you are doing this alongside your regular work, not as a full-time project. If you can dedicate more focused time, you can compress the timeline. The key is momentum -- do not let the scope document sit for weeks before acting on it.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: Resources
+         ============================================================ -->
+    <section class="section" id="section-3">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">Resources</h2>
+            <span class="section-time">1 min</span>
+        </div>
+
+        <p>Everything you need to keep going is in the framework. Here are the key links:</p>
+
+        <div class="resource-grid">
+            <a href="../../index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <div>
+                    <div class="resource-link-text">Framework Homepage</div>
+                    <div class="resource-link-desc">Main entry point for the full methodology</div>
+                </div>
+            </a>
+
+            <a href="../../site/quick-start/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <div>
+                    <div class="resource-link-text">Quick Start Guide</div>
+                    <div class="resource-link-desc">Jump straight to building</div>
+                </div>
+            </a>
+
+            <a href="../../site/stage-1-identify/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div>
+                    <div class="resource-link-text">Stage 1: Identify</div>
+                    <div class="resource-link-desc">Workflow discovery methodology</div>
+                </div>
+            </a>
+
+            <a href="../../site/stage-2-assess/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <div>
+                    <div class="resource-link-text">Stage 2: Assess</div>
+                    <div class="resource-link-desc">Scoring and prioritisation</div>
+                </div>
+            </a>
+
+            <a href="../../site/stage-3-scope/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <div>
+                    <div class="resource-link-text">Stage 3: Scope</div>
+                    <div class="resource-link-desc">Scope document deep dive</div>
+                </div>
+            </a>
+
+            <a href="../../site/business-case/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                <div>
+                    <div class="resource-link-text">Business Case Template</div>
+                    <div class="resource-link-desc">Make the case to your leadership</div>
+                </div>
+            </a>
+
+            <a href="../../site/what-is-agentic/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <div>
+                    <div class="resource-link-text">What Is an Agentic Workflow?</div>
+                    <div class="resource-link-desc">Share this with your team</div>
+                </div>
+            </a>
+
+            <a href="../../site/personalise/index.html" class="resource-link">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <div>
+                    <div class="resource-link-text">Personalise</div>
+                    <div class="resource-link-desc">Tailor materials to your specific org</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 4: Final Reflection
+         ============================================================ -->
+    <section class="section" id="section-4">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">Final Reflection</h2>
+            <span class="section-time">1 min</span>
+        </div>
+
+        <div class="reflection">
+            <h3>
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Where You Started. Where You Are Now.
+            </h3>
+            <p>You started this pathway wondering whether AI automation was for you. Whether it was too technical. Whether it would replace parts of your job you actually care about.</p>
+            <p>You now have a structured methodology, a scored workflow, and a scope document ready to go. You know exactly what the agent will do, where you stay in control, and what happens when things go wrong.</p>
+            <p>The framework did not ask you to learn to code. It asked you to think clearly about your own work. That is the hard part -- and you have done it.</p>
+            <p><strong>The clarity you built in these eight lessons is the foundation for everything that comes next.</strong> Your first agent will save you hours every week. Your second one will take half the time to build. And each one frees you to do more of the work that actually requires you -- the relationship building, the strategic thinking, the moments where a human being makes all the difference.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Completion Card
+         ============================================================ -->
+    <section class="section" id="completion">
+        <div class="completion-card-wrapper">
+            <div class="completion-inner">
+                <div class="completion-badge">
+                    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="completion-title">Pathway Complete</div>
+                <p class="completion-subtitle">You have completed the CSM Learning Pathway. You are ready to build your first agentic workflow.</p>
+                <div class="completion-stats">
+                    <div class="completion-stat">
+                        <div class="completion-stat-value">8</div>
+                        <div class="completion-stat-label">Lessons</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="completion-stat-value">3</div>
+                        <div class="completion-stat-label">Stages</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="completion-stat-value">1</div>
+                        <div class="completion-stat-label">Scope Document</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="completion-stat-value">~2h</div>
+                        <div class="completion-stat-label">Invested</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Footer Navigation -->
+    <nav class="lesson-nav">
+        <a href="07-what-happens-next.html" class="nav-btn">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <div>
+                <span class="nav-direction">Previous</span>
+                <span class="nav-title">Lesson 7: What Happens Next</span>
+            </div>
+        </a>
+        <a href="../../index.html" class="nav-btn nav-btn--next nav-btn--framework">
+            <div>
+                <span class="nav-direction">Continue</span>
+                <span class="nav-title">Back to Framework</span>
+            </div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </nav>
+</main>
+
+<script>
+    // Scroll-triggered section animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.section').forEach(section => {
+        observer.observe(section);
+    });
+</script>
+
+</body>
+</html>

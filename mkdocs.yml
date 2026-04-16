@@ -1,0 +1,119 @@
+site_name: Agentic Workflow Framework
+site_description: A structured, platform-neutral methodology for identifying, designing, and building agentic workflows
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+    - toc.integrate
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - admonition
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+
+nav:
+  - Home: index.md
+  - Framework Overview: framework-overview.md
+  - Getting Started:
+    - getting-started/index.md
+    - Quick Start: getting-started/quick-start.md
+    - Prerequisites: getting-started/prerequisites.md
+    - Choose a Platform: getting-started/choose-a-platform.md
+    - How to Use: getting-started/how-to-use.md
+    - What is an Agentic Workflow?: getting-started/what-is-a-workflow.md
+  - Stages:
+    - stages/index.md
+    - "1. Decompose": stages/01-decompose.md
+    - "2. Select": stages/02-select.md
+    - "3. Scope": stages/03-scope.md
+    - "4. Design": stages/04-design.md
+    - "5. Build": stages/05-build.md
+    - "6. Evaluate": stages/06-evaluate.md
+  - Worked Examples:
+    - "CSM — Quarterly Account Health Review":
+      - worked-example/index.md
+      - Decompose: worked-example/decompose.md
+      - Select: worked-example/select.md
+      - Scope: worked-example/scope.md
+      - Design: worked-example/design.md
+      - Build: worked-example/build.md
+      - Evaluate: worked-example/evaluate.md
+    - "BA — Feature Request Intake":
+      - worked-example-ba/index.md
+      - Decompose: worked-example-ba/decompose.md
+      - Select: worked-example-ba/select.md
+      - Scope: worked-example-ba/scope.md
+      - Design: worked-example-ba/design.md
+      - Evaluate: worked-example-ba/evaluate.md
+    - "SE — Release Notes Compilation":
+      - worked-example-se/index.md
+      - Decompose: worked-example-se/decompose.md
+      - Select: worked-example-se/select.md
+      - Scope: worked-example-se/scope.md
+      - Design: worked-example-se/design.md
+      - Evaluate: worked-example-se/evaluate.md
+  - Personalise:
+    - personalise/index.md
+    - Application Guide: personalise/apply.md
+    - Training Materials: personalise/learn.md
+    - Custom Site: personalise/customise.md
+    - Business Case: personalise/business-case.md
+    - Business Case Prompt: personalise/prompts/business-case.md
+    - Change Management: personalise/change-management.md
+  - Reference:
+    - Glossary: reference/glossary.md
+    - Decision Trees: reference/decision-trees.md
+    - Checklist: reference/checklist.md
+    - Platform Cheat Sheet: reference/platform-cheatsheet.md
+  - Enablement:
+    - enablement/index.md
+    - CSM Pathway: enablement/csm.md
+    - BA Pathway: enablement/ba.md
+    - SWE Pathway: enablement/swe.md
+    - Templates:
+      - blank-templates/index.md
+      - Workflow Inventory: blank-templates/workflow-inventory.md
+      - Selection Record: blank-templates/selection-record.md
+      - Scope Document: blank-templates/scope-document.md
+      - Design Document: blank-templates/design-document.md
+      - Evaluation Report: blank-templates/evaluation-report.md

@@ -1,0 +1,74 @@
+# === ORGANISATION CONTEXT ===
+# Fill in the sections below. Delete or leave blank any fields that don't apply.
+# Copy this file to org-config.yaml and fill in your details.
+
+organisation:
+  name: ""                    # e.g., "Acme Corp"
+  description: ""             # 1-2 sentences about what the company does
+  division: ""                # e.g., "Customer Operations", "Client Services"
+  industry: ""                # e.g., "Financial services", "SaaS", "Healthcare"
+
+# === ROLES ===
+# List the roles in your team that will use the framework.
+# Add or remove roles as needed. Aim for 2-5 roles.
+#
+# IMPORTANT: aim for ~150 words per role description. Vague descriptions
+# produce vague (and hallucination-prone) output. Include time-of-day texture,
+# exception cases, and the hardest recurring decisions. Under ~100 words and
+# the AI has to extrapolate — that's where invented systems and wrong
+# regulatory framings come from.
+roles:
+  - name: ""                  # e.g., "Account Manager"
+    description: ""           # ~150 words: typical week rhythm, systems used,
+                              # exception cases, hardest recurring decisions
+
+  - name: ""
+    description: ""
+
+# === SYSTEMS AND TOOLS ===
+# List the systems your team uses regularly. Include internal tools.
+systems:
+  - name: ""                  # e.g., "Salesforce"
+    purpose: ""               # e.g., "CRM — account data, pipeline, contacts"
+    api_available: false      # Set to true ONLY if your team can access this system's REST/GraphQL API today
+
+# === CONSTRAINTS ===
+# What limits or requirements affect automation decisions?
+constraints:
+  regulatory: ""              # e.g., "FCA regulated", "HIPAA", "SOX", "none"
+  data_sensitivity: ""        # e.g., "Handles PII", "Financial data", "Internal only"
+  client_facing: true         # Does your team produce outputs for external clients?
+  approval_requirements: ""   # e.g., "Manager approval for client deliverables"
+
+# === WHAT YOU WANT TO ACHIEVE ===
+# Help the AI focus its recommendations.
+goals:
+  primary_goal: ""            # e.g., "Reduce time spent on weekly reporting"
+  target_workflows: []        # Optional: specific workflows you already know about
+                              # e.g., ["Weekly status report", "QBR preparation"]
+  timeline: ""                # e.g., "First agent in 3 months"
+
+# === REGULATORY ENVIRONMENT ===
+regulatory_environment:
+  jurisdictions: []          # e.g., ["FCA", "PRA", "MAS", "APRA"]
+  data_residency: ""         # e.g., "EU only", "UK and US", "No restrictions"
+  existing_ai_policy: false  # Does the org already have an AI usage policy?
+  governance_cycle_weeks: 0  # Typical weeks for new AI/model governance review.
+                             # 8-12 for FCA/PRA/HIPAA/SOX environments.
+                             # 2-4 for lightweight internal governance.
+                             # 0 for minimal/exploratory. Used to set realistic
+                             # rollout plan timings — do NOT default to 3-month
+                             # pilots in regulated industries.
+  approval_authorities: ""   # e.g., "DPO, CISO, Head of Compliance"
+
+# === OPERATING MODEL ===
+operating_model:
+  type: ""                   # "vendor", "principal", "platform", "marketplace"
+  client_boundary: false     # Do outputs cross a client boundary?
+  multi_tenant: false        # Multiple clients from shared infrastructure?
+
+# === TEAM CAPABILITY ===
+team_capability:
+  can_build_stages_4_6: false
+  engineering_support: ""    # "Dedicated team", "Shared platform team", "External"
+  existing_automation: ""    # "None", "Scripts/cron", "Existing ML pipeline"

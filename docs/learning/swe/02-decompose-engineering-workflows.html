@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson 2: Decompose: Engineering Workflows — SWE Learning Pathway</title>
+<style>
+  /* ── Reset & Base ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: #1c2129;
+    --bg-card-alt: #171d25;
+    --text-primary: #e6edf3;
+    --text-secondary: #9eaab8;
+    --text-muted: #6e7a88;
+    --accent: #4ecdc4;
+    --accent-glow: rgba(78, 205, 196, 0.15);
+    --accent-warm: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --accent-purple: #a78bfa;
+    --border: rgba(78, 205, 196, 0.12);
+    --border-subtle: rgba(255,255,255,0.06);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 18px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Scroll Progress Bar ─────────────────────────────── */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0;
+    width: 0%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Top Navigation ──────────────────────────────────── */
+  .top-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 24px;
+  }
+  .top-nav-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-primary); }
+  .brand-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+  }
+  .brand-text { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand-text span { color: var(--text-muted); font-weight: 400; }
+
+  .lesson-progress { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+  .progress-dots { display: flex; gap: 6px; }
+  .progress-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border-subtle); border: 1.5px solid var(--text-muted);
+  }
+  .progress-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+  .progress-dot.completed { background: var(--accent-green); border-color: var(--accent-green); }
+
+  /* ── Section Navigation ─────────────────────────────── */
+  .section-nav { background: var(--bg-secondary); border-bottom: 1px solid var(--border-subtle); padding: 12px 24px; }
+  .section-nav-inner {
+    max-width: 960px; margin: 0 auto; display: flex; gap: 24px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .section-nav-inner::-webkit-scrollbar { display: none; }
+  .section-nav a {
+    font-size: 13px; color: var(--text-muted); text-decoration: none; white-space: nowrap;
+    padding: 4px 0; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s;
+  }
+  .section-nav a:hover, .section-nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── Layout ──────────────────────────────────────────── */
+  .page-wrapper { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Hero ─────────────────────────────────────────────── */
+  .hero { padding: 80px 0 60px; text-align: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-glow); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 16px; font-size: 13px;
+    color: var(--accent); font-weight: 500; margin-bottom: 24px; letter-spacing: 0.02em;
+  }
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.2;
+    letter-spacing: -0.02em; margin-bottom: 20px; color: #fff;
+  }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-subtitle { font-size: 20px; color: var(--text-secondary); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+  .hero-meta { display: flex; justify-content: center; gap: 32px; font-size: 14px; color: var(--text-muted); }
+  .hero-meta-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ── Section styling ─────────────────────────────────── */
+  .lesson-section { padding: 60px 0; border-top: 1px solid var(--border-subtle); }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .section-time { font-size: 12px; color: var(--text-muted); margin-left: 12px; font-weight: 400; letter-spacing: 0.02em; text-transform: none; }
+  h2 { font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 24px; letter-spacing: -0.01em; color: #fff; }
+  h3 { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 32px 0 16px; color: var(--text-primary); }
+  p { margin-bottom: 20px; color: var(--text-secondary); }
+  strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── Callout boxes ───────────────────────────────────── */
+  .callout {
+    background: var(--bg-card); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 20px 24px; margin: 28px 0;
+  }
+  .callout p { margin-bottom: 0; color: var(--text-primary); font-size: 17px; }
+  .callout.warm { border-left-color: var(--accent-warm); }
+  .callout.green { border-left-color: var(--accent-green); }
+
+  /* ── Concept cards ───────────────────────────────────── */
+  .concept-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card-alt));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 28px 28px 24px; margin: 32px 0; box-shadow: var(--shadow);
+  }
+  .concept-card-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
+  }
+  .concept-card p { color: var(--text-primary); font-size: 17px; margin-bottom: 0; }
+
+  /* ── Four Angles Grid ───────────────────────────────── */
+  .angles-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 36px 0;
+  }
+  .angle-card {
+    background: var(--bg-card); border: 1px solid var(--border-subtle);
+    border-radius: var(--radius); padding: 24px; position: relative;
+    border-top: 3px solid var(--accent); transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .angle-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .angle-card.warm { border-top-color: var(--accent-warm); }
+  .angle-card.green { border-top-color: var(--accent-green); }
+  .angle-card.purple { border-top-color: var(--accent-purple); }
+  .angle-icon { font-size: 28px; margin-bottom: 12px; }
+  .angle-name {
+    font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;
+  }
+  .angle-question {
+    font-size: 14px; color: var(--accent); font-style: italic; margin-bottom: 12px;
+  }
+  .angle-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0; }
+
+  /* ── Workflow Table ──────────────────────────────────── */
+  .workflow-table-wrap {
+    margin: 36px 0; overflow-x: auto; border-radius: var(--radius);
+    border: 1px solid var(--border-subtle); box-shadow: var(--shadow);
+  }
+  .workflow-table {
+    width: 100%; border-collapse: collapse; font-size: 15px;
+    background: var(--bg-card);
+  }
+  .workflow-table thead { background: var(--bg-secondary); }
+  .workflow-table th {
+    padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent);
+    border-bottom: 2px solid var(--border);
+  }
+  .workflow-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-secondary); vertical-align: top;
+  }
+  .workflow-table tr:last-child td { border-bottom: none; }
+  .workflow-table tr:hover td { background: var(--bg-card-alt); }
+  .workflow-table .wf-name { color: var(--text-primary); font-weight: 600; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+  }
+  .badge.high { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+  .badge.medium { background: rgba(88, 166, 255, 0.15); color: var(--accent-warm); }
+  .badge.low { background: rgba(248, 81, 73, 0.12); color: var(--accent-red); }
+
+  /* ── Expandable sections ─────────────────────────────── */
+  details {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); margin: 20px 0; overflow: hidden;
+  }
+  details summary {
+    padding: 16px 20px; cursor: pointer; font-weight: 600; font-size: 17px;
+    color: var(--text-primary); list-style: none; display: flex; align-items: center; gap: 12px;
+    transition: background 0.2s;
+  }
+  details summary:hover { background: var(--bg-card-alt); }
+  details summary::before { content: '\25B6'; font-size: 12px; color: var(--accent); transition: transform 0.2s; flex-shrink: 0; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary::-webkit-details-marker { display: none; }
+  details .details-content { padding: 0 20px 20px; color: var(--text-secondary); }
+  details .details-content p { font-size: 16px; }
+
+  /* ── Reflection Questions ────────────────────────────── */
+  .reflection { margin: 40px 0; }
+  .reflection-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0; overflow: hidden; margin-bottom: 16px;
+  }
+  .reflection-card-inner { display: flex; align-items: stretch; }
+  .reflection-number {
+    display: flex; align-items: center; justify-content: center; min-width: 56px;
+    background: var(--accent-glow); border-right: 1px solid var(--border);
+    font-size: 20px; font-weight: 700; color: var(--accent);
+  }
+  .reflection-content { padding: 20px 24px; flex: 1; }
+  .reflection-question { font-size: 17px; color: var(--text-primary); line-height: 1.6; margin-bottom: 0; }
+  .reflection-prompt { font-size: 13px; color: var(--text-muted); margin-top: 8px; font-style: italic; }
+
+  /* ── Comparison ──────────────────────────────────────── */
+  .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 36px 0; }
+  .comparison-card { border-radius: var(--radius); padding: 28px 24px; position: relative; overflow: hidden; }
+  .comparison-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .comparison-card.before { background: rgba(248, 81, 73, 0.06); border: 1px solid rgba(248, 81, 73, 0.15); }
+  .comparison-card.before::before { background: var(--accent-red); }
+  .comparison-card.after { background: rgba(63, 185, 80, 0.06); border: 1px solid rgba(63, 185, 80, 0.15); }
+  .comparison-card.after::before { background: var(--accent-green); }
+  .comparison-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
+  .before .comparison-label { color: var(--accent-red); }
+  .after .comparison-label { color: var(--accent-green); }
+  .comparison-item { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .comparison-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ── Key Takeaway ───────────────────────────────────── */
+  .key-takeaway {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.08), rgba(88, 166, 255, 0.06));
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px; margin: 40px 0; box-shadow: var(--shadow);
+  }
+  .key-takeaway-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .key-takeaway p { color: var(--text-primary); font-size: 17px; margin-bottom: 12px; }
+  .key-takeaway p:last-child { margin-bottom: 0; }
+
+  /* ── Learning Objectives ────────────────────────────── */
+  .objectives {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px; margin: 32px 0;
+  }
+  .objectives-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent-green); margin-bottom: 16px;
+  }
+  .objectives-list { list-style: none; }
+  .objectives-list li {
+    padding: 8px 0; font-size: 16px; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 12px; line-height: 1.5;
+  }
+  .objectives-list li::before {
+    content: '\2713'; flex-shrink: 0; color: var(--accent-green);
+    font-weight: 700; margin-top: 1px;
+  }
+
+  /* ── Prev/Next Navigation ───────────────────────────── */
+  .lesson-nav { padding: 60px 0 80px; border-top: 1px solid var(--border-subtle); }
+  .lesson-nav-inner {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+  }
+  .lesson-nav a {
+    display: inline-flex; align-items: center; gap: 10px;
+    text-decoration: none; font-size: 16px; font-weight: 600;
+    padding: 14px 24px; border-radius: 10px; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .lesson-nav a:hover { transform: translateY(-2px); }
+  .lesson-nav .prev {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  .lesson-nav .prev:hover { box-shadow: var(--shadow); }
+  .lesson-nav .next {
+    background: linear-gradient(135deg, var(--accent), var(--accent-warm));
+    color: #fff; box-shadow: 0 4px 20px rgba(78, 205, 196, 0.25);
+  }
+  .lesson-nav .next:hover { box-shadow: 0 8px 30px rgba(78, 205, 196, 0.35); }
+  .lesson-nav .arrow { font-size: 18px; transition: transform 0.2s; }
+  .lesson-nav .next:hover .arrow { transform: translateX(4px); }
+  .lesson-nav .prev:hover .arrow { transform: translateX(-4px); }
+
+  /* ── Responsive ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 16px; }
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 17px; }
+    .hero-meta { flex-direction: column; gap: 8px; align-items: center; }
+    .lesson-section { padding: 40px 0; }
+    h2 { font-size: 26px; }
+    h3 { font-size: 19px; }
+    .angles-grid { grid-template-columns: 1fr; }
+    .comparison { grid-template-columns: 1fr; }
+    .reflection-card-inner { flex-direction: column; }
+    .reflection-number { min-width: auto; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); }
+    .section-nav-inner { gap: 16px; }
+    .lesson-nav-inner { flex-direction: column; }
+    .lesson-nav a { width: 100%; justify-content: center; }
+  }
+  @media (max-width: 480px) {
+    .top-nav-inner { height: 52px; }
+    .brand-text { font-size: 13px; }
+    .lesson-progress { display: none; }
+    .page-wrapper { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Top Navigation -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="#" class="brand">
+      <div class="brand-icon">SE</div>
+      <div class="brand-text">SWE Learning Pathway <span>/ Lesson 2</span></div>
+    </a>
+    <div class="lesson-progress">
+      <span>Lesson 2 of 8</span>
+      <div class="progress-dots">
+        <div class="progress-dot completed"></div>
+        <div class="progress-dot active"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+        <div class="progress-dot"></div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Section Navigation -->
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a href="#why-decompose" class="active">Why decompose</a>
+    <a href="#four-angles">Four angles</a>
+    <a href="#twelve-workflows">12 workflows</a>
+    <a href="#metadata-vs-meaning">Metadata vs meaning</a>
+    <a href="#self-check">Self-check</a>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="page-wrapper">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">Lesson 2 of 8</div>
+    <h1>Decompose: <em>Engineering Workflows</em></h1>
+    <p class="hero-subtitle">
+      Before you can automate anything, you need a complete inventory of your repeatable work. The four-angle method ensures you find workflows you do on autopilot&mdash;the ones hiding in plain sight.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span>&#9202;</span>
+        <span>~25 minutes</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#128736;</span>
+        <span>Stage 1 of the framework</span>
+      </div>
+      <div class="hero-meta-item">
+        <span>&#9745;</span>
+        <span>Ends with a self-check</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Learning Objectives -->
+  <div class="objectives reveal">
+    <div class="objectives-label">Learning Objectives</div>
+    <ul class="objectives-list">
+      <li>Explain why a structured decomposition beats an ad-hoc brainstorm for finding automation candidates</li>
+      <li>Apply the four-angle enumeration method (time, trigger, output, system) to an engineering role</li>
+      <li>Identify at least 10 repeatable workflows from your own engineering responsibilities</li>
+      <li>Distinguish between workflows that operate on metadata versus workflows that require interpreting meaning</li>
+      <li>Recognise workflow dependencies and shared data sources across your inventory</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: Why decompose? -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="why-decompose">
+    <div class="section-label">Section 1 <span class="section-time">5 min read</span></div>
+    <h2>Why you cannot skip the inventory</h2>
+
+    <p>
+      Ask an engineer what they would automate and you will get the same three answers: CI/CD, testing, deployments. These are real, but they are the obvious ones. The workflows that eat your time&mdash;compiling release notes, triaging dependency updates, writing handoff docs for on-call rotation, reconstructing incident timelines&mdash;rarely make the list because they do not feel like "work." They feel like overhead.
+    </p>
+
+    <p>
+      That is exactly why you need a structured decomposition. An ad-hoc brainstorm surfaces what is top-of-mind. A systematic inventory surfaces what is <strong>actually repeatable</strong>&mdash;including the workflows you do on autopilot, the ones you have never thought of as automation candidates.
+    </p>
+
+    <div class="callout reveal">
+      <p>Decomposition is not about finding the biggest workflow. It is about finding <strong>every</strong> repeatable workflow, so you can make an informed choice about which one to automate first. You cannot pick the best candidate from a list you never wrote down.</p>
+    </div>
+
+    <details class="reveal">
+      <summary>How is this different from process mapping?</summary>
+      <div class="details-content">
+        <p>
+          Process mapping documents how a single workflow works, step by step. Decomposition is the step <em>before</em> that: figuring out which workflows exist in the first place. You are creating an inventory&mdash;a table of every repeatable thing you do&mdash;not a detailed map of any one workflow. The detailed mapping comes later, in Stage 3 (Scope). Decomposition answers "what do I do?" Scope answers "how exactly do I do it?"
+        </p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>What counts as a "workflow"?</summary>
+      <div class="details-content">
+        <p>
+          A workflow is a sequence of steps you perform more than once, triggered by a recognisable event, that produces a specific output. "Write code" is not a workflow&mdash;it is too broad and every instance is different. "Compile release notes from merged PRs when a release tag is created" is a workflow&mdash;it has a trigger, a repeatable sequence, and a defined deliverable. The test: if you could write instructions for someone else to follow, and they would produce roughly the same output, it is a workflow.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: The Four Angles -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="four-angles">
+    <div class="section-label">Section 2 <span class="section-time">7 min read</span></div>
+    <h2>Four angles of enumeration</h2>
+
+    <p>
+      The reason people miss workflows is that they only think from one direction&mdash;usually "what tasks do I have?" The four-angle method forces you to look at your work from four different perspectives. Each angle surfaces workflows the others miss.
+    </p>
+
+    <div class="angles-grid reveal">
+      <div class="angle-card">
+        <div class="angle-icon">&#128337;</div>
+        <div class="angle-name">Time-Based</div>
+        <div class="angle-question">"What do I do on a cadence?"</div>
+        <p class="angle-desc">Sprint cycles, on-call rotations, weekly standups, monthly reviews. Anything that recurs on a schedule, regardless of what is happening in the codebase. These are the workflows tied to your calendar, not your ticket board.</p>
+      </div>
+      <div class="angle-card warm">
+        <div class="angle-icon">&#9889;</div>
+        <div class="angle-name">Trigger-Based</div>
+        <div class="angle-question">"What events make me context-switch?"</div>
+        <p class="angle-desc">An alert fires. A PR is opened. A deploy completes. A Dependabot PR appears. A release tag is pushed. These are reactive workflows&mdash;you do not plan them, they happen to you. They often interrupt deeper work.</p>
+      </div>
+      <div class="angle-card green">
+        <div class="angle-icon">&#128196;</div>
+        <div class="angle-name">Output-Based</div>
+        <div class="angle-question">"What artifacts do I produce repeatedly?"</div>
+        <p class="angle-desc">Release notes. Post-mortems. ADRs. Handoff documents. API documentation updates. Runbook entries. Work backwards from the deliverable&mdash;if you produce the same kind of document regularly, there is a workflow behind it.</p>
+      </div>
+      <div class="angle-card purple">
+        <div class="angle-icon">&#128421;</div>
+        <div class="angle-name">System-Based</div>
+        <div class="angle-question">"What do I do in each tool I use?"</div>
+        <p class="angle-desc">GitHub, Datadog, PagerDuty, Jira, Slack, your CI/CD dashboard. Walk through each tool you open regularly. What repeatable actions do you take in each? This angle catches workflows that span systems&mdash;pulling data from Datadog into a Slack summary, for instance.</p>
+      </div>
+    </div>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">Why four angles work</div>
+      <p>Each angle has blind spots. Time-based misses ad-hoc workflows like incident response. Trigger-based misses scheduled work like sprint retrospective prep. Output-based misses workflows that do not produce a document (like PR triage). System-based misses workflows that happen in a single tool. <strong>Together, the four angles create overlapping coverage.</strong> A workflow found by two angles is not a duplicate&mdash;it is confirmation.</p>
+    </div>
+
+    <h3>Running the four angles on an engineering role</h3>
+
+    <p>
+      Here is what it looks like in practice. You sit down with a blank table and work through each angle. Do not filter while you enumerate&mdash;write down everything, even workflows that seem too small or too obvious. Filtering comes later, in Stage 2 (Select).
+    </p>
+
+    <div class="comparison reveal">
+      <div class="comparison-card before">
+        <div class="comparison-label">Ad-hoc brainstorm</div>
+        <div class="comparison-item">
+          <div class="comparison-desc">"I should automate CI/CD"</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc">"Testing could be automated"</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc">"Maybe deployments?"</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc" style="color: var(--text-muted); font-style: italic;">...runs out of ideas after 3</div>
+        </div>
+      </div>
+
+      <div class="comparison-card after">
+        <div class="comparison-label">Four-angle enumeration</div>
+        <div class="comparison-item">
+          <div class="comparison-desc">Time: on-call handoff, sprint metrics, quarterly tech debt review</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc">Trigger: PR triage, dependency updates, alert response, release notes</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc">Output: post-mortems, ADRs, runbooks, API docs, handoff docs</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-desc">System: GitHub label management, Datadog dashboard summaries, PagerDuty escalation</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: Twelve Example Workflows -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="twelve-workflows">
+    <div class="section-label">Section 3 <span class="section-time">8 min read</span></div>
+    <h2>Twelve engineering workflows: a reference inventory</h2>
+
+    <p>
+      Below is a reference inventory produced by applying the four-angle method to a software engineering role. This is not your inventory&mdash;your workflows depend on your team, your tools, and your responsibilities. But it shows the level of detail you are aiming for and the kind of workflows the method surfaces.
+    </p>
+
+    <p>
+      Notice the <strong>Automation Potential</strong> column. This is a rough initial estimate, not a final verdict&mdash;Stage 2 (Select) applies rigorous scoring. But even a rough label helps you see the pattern.
+    </p>
+
+    <div class="workflow-table-wrap reveal">
+      <table class="workflow-table">
+        <thead>
+          <tr>
+            <th>Angle</th>
+            <th>Workflow</th>
+            <th>Trigger</th>
+            <th>Frequency</th>
+            <th>Time</th>
+            <th>Systems</th>
+            <th>Output</th>
+            <th>Potential</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>&#128337; Time</td>
+            <td class="wf-name">On-Call Rotation Handoff</td>
+            <td>Weekly rotation changeover</td>
+            <td>Weekly</td>
+            <td>1&ndash;2h</td>
+            <td>PagerDuty, CI/CD, Slack</td>
+            <td>Handoff document</td>
+            <td><span class="badge medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>&#128337; Time</td>
+            <td class="wf-name">Tech Debt Assessment</td>
+            <td>Sprint boundary or quarterly planning</td>
+            <td>Quarterly</td>
+            <td>4&ndash;6h</td>
+            <td>GitHub, SonarQube, architecture docs</td>
+            <td>Prioritised tech debt report</td>
+            <td><span class="badge medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>&#128337; Time</td>
+            <td class="wf-name">Release Readiness Checklist</td>
+            <td>Release candidate tagged</td>
+            <td>Per release</td>
+            <td>2&ndash;3h</td>
+            <td>CI/CD, test suite, staging, deploy config</td>
+            <td>Go/no-go readiness report</td>
+            <td><span class="badge high">High</span></td>
+          </tr>
+          <tr>
+            <td>&#9889; Trigger</td>
+            <td class="wf-name">Release Notes Compilation</td>
+            <td>Release tag created</td>
+            <td>Biweekly&ndash;monthly</td>
+            <td>3&ndash;4h</td>
+            <td>GitHub, issue tracker, CI/CD</td>
+            <td>Published release notes</td>
+            <td><span class="badge high">High</span></td>
+          </tr>
+          <tr>
+            <td>&#9889; Trigger</td>
+            <td class="wf-name">Dependency Update Review</td>
+            <td>Dependabot/Renovate PR opened</td>
+            <td>2&ndash;4x/week</td>
+            <td>0.5&ndash;1h</td>
+            <td>GitHub, npm/PyPI, CVE databases, CI/CD</td>
+            <td>Approved or flagged dependency PRs</td>
+            <td><span class="badge high">High</span></td>
+          </tr>
+          <tr>
+            <td>&#9889; Trigger</td>
+            <td class="wf-name">PR Review Triage</td>
+            <td>PR opened or review requested</td>
+            <td>3&ndash;5x/day</td>
+            <td>0.5&ndash;1h</td>
+            <td>GitHub, CI/CD, Codeowners, Slack</td>
+            <td>Assigned reviewers + priority label</td>
+            <td><span class="badge medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>&#9889; Trigger</td>
+            <td class="wf-name">Hotfix Deployment Coordination</td>
+            <td>Critical bug in production</td>
+            <td>1&ndash;2x/month</td>
+            <td>1&ndash;2h</td>
+            <td>GitHub, CI/CD, PagerDuty, Slack</td>
+            <td>Deployed hotfix + stakeholder comms</td>
+            <td><span class="badge medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>&#128196; Output</td>
+            <td class="wf-name">Post-Mortem Compilation</td>
+            <td>P1/P2 incident resolved</td>
+            <td>1&ndash;3x/month</td>
+            <td>3&ndash;5h</td>
+            <td>PagerDuty, Datadog, Slack, Git history</td>
+            <td>Post-mortem document</td>
+            <td><span class="badge low">Low</span></td>
+          </tr>
+          <tr>
+            <td>&#128196; Output</td>
+            <td class="wf-name">Architecture Decision Records</td>
+            <td>Significant design decision made</td>
+            <td>1&ndash;2x/month</td>
+            <td>2&ndash;3h</td>
+            <td>Confluence, GitHub, meeting notes</td>
+            <td>Published ADR</td>
+            <td><span class="badge low">Low</span></td>
+          </tr>
+          <tr>
+            <td>&#128196; Output</td>
+            <td class="wf-name">Incident Timeline Reconstruction</td>
+            <td>Post-mortem scheduled</td>
+            <td>Tied to post-mortem</td>
+            <td>1&ndash;2h</td>
+            <td>PagerDuty, Datadog, deploy logs, Slack</td>
+            <td>Annotated timeline</td>
+            <td><span class="badge high">High</span></td>
+          </tr>
+          <tr>
+            <td>&#128421; System</td>
+            <td class="wf-name">API Documentation Updates</td>
+            <td>Endpoint added, changed, or deprecated</td>
+            <td>Per feature</td>
+            <td>1&ndash;2h</td>
+            <td>OpenAPI spec, GitHub, API gateway, docs site</td>
+            <td>Updated API reference</td>
+            <td><span class="badge medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td>&#128421; System</td>
+            <td class="wf-name">Runbook Maintenance</td>
+            <td>Service change deployed or post-mortem action item</td>
+            <td>2&ndash;3x/month</td>
+            <td>1&ndash;2h</td>
+            <td>Wiki, GitHub, monitoring dashboards</td>
+            <td>Updated runbook</td>
+            <td><span class="badge low">Low</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="reveal">
+      <summary>Why did Release Notes score High?</summary>
+      <div class="details-content">
+        <p>
+          Release Notes Compilation checks every box for high automation potential. It is <strong>structurally repeatable</strong>&mdash;every release follows the same sequence: pull merged PRs, categorise by type, filter to user-facing changes, draft formatted notes. It is <strong>deterministic</strong>&mdash;two engineers with the same PR list and the same label-based rules produce near-identical output. And the <strong>data is API-accessible</strong>&mdash;Git history, PR metadata, labels, and linked issues are all queryable via GitHub's API. The draft is reviewed before publishing, so errors are caught before they reach users.
+        </p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Why did Incident Timeline Reconstruction score High but Post-Mortem Compilation score Low?</summary>
+      <div class="details-content">
+        <p>
+          These are often lumped together as "post-mortem work," but they have very different automation profiles. <strong>Timeline reconstruction</strong> is almost entirely data retrieval: pull alerts from PagerDuty in chronological order, correlate with deploy events from CI/CD, extract relevant Slack messages, stitch them into an annotated timeline. Two engineers with the same data produce the same timeline. <strong>Post-mortem compilation</strong> requires interpreting <em>why</em> things happened&mdash;identifying contributing factors, assessing detection speed, recommending preventive actions. That interpretive work varies by engineer. This is the <strong>sub-workflow pattern</strong>: split the High-scoring data compilation from the Low-scoring analysis.
+        </p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Why did Dependency Update Review score High despite being security-sensitive?</summary>
+      <div class="details-content">
+        <p>
+          The security sensitivity actually <em>supports</em> automation. The workflow is almost entirely rule-based: check version bump type (major/minor/patch), scan changelog for breaking changes, verify CI passes, check CVE databases for known vulnerabilities. The decision criteria are explicit: "approve patch updates with passing CI," "flag major bumps for manual review," "reject any version with a known CVE above CVSS 7.0." A rules-based check is more consistent than an engineer scanning changelogs at varying levels of attention across the week. At 2&ndash;4 updates per week, the compound time savings are significant.
+        </p>
+      </div>
+    </details>
+
+    <details class="reveal">
+      <summary>Why did ADRs score Low despite being documentation?</summary>
+      <div class="details-content">
+        <p>
+          Not all documentation workflows are equal. Release notes (High) are about reformatting structured data that already exists. ADRs are about articulating <em>why</em> a design decision was made&mdash;capturing the alternatives considered, the trade-offs weighed, and the context that made one option preferable. Two engineers might write the same ADR very differently because they weight different trade-offs. An agent could scaffold the template and pull in context, but the core intellectual work&mdash;"we chose X over Y because Z"&mdash;is irreducibly human.
+        </p>
+      </div>
+    </details>
+
+    <h3>Workflow dependencies matter</h3>
+
+    <p>
+      Once you have your inventory, look for connections between workflows. These dependencies affect which workflow you automate first and how you design the agent.
+    </p>
+
+    <div class="callout warm reveal">
+      <p><strong>Shared data sources:</strong> Release Notes, Release Readiness, and Hotfix Coordination all share GitHub data (PRs, commits, tags, CI status). Incident Timeline Reconstruction, Post-Mortem Compilation, and On-Call Handoff all share PagerDuty and monitoring data. Automating one workflow often makes the next one easier because the data pipeline already exists.</p>
+    </div>
+
+    <div class="callout reveal">
+      <p><strong>Sequential dependencies:</strong> Release Readiness Checklist gates the release that triggers Release Notes. Incident Timeline Reconstruction feeds into Post-Mortem Compilation. Post-mortem action items trigger Runbook Maintenance. These chains tell you the natural order for automation.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: Metadata vs Meaning -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="metadata-vs-meaning">
+    <div class="section-label">Section 4 <span class="section-time">3 min read</span></div>
+    <h2>The key pattern: metadata vs meaning</h2>
+
+    <p>
+      Look at the inventory table again. Every workflow that scored High operates on <strong>metadata</strong>&mdash;PR labels, version numbers, alert timestamps, commit messages. They reorganise and reformat data that already has structure. Every workflow that scored Low requires interpreting <strong>meaning</strong>&mdash;why a decision was made, what a pattern of failures implies, which trade-offs matter most.
+    </p>
+
+    <div class="concept-card reveal">
+      <div class="concept-card-label">The Rule</div>
+      <p>If the workflow is about <strong>moving structured data between systems</strong>, it is probably High. If it is about <strong>making a judgement call that depends on engineering context</strong>, it is probably Medium or Low. The line between High and Medium in engineering workflows almost always comes down to whether you are operating on metadata or on meaning.</p>
+    </div>
+
+    <p>
+      This pattern is practical, not just theoretical. When you score your own workflows in Stage 2, ask yourself: "Could two engineers with the same inputs produce the same output?" If yes, the workflow operates on metadata. If the outputs would differ based on experience or context, the workflow requires meaning.
+    </p>
+
+    <details class="reveal">
+      <summary>What about Medium workflows like PR Review Triage?</summary>
+      <div class="details-content">
+        <p>
+          PR Review Triage sits exactly on the line. The data gathering is metadata: check diff size, identify affected services from file paths, look up codeowners, check CI status. That is High. But deciding <em>who</em> should review and <em>how urgently</em> depends on understanding which parts of the codebase are high-risk, who has context on the module, and whether the PR is blocking a release. That judgement part is why it scores Medium, not High. An agent could handle the data gathering and suggest reviewers, but the priority call requires context that is hard to encode as rules.
+        </p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: Self-Check -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <section class="lesson-section" id="self-check">
+    <div class="section-label">Section 5 <span class="section-time">2 min</span></div>
+    <h2>Self-check</h2>
+
+    <p>
+      Before you move on, take a few minutes to apply the four-angle method to your own role. These questions set you up for Lesson 3, where you will score and rank your candidate workflows.
+    </p>
+
+    <div class="reflection reveal">
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">1</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Pick one angle (time, trigger, output, or system) and list three workflows from your own role that it surfaces. Did any of them surprise you?</p>
+            <p class="reflection-prompt">The system-based angle often catches workflows you forgot about. Walk through each tool you opened this week.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">2</div>
+          <div class="reflection-content">
+            <p class="reflection-question">For each of your three workflows, would two engineers with the same inputs produce the same output? Or would the outputs differ based on experience?</p>
+            <p class="reflection-prompt">This is the metadata-vs-meaning test. Same-output workflows are your strongest automation candidates.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">3</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Look at the systems column for your workflows. Are any workflows sharing the same data sources? Could automating one create a data pipeline that makes the next one easier?</p>
+            <p class="reflection-prompt">Shared data sources between workflows mean compound returns from automation. The second agent is always cheaper than the first.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reflection-card">
+        <div class="reflection-card-inner">
+          <div class="reflection-number">4</div>
+          <div class="reflection-content">
+            <p class="reflection-question">Can you think of a workflow from your role that spans more than one angle? For example, something that is both time-based (weekly) and produces a specific output (a document)?</p>
+            <p class="reflection-prompt">Multi-angle workflows are not duplicates&mdash;they are confirmation that the workflow is real and repeatable enough to appear from multiple perspectives.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Takeaway -->
+    <div class="key-takeaway reveal">
+      <div class="key-takeaway-label">&#127919; Key Takeaway</div>
+      <p>
+        Decomposition is about <strong>completeness, not perfection</strong>. Your goal is a workflow inventory that captures every repeatable thing you do&mdash;not a perfectly scored ranking. The four-angle method (time, trigger, output, system) gives you overlapping coverage so nothing hides in a blind spot.
+      </p>
+      <p>
+        The pattern to carry forward: workflows that operate on <strong>metadata</strong> (PR labels, version numbers, alert timestamps) are your strongest automation candidates. Workflows that require interpreting <strong>meaning</strong> (why something happened, which trade-off matters most) need human judgement&mdash;but they often contain sub-workflows where the data gathering is still automatable.
+      </p>
+      <p>
+        In Lesson 3, you will take your inventory and apply structured scoring to pick the single best candidate for your first agent build.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- Prev / Next Navigation -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="lesson-nav">
+    <div class="lesson-nav-inner">
+      <a href="01-what-is-agentic-workflow.html" class="prev">
+        <span class="arrow">&#10140;</span>
+        Lesson 1: What is an Agentic Workflow?
+      </a>
+      <a href="03-select-scoring-candidates.html" class="next">
+        Lesson 3: Select: Scoring Candidates
+        <span class="arrow">&#10142;</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Scroll progress bar
+  function updateProgress() {
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var scrolled = window.scrollY;
+    var pct = docHeight > 0 ? (scrolled / docHeight) * 100 : 0;
+    document.getElementById('scrollProgress').style.width = pct + '%';
+  }
+
+  // Scroll-triggered reveal
+  function revealOnScroll() {
+    var reveals = document.querySelectorAll('.reveal');
+    var trigger = window.innerHeight * 0.88;
+    reveals.forEach(function(el) {
+      if (el.getBoundingClientRect().top < trigger) el.classList.add('visible');
+    });
+  }
+
+  // Active section nav highlighting
+  function updateSectionNav() {
+    var sections = ['why-decompose', 'four-angles', 'twelve-workflows', 'metadata-vs-meaning', 'self-check'];
+    var links = document.querySelectorAll('.section-nav a');
+    var current = sections[0];
+    for (var i = sections.length - 1; i >= 0; i--) {
+      var el = document.getElementById(sections[i]);
+      if (el && el.getBoundingClientRect().top <= 120) { current = sections[i]; break; }
+    }
+    links.forEach(function(link) {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', function() { updateProgress(); revealOnScroll(); updateSectionNav(); }, { passive: true });
+  updateProgress();
+  revealOnScroll();
+</script>
+
+</body>
+</html>

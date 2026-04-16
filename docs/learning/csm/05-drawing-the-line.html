@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5: Drawing the Line -- What the Agent Does vs What You Do | CSM Learning Path</title>
+    <style>
+        /* ============================================================
+           CSM Learning Path — Design System
+           ============================================================ */
+
+        /* --- Reset & Base --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --color-bg:          #0f1117;
+            --color-surface:     #1a1d27;
+            --color-surface-2:   #222636;
+            --color-surface-3:   #2a2f42;
+            --color-border:      #2e3348;
+            --color-border-light:#3a3f56;
+
+            --color-text:        #e2e4ed;
+            --color-text-muted:  #9498af;
+            --color-text-dim:    #6b6f88;
+
+            --color-accent:      #6c8aff;
+            --color-accent-soft: rgba(108,138,255,0.12);
+            --color-accent-med:  rgba(108,138,255,0.22);
+
+            --color-green:       #34d399;
+            --color-green-soft:  rgba(52,211,153,0.12);
+            --color-green-med:   rgba(52,211,153,0.22);
+
+            --color-amber:       #fbbf24;
+            --color-amber-soft:  rgba(251,191,36,0.10);
+            --color-amber-med:   rgba(251,191,36,0.20);
+
+            --color-red:         #f87171;
+            --color-red-soft:    rgba(248,113,113,0.10);
+            --color-red-med:     rgba(248,113,113,0.20);
+
+            --color-purple:      #a78bfa;
+            --color-purple-soft: rgba(167,139,250,0.12);
+            --color-purple-med:  rgba(167,139,250,0.22);
+
+            --color-cyan:        #22d3ee;
+            --color-cyan-soft:   rgba(34,211,238,0.10);
+
+            /* Tag colours */
+            --color-auto:        #34d399;
+            --color-auto-soft:   rgba(52,211,153,0.12);
+            --color-auto-med:    rgba(52,211,153,0.25);
+
+            --color-hil:         #fbbf24;
+            --color-hil-soft:    rgba(251,191,36,0.10);
+            --color-hil-med:     rgba(251,191,36,0.22);
+
+            --color-manual:      #f87171;
+            --color-manual-soft: rgba(248,113,113,0.10);
+            --color-manual-med:  rgba(248,113,113,0.22);
+
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   14px;
+            --radius-xl:   20px;
+
+            --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md:   0 4px 12px rgba(0,0,0,0.35);
+            --shadow-lg:   0 8px 30px rgba(0,0,0,0.4);
+
+            --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --font-mono:   'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.7;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Top Progress Bar --- */
+        .progress-bar-track {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color-surface-2);
+            z-index: 1000;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 62.5%; /* 5 of 8 */
+            background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
+            border-radius: 0 2px 2px 0;
+            transition: width 0.4s ease;
+        }
+
+        /* --- Header --- */
+        .lesson-header {
+            background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg) 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: 28px 0 36px;
+        }
+        .header-inner {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--color-text-muted);
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: var(--color-accent);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: var(--color-text-dim); }
+
+        .lesson-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+        .badge--stage {
+            background: var(--color-accent-soft);
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent-med);
+        }
+        .badge--time {
+            background: var(--color-surface-2);
+            color: var(--color-text-muted);
+            border: 1px solid var(--color-border);
+        }
+        .badge--lesson {
+            background: var(--color-purple-soft);
+            color: var(--color-purple);
+            border: 1px solid rgba(167,139,250,0.22);
+        }
+
+        .lesson-title {
+            font-size: 34px;
+            font-weight: 750;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .lesson-subtitle {
+            font-size: 17px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            max-width: 640px;
+        }
+
+        /* --- Progress Dots --- */
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 22px;
+        }
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-surface-3);
+            border: 2px solid var(--color-border);
+            transition: all 0.2s;
+        }
+        .progress-dot--complete {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+        .progress-dot--current {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-soft);
+        }
+        .progress-dot-label {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            margin-left: 4px;
+        }
+
+        /* --- Main Content --- */
+        .lesson-body {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 48px 28px 80px;
+        }
+
+        /* --- Section --- */
+        .section {
+            margin-bottom: 56px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .section-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-accent-soft);
+            border: 1px solid var(--color-accent-med);
+            color: var(--color-accent);
+            font-size: 15px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.015em;
+        }
+        .section-time {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            margin-left: auto;
+            white-space: nowrap;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+        p.muted {
+            color: var(--color-text-muted);
+        }
+
+        strong { color: #fff; font-weight: 650; }
+        em { color: var(--color-text); }
+
+        /* --- Three Tags --- */
+        .tag-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .tag-card {
+            background: var(--color-surface);
+            border-radius: var(--radius-xl);
+            padding: 28px 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tag-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tag-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .tag-card--auto::before { background: var(--color-auto); }
+        .tag-card--auto:hover { border-color: var(--color-auto-med); }
+        .tag-card--hil::before { background: var(--color-hil); }
+        .tag-card--hil:hover { border-color: var(--color-hil-med); }
+        .tag-card--manual::before { background: var(--color-manual); }
+        .tag-card--manual:hover { border-color: var(--color-manual-med); }
+
+        .tag-name {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+        }
+
+        .tag-card--auto .tag-name { color: var(--color-auto); }
+        .tag-card--hil .tag-name { color: var(--color-hil); }
+        .tag-card--manual .tag-name { color: var(--color-manual); }
+
+        .tag-headline {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+
+        .tag-desc {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .tag-examples {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tag-examples li {
+            font-size: 13px;
+            color: var(--color-text);
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .tag-examples li::before {
+            content: '';
+            flex-shrink: 0;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            margin-top: 6px;
+        }
+
+        .tag-card--auto .tag-examples li::before { background: var(--color-auto); }
+        .tag-card--hil .tag-examples li::before { background: var(--color-hil); }
+        .tag-card--manual .tag-examples li::before { background: var(--color-manual); }
+
+        @media (max-width: 720px) {
+            .tag-cards { grid-template-columns: 1fr; }
+        }
+
+        /* --- Automation Spectrum --- */
+        .spectrum {
+            margin: 32px 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .spectrum-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-dim);
+            margin-bottom: 20px;
+        }
+
+        .spectrum-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(90deg,
+                var(--color-auto) 0%,
+                var(--color-auto) 33%,
+                var(--color-hil) 33%,
+                var(--color-hil) 66%,
+                var(--color-manual) 66%,
+                var(--color-manual) 100%
+            );
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .spectrum-markers {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .spectrum-marker {
+            text-align: center;
+            flex: 1;
+        }
+
+        .spectrum-marker-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+
+        .spectrum-marker:nth-child(1) .spectrum-marker-label { color: var(--color-auto); }
+        .spectrum-marker:nth-child(2) .spectrum-marker-label { color: var(--color-hil); }
+        .spectrum-marker:nth-child(3) .spectrum-marker-label { color: var(--color-manual); }
+
+        .spectrum-marker-example {
+            font-size: 12px;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        .spectrum-ends {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .spectrum-end {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            font-weight: 600;
+        }
+
+        /* --- Decision Tree (visual flowchart) --- */
+        .decision-tree {
+            margin: 32px 0;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-xl);
+            padding: 32px 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .decision-tree-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-text-dim);
+            margin-bottom: 28px;
+        }
+
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .tree-node {
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border-light);
+            border-radius: var(--radius-lg);
+            padding: 18px 24px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .tree-node-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.45;
+            margin-bottom: 0;
+        }
+
+        .tree-connector {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+        }
+
+        .tree-branch {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 0 8px;
+        }
+
+        .tree-branch-line {
+            width: 2px;
+            height: 20px;
+            background: var(--color-border-light);
+        }
+
+        .tree-branch-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 4px 12px;
+            border-radius: 100px;
+            margin: 4px 0;
+        }
+
+        .tree-branch-label--yes {
+            background: var(--color-auto-soft);
+            color: var(--color-auto);
+        }
+
+        .tree-branch-label--no {
+            background: var(--color-surface-3);
+            color: var(--color-text-muted);
+        }
+
+        .tree-result {
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .tree-result--auto {
+            background: var(--color-auto-soft);
+            border: 1px solid var(--color-auto-med);
+            color: var(--color-auto);
+        }
+
+        .tree-result--hil {
+            background: var(--color-hil-soft);
+            border: 1px solid var(--color-hil-med);
+            color: var(--color-hil);
+        }
+
+        .tree-result--manual {
+            background: var(--color-manual-soft);
+            border: 1px solid var(--color-manual-med);
+            color: var(--color-manual);
+        }
+
+        .tree-mid-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--color-border-light);
+            margin: 0 auto;
+        }
+
+        /* --- Walk-through cards --- */
+        .walkthrough {
+            margin: 28px 0;
+        }
+
+        .walkthrough-step {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 20px 22px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .walkthrough-step:hover {
+            border-color: var(--color-border-light);
+        }
+
+        .walkthrough-step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .walkthrough-step-desc {
+            font-size: 13px;
+            color: var(--color-text-muted);
+            line-height: 1.55;
+            margin-bottom: 0;
+        }
+
+        .walkthrough-step-reasoning {
+            font-size: 12px;
+            color: var(--color-text-dim);
+            font-style: italic;
+            margin-top: 6px;
+            margin-bottom: 0;
+        }
+
+        .walkthrough-tag {
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 5px 14px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .walkthrough-tag--auto {
+            background: var(--color-auto-soft);
+            color: var(--color-auto);
+            border: 1px solid var(--color-auto-med);
+        }
+
+        .walkthrough-tag--hil {
+            background: var(--color-hil-soft);
+            color: var(--color-hil);
+            border: 1px solid var(--color-hil-med);
+        }
+
+        .walkthrough-tag--manual {
+            background: var(--color-manual-soft);
+            color: var(--color-manual);
+            border: 1px solid var(--color-manual-med);
+        }
+
+        /* --- Key Principle Callout --- */
+        .principle {
+            background: var(--color-accent-soft);
+            border: 1px solid var(--color-accent-med);
+            border-left: 4px solid var(--color-accent);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+        .principle-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-accent);
+            margin-bottom: 6px;
+        }
+        .principle-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        /* --- Insight Callout --- */
+        .insight {
+            background: var(--color-amber-soft);
+            border: 1px solid var(--color-amber-med);
+            border-left: 4px solid var(--color-amber);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            margin: 20px 0;
+        }
+        .insight-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-amber);
+            margin-bottom: 6px;
+        }
+        .insight p {
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+        /* --- Golden Rules --- */
+        .golden-rules {
+            margin: 28px 0;
+        }
+
+        .golden-rule {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-left: 4px solid var(--color-amber);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding: 20px 24px;
+            margin-bottom: 14px;
+        }
+
+        .golden-rule-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .golden-rule-detail {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .golden-rule-metric {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 3px 12px;
+            border-radius: var(--radius-sm);
+            margin-top: 8px;
+        }
+
+        .golden-rule-metric--remove {
+            background: var(--color-auto-soft);
+            color: var(--color-auto);
+        }
+
+        .golden-rule-metric--fix {
+            background: var(--color-manual-soft);
+            color: var(--color-manual);
+        }
+
+        /* --- Mistake cards --- */
+        .mistakes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .mistake-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mistake-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-red);
+        }
+
+        .mistake-number {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-red);
+            margin-bottom: 8px;
+        }
+
+        .mistake-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+
+        .mistake-desc {
+            font-size: 14px;
+            color: var(--color-text-muted);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .mistake-fix {
+            font-size: 13px;
+            color: var(--color-green);
+            font-weight: 600;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .mistake-fix::before {
+            content: '';
+            flex-shrink: 0;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-green);
+            margin-top: 6px;
+        }
+
+        @media (max-width: 720px) {
+            .mistakes { grid-template-columns: 1fr; }
+        }
+
+        /* --- Interactive Exercise --- */
+        .exercise {
+            background: linear-gradient(135deg, rgba(108,138,255,0.06) 0%, rgba(167,139,250,0.06) 100%);
+            border: 1px solid var(--color-accent-med);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin: 24px 0;
+            position: relative;
+        }
+        .exercise::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
+        }
+        .exercise-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--color-accent);
+            margin-bottom: 12px;
+        }
+        .exercise-label svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--color-accent);
+            fill: none;
+            stroke-width: 2;
+        }
+        .exercise h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .exercise > p {
+            color: var(--color-text-muted);
+            font-size: 15px;
+        }
+
+        /* --- Tag-assignment grid --- */
+        .tag-grid {
+            margin: 20px 0;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tag-grid-header {
+            display: grid;
+            grid-template-columns: 50px 1fr 160px;
+            background: var(--color-surface-2);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .tag-grid-header span {
+            padding: 12px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-text-muted);
+        }
+
+        .tag-grid-header span:not(:last-child) {
+            border-right: 1px solid var(--color-border);
+        }
+
+        .tag-grid-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 160px;
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .tag-grid-row:last-child {
+            border-bottom: none;
+        }
+
+        .tag-grid-row .cell {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tag-grid-row .cell:not(:last-child) {
+            border-right: 1px solid var(--color-border);
+        }
+
+        .tag-grid-row .cell input {
+            width: 100%;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            color: var(--color-text);
+            font-size: 13px;
+            font-family: var(--font-sans);
+        }
+
+        .tag-grid-row .cell input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-soft);
+        }
+
+        .tag-grid-row .cell select {
+            width: 100%;
+            background: var(--color-surface-2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            color: var(--color-text);
+            font-size: 13px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .tag-grid-row .cell select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-accent-soft);
+        }
+
+        .step-num {
+            font-weight: 700;
+            color: var(--color-accent);
+            font-size: 14px;
+            justify-content: center;
+            background: var(--color-surface-2);
+        }
+
+        /* --- Sanity Check --- */
+        .sanity-checks {
+            margin: 20px 0;
+        }
+
+        .sanity-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+        }
+
+        .sanity-check-icon {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .sanity-check-icon--warn {
+            background: var(--color-amber-soft);
+            border: 1px solid var(--color-amber-med);
+            color: var(--color-amber);
+        }
+
+        .sanity-check-text {
+            font-size: 14px;
+            color: var(--color-text);
+            line-height: 1.55;
+            margin-bottom: 0;
+        }
+
+        .sanity-check-text strong {
+            color: #fff;
+        }
+
+        /* --- Reflection --- */
+        .reflection {
+            background: linear-gradient(135deg, rgba(52,211,153,0.06) 0%, rgba(34,211,238,0.06) 100%);
+            border: 1px solid var(--color-green-med);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin: 32px 0;
+        }
+        .reflection h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .reflection h3 svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--color-green);
+            fill: none;
+            stroke-width: 2;
+        }
+        .reflection p {
+            font-size: 15px;
+            color: var(--color-text-muted);
+            margin-bottom: 12px;
+        }
+        .reflection p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- Bullet list --- */
+        .bullet-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+        .bullet-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: var(--color-text);
+        }
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--color-accent);
+        }
+
+        /* --- Step List --- */
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+            margin: 20px 0;
+        }
+        .steps li {
+            counter-increment: step-counter;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            font-size: 15px;
+        }
+        .steps li::before {
+            content: counter(step-counter);
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--color-surface-3);
+            border: 1px solid var(--color-border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--color-text-muted);
+            margin-top: 1px;
+        }
+
+        /* --- Footer Nav --- */
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--color-border);
+        }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+            min-width: 180px;
+        }
+        .nav-btn:hover {
+            border-color: var(--color-accent);
+            background: var(--color-surface-2);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+        .nav-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--color-text-muted);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+        .nav-btn--next {
+            text-align: right;
+            margin-left: auto;
+            justify-content: flex-end;
+        }
+        .nav-btn--next svg { order: 2; }
+        .nav-direction {
+            font-size: 11px;
+            color: var(--color-text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+        }
+        .nav-title {
+            display: block;
+            color: #fff;
+        }
+
+        /* --- Utility --- */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--color-border);
+            margin: 32px 0;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 640px) {
+            .lesson-title { font-size: 26px; }
+            .section-title { font-size: 18px; }
+            .section-header { flex-wrap: wrap; }
+            .section-time { margin-left: 50px; }
+            .lesson-body { padding: 32px 18px 60px; }
+            .exercise { padding: 22px; }
+            .reflection { padding: 22px; }
+            .nav-btn { min-width: unset; padding: 12px 16px; }
+            .tag-grid-header,
+            .tag-grid-row {
+                grid-template-columns: 40px 1fr 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar-track">
+    <div class="progress-bar-fill"></div>
+</div>
+
+<!-- Header -->
+<header class="lesson-header">
+    <div class="header-inner">
+        <nav class="breadcrumb">
+            <a href="../index.html">CSM Learning Path</a>
+            <span class="sep">/</span>
+            <span>Lesson 5</span>
+        </nav>
+
+        <div class="lesson-meta">
+            <span class="badge badge--lesson">Lesson 5 of 8</span>
+            <span class="badge badge--stage">Stage 3: Scope (Part 2)</span>
+            <span class="badge badge--time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ~20 min
+            </span>
+        </div>
+
+        <h1 class="lesson-title">Drawing the Line -- What the Agent Does vs What You Do</h1>
+        <p class="lesson-subtitle">Every step in your workflow gets one of three tags. Get this right and you have a clear automation boundary. Get it wrong and you either waste time reviewing things that do not need review, or let the agent loose where it should not be.</p>
+
+        <div class="progress-dots">
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--current"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <span class="progress-dot-label">5 / 8</span>
+        </div>
+    </div>
+</header>
+
+<!-- Body -->
+<main class="lesson-body">
+
+    <!-- ============================================================
+         SECTION 1: The Three Tags
+         ============================================================ -->
+    <section class="section" id="section-1">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">The Three Tags</h2>
+            <span class="section-time">5 min</span>
+        </div>
+
+        <p>Every step in your workflow gets exactly one of three tags. No grey areas, no "it depends." One tag per step. Here they are:</p>
+
+        <div class="tag-cards">
+            <div class="tag-card tag-card--auto">
+                <div class="tag-name">Automate</div>
+                <div class="tag-headline">The agent does it. You do not review.</div>
+                <div class="tag-desc">Data retrieval, calculations, template-based generation. Deterministic work where the output is either correct or it is not.</div>
+                <ul class="tag-examples">
+                    <li>Pull account data from Salesforce</li>
+                    <li>Calculate ticket volume trends</li>
+                    <li>Generate usage summary from analytics API</li>
+                    <li>Format data into report template</li>
+                </ul>
+            </div>
+
+            <div class="tag-card tag-card--hil">
+                <div class="tag-name">Human-in-the-Loop</div>
+                <div class="tag-headline">The agent does 80%. You review and approve.</div>
+                <div class="tag-desc">The agent drafts, flags, or proposes. You check it before the workflow continues. This is your quality gate.</div>
+                <ul class="tag-examples">
+                    <li>Agent drafts the health narrative -- you edit tone</li>
+                    <li>Agent flags at-risk accounts -- you confirm priority</li>
+                    <li>Agent proposes action items -- you approve or revise</li>
+                    <li>Agent compiles renewal brief -- you add context</li>
+                </ul>
+            </div>
+
+            <div class="tag-card tag-card--manual">
+                <div class="tag-name">Manual</div>
+                <div class="tag-headline">You do it entirely. The agent does not touch it.</div>
+                <div class="tag-desc">Relationship-dependent work, political sensitivity, or anything that requires real-time human interaction.</div>
+                <ul class="tag-examples">
+                    <li>Send the report to the customer</li>
+                    <li>Lead the QBR conversation</li>
+                    <li>Decide whether to escalate internally</li>
+                    <li>Navigate a difficult renewal negotiation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Spectrum visual -->
+        <div class="spectrum">
+            <div class="spectrum-label">The Automation Spectrum</div>
+            <div class="spectrum-bar"></div>
+            <div class="spectrum-markers">
+                <div class="spectrum-marker">
+                    <div class="spectrum-marker-label">Automate</div>
+                    <div class="spectrum-marker-example">Pull data, calculate metrics, populate templates</div>
+                </div>
+                <div class="spectrum-marker">
+                    <div class="spectrum-marker-label">Human-in-the-Loop</div>
+                    <div class="spectrum-marker-example">Draft narratives, flag risks, propose actions</div>
+                </div>
+                <div class="spectrum-marker">
+                    <div class="spectrum-marker-label">Manual</div>
+                    <div class="spectrum-marker-example">Send emails, lead meetings, make escalation calls</div>
+                </div>
+            </div>
+            <div class="spectrum-ends">
+                <span class="spectrum-end">Fully Automated</span>
+                <span class="spectrum-end">Fully Human</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: The Decision Tree
+         ============================================================ -->
+    <section class="section" id="section-2">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">The Decision Tree</h2>
+            <span class="section-time">5 min</span>
+        </div>
+
+        <p>Not sure which tag a step gets? Run it through this decision tree. Start at the top and follow the branches.</p>
+
+        <!-- Visual Decision Tree -->
+        <div class="decision-tree">
+            <div class="decision-tree-label">Tag Assignment Decision Tree</div>
+            <div class="tree">
+                <!-- Level 1 -->
+                <div class="tree-node">
+                    <p class="tree-node-question">Is the step primarily data retrieval or transformation?</p>
+                </div>
+
+                <div class="tree-connector">
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--yes">Yes</div>
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-result tree-result--auto">Automate</div>
+                    </div>
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--no">No</div>
+                        <div class="tree-branch-line"></div>
+                    </div>
+                </div>
+
+                <!-- Level 2 -->
+                <div class="tree-node" style="max-width: 420px;">
+                    <p class="tree-node-question">Does it require judgement, but the criteria are articulable?</p>
+                </div>
+
+                <div class="tree-connector" style="max-width: 420px;">
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--yes">Yes</div>
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-result tree-result--hil">Human-in-the-Loop</div>
+                    </div>
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--no">No</div>
+                        <div class="tree-branch-line"></div>
+                    </div>
+                </div>
+
+                <!-- Level 3 -->
+                <div class="tree-node" style="max-width: 380px;">
+                    <p class="tree-node-question">Does it require relationship context or political sensitivity?</p>
+                </div>
+
+                <div class="tree-connector" style="max-width: 380px;">
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--yes">Yes</div>
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-result tree-result--manual">Manual</div>
+                    </div>
+                    <div class="tree-branch">
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-branch-label tree-branch-label--no">Unclear</div>
+                        <div class="tree-branch-line"></div>
+                        <div class="tree-result tree-result--hil">Human-in-the-Loop</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p>Notice the fallback at the bottom: if you cannot clearly determine whether something needs full manual control, <strong>default to Human-in-the-Loop</strong>. This is the safest middle ground -- the agent still does the heavy lifting, but you get a checkpoint before anything moves forward.</p>
+
+        <p>Let us walk through four steps from a CSM quarterly health report workflow:</p>
+
+        <!-- Walk-through examples -->
+        <div class="walkthrough">
+            <div class="walkthrough-step">
+                <div>
+                    <div class="walkthrough-step-label">Pull account data from Salesforce</div>
+                    <div class="walkthrough-step-desc">Retrieve ARR, contract dates, tier, and renewal date for the account.</div>
+                    <p class="walkthrough-step-reasoning">Pure data retrieval. No decisions, no interpretation. The data is either correct or it is not.</p>
+                </div>
+                <div class="walkthrough-tag walkthrough-tag--auto">Automate</div>
+            </div>
+
+            <div class="walkthrough-step">
+                <div>
+                    <div class="walkthrough-step-label">Assess support ticket health</div>
+                    <div class="walkthrough-step-desc">Compare ticket volume and severity against last quarter, flag degrading trends.</div>
+                    <p class="walkthrough-step-reasoning">Criteria-based judgement -- the rules are explicit (>20% volume increase, severity shift). Agent can flag, you confirm.</p>
+                </div>
+                <div class="walkthrough-tag walkthrough-tag--hil">HIL</div>
+            </div>
+
+            <div class="walkthrough-step">
+                <div>
+                    <div class="walkthrough-step-label">Draft the health narrative</div>
+                    <div class="walkthrough-step-desc">Write a 3-paragraph summary combining data trends, engagement metrics, and risk signals.</div>
+                    <p class="walkthrough-step-reasoning">The agent has the data and the template. But tone, emphasis, and what to highlight require your relationship context.</p>
+                </div>
+                <div class="walkthrough-tag walkthrough-tag--hil">HIL</div>
+            </div>
+
+            <div class="walkthrough-step">
+                <div>
+                    <div class="walkthrough-step-label">Send the report to the customer</div>
+                    <div class="walkthrough-step-desc">Email the final report to the customer stakeholders.</div>
+                    <p class="walkthrough-step-reasoning">Distribution always stays with you. The agent never sends anything externally on your behalf.</p>
+                </div>
+                <div class="walkthrough-tag walkthrough-tag--manual">Manual</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: The Golden Rule
+         ============================================================ -->
+    <section class="section" id="section-3">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">The Golden Rule</h2>
+            <span class="section-time">3 min</span>
+        </div>
+
+        <div class="principle">
+            <div class="principle-label">Golden Rule</div>
+            <p class="principle-text">Err toward more human involvement in v1. You can always remove checkpoints later as trust builds.</p>
+        </div>
+
+        <p>It is tempting to automate aggressively from the start. Resist that temptation. Your first version should have more checkpoints than you think you need. Here is why, and here is how you know when to adjust:</p>
+
+        <div class="golden-rules">
+            <div class="golden-rule">
+                <p class="golden-rule-text">A 95% approval rate at a checkpoint means the checkpoint is unnecessary.</p>
+                <p class="golden-rule-detail">If you are approving the agent's output without changes 19 times out of 20, that checkpoint is costing you time without adding value. Remove it in v2.</p>
+                <div class="golden-rule-metric golden-rule-metric--remove">95%+ approval = remove checkpoint</div>
+            </div>
+
+            <div class="golden-rule">
+                <p class="golden-rule-text">A 60% edit rate means the preceding step needs improvement.</p>
+                <p class="golden-rule-detail">If you are editing the agent's output more often than not, the problem is not the checkpoint -- it is the step before it. The agent's instructions, data sources, or criteria need refinement. Fix the agent, not the checkpoint.</p>
+                <div class="golden-rule-metric golden-rule-metric--fix">60%+ edits = fix the agent</div>
+            </div>
+        </div>
+
+        <p>This creates a natural evolution. Your v1 has many checkpoints. Over time, data shows which checkpoints are adding value and which are just slowing you down. You tighten the screws gradually, from evidence, not from hope.</p>
+    </section>
+
+    <!-- ============================================================
+         SECTION 4: Common Boundary Mistakes
+         ============================================================ -->
+    <section class="section" id="section-4">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">Common Boundary Mistakes</h2>
+            <span class="section-time">5 min</span>
+        </div>
+
+        <p>These are the four mistakes we see most often when people draw the automation boundary for the first time. All four are completely natural. All four are fixable.</p>
+
+        <div class="mistakes">
+            <div class="mistake-card">
+                <div class="mistake-number">Mistake 1</div>
+                <div class="mistake-title">Automating sentiment analysis completely</div>
+                <p class="mistake-desc">You tag "assess customer sentiment" as AUTOMATE because the agent can read NPS scores and survey responses. But sentiment is not just data -- it is relationship context. The NPS might say 8, but you know from last week's call that the champion is frustrated about a feature gap.</p>
+                <div class="mistake-fix">Keep sentiment assessment as HIL. The agent compiles the data signals. You interpret what they mean for this specific customer.</div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-number">Mistake 2</div>
+                <div class="mistake-title">Keeping data gathering as MANUAL</div>
+                <p class="mistake-desc">You tag "pull account data from Salesforce" as MANUAL because "I always do it myself" or "I want to make sure it is right." But data retrieval is the single most automatable category of work. If the query is well-defined, the agent will pull the exact same data you would, every time, in seconds instead of minutes.</p>
+                <div class="mistake-fix">Data gathering is always AUTOMATE. If you are worried about data quality, add a validation step after, not a manual step before.</div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-number">Mistake 3</div>
+                <div class="mistake-title">Making everything Human-in-the-Loop</div>
+                <p class="mistake-desc">You tag every step as HIL because it feels safe. But if you review every single thing the agent does, you spend more time reviewing than you would spend doing the work yourself. The overhead of context-switching into "review mode" for trivial outputs is real.</p>
+                <div class="mistake-fix">Reserve HIL for steps where your review actually changes the output. If you would rubber-stamp it, it should be AUTOMATE.</div>
+            </div>
+
+            <div class="mistake-card">
+                <div class="mistake-number">Mistake 4</div>
+                <div class="mistake-title">Forgetting that distribution stays MANUAL</div>
+                <p class="mistake-desc">You build a beautiful automated workflow, and at the end you tag "send the report" as AUTOMATE. The agent sends an email to your customer with a tone you did not review, at a time you did not choose, with no opportunity to add a personal note. This is how trust erodes.</p>
+                <div class="mistake-fix">Distribution is always MANUAL. The agent prepares. You deliver. No exceptions in v1.</div>
+            </div>
+        </div>
+
+        <div class="insight">
+            <div class="insight-label">Pattern to notice</div>
+            <p>Mistakes 1 and 4 are about being too aggressive (too much automation). Mistakes 2 and 3 are about being too conservative (too much human involvement). The sweet spot is in the middle, and the decision tree from Section 2 is designed to land you there.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: Interactive Exercise
+         ============================================================ -->
+    <section class="section" id="section-5">
+        <div class="section-header">
+            <span class="section-number">5</span>
+            <h2 class="section-title">Interactive Exercise</h2>
+            <span class="section-time">2 min</span>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-label">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                Your Turn
+            </div>
+            <h3>Tag Your 5 Steps</h3>
+            <p>Go back to the 5 steps you mapped in Lesson 4. For each one, assign a tag: AUTOMATE, HIL, or MANUAL. Use the decision tree if you are unsure.</p>
+
+            <div class="tag-grid">
+                <div class="tag-grid-header">
+                    <span>#</span>
+                    <span>Your Step (from Lesson 4)</span>
+                    <span>Tag</span>
+                </div>
+                <div class="tag-grid-row">
+                    <div class="cell step-num">1</div>
+                    <div class="cell"><input type="text" placeholder="Paste or type your step here"></div>
+                    <div class="cell">
+                        <select>
+                            <option value="">-- Select --</option>
+                            <option value="auto">AUTOMATE</option>
+                            <option value="hil">HIL</option>
+                            <option value="manual">MANUAL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tag-grid-row">
+                    <div class="cell step-num">2</div>
+                    <div class="cell"><input type="text" placeholder="Paste or type your step here"></div>
+                    <div class="cell">
+                        <select>
+                            <option value="">-- Select --</option>
+                            <option value="auto">AUTOMATE</option>
+                            <option value="hil">HIL</option>
+                            <option value="manual">MANUAL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tag-grid-row">
+                    <div class="cell step-num">3</div>
+                    <div class="cell"><input type="text" placeholder="Paste or type your step here"></div>
+                    <div class="cell">
+                        <select>
+                            <option value="">-- Select --</option>
+                            <option value="auto">AUTOMATE</option>
+                            <option value="hil">HIL</option>
+                            <option value="manual">MANUAL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tag-grid-row">
+                    <div class="cell step-num">4</div>
+                    <div class="cell"><input type="text" placeholder="Paste or type your step here"></div>
+                    <div class="cell">
+                        <select>
+                            <option value="">-- Select --</option>
+                            <option value="auto">AUTOMATE</option>
+                            <option value="hil">HIL</option>
+                            <option value="manual">MANUAL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tag-grid-row">
+                    <div class="cell step-num">5</div>
+                    <div class="cell"><input type="text" placeholder="Paste or type your step here"></div>
+                    <div class="cell">
+                        <select>
+                            <option value="">-- Select --</option>
+                            <option value="auto">AUTOMATE</option>
+                            <option value="hil">HIL</option>
+                            <option value="manual">MANUAL</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <p style="margin-top: 20px;"><strong>Now run two sanity checks:</strong></p>
+
+            <div class="sanity-checks">
+                <div class="sanity-check">
+                    <div class="sanity-check-icon sanity-check-icon--warn">!</div>
+                    <p class="sanity-check-text"><strong>Do you have at least one HIL checkpoint?</strong> If not, you have been too aggressive. No workflow should run entirely without human oversight in v1. Go back and add a review point where the agent's output matters most.</p>
+                </div>
+                <div class="sanity-check">
+                    <div class="sanity-check-icon sanity-check-icon--warn">!</div>
+                    <p class="sanity-check-text"><strong>Do you have more than 3 HIL checkpoints for 5 steps?</strong> If so, you have been too conservative. You will spend more time reviewing than you save. Run each HIL step through the decision tree again -- at least one of them is probably AUTOMATE.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         Closing Reflection
+         ============================================================ -->
+    <section class="section" id="section-6">
+        <div class="reflection">
+            <h3>
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                What You Now Have
+            </h3>
+            <p>You have a workflow with steps, decision logic classifications, and automation boundary tags. That is the core of a Stage 3 scope document. You know what the agent does, where you review, and what stays entirely with you.</p>
+            <p><strong>This is your blueprint.</strong> If your team uses a low-code agent builder, this is what you will configure yourself. If you are working with an engineer using a code-first framework, this is the handoff document that tells them exactly what to build. Either way: no ambiguity, no assumptions, no "we'll figure it out later."</p>
+            <p>In Lesson 6, you will learn how to refine this into a complete scope document and prepare for the next stage &mdash; whether that is configuring the agent yourself or handing off to a technical partner.</p>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Footer Navigation -->
+    <nav class="lesson-nav">
+        <a href="04-mapping-your-workflow.html" class="nav-btn">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <div>
+                <span class="nav-direction">Previous</span>
+                <span class="nav-title">Lesson 4: Mapping Your Workflow</span>
+            </div>
+        </a>
+        <a href="06-completing-your-scope.html" class="nav-btn nav-btn--next">
+            <div>
+                <span class="nav-direction">Next</span>
+                <span class="nav-title">Lesson 6: Completing Your Scope</span>
+            </div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </nav>
+</main>
+
+</body>
+</html>

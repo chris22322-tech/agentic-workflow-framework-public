@@ -1,0 +1,14 @@
+{
+    "id": "item-001",
+    "status": "active",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-03-20T14:22:00Z",
+    "metrics": {
+        "score": 8.5,
+        "completion_rate": 0.92,
+        "response_time_hours": 18
+    },
+    "categories": ["category-a", "category-b"],
+    "notes": "Example fixture data for testing. Replace with a real API response from your data source.",
+    "_fixture_note": "This file lives in tests/fixtures/. Add one fixture per tool per scenario. See Stage 5: Build → Testing conventions."
+}

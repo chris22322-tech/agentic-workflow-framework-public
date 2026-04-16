@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 7: Evaluate and Iterate | BA Learning Path</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-card: #1e293b;
+            --border-subtle: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #22d3ee;
+            --accent-soft: rgba(34,211,238,0.10);
+            --accent-med: rgba(34,211,238,0.22);
+            --green: #4ade80;
+            --green-soft: rgba(74,222,128,0.10);
+            --green-med: rgba(74,222,128,0.22);
+            --red: #f87171;
+            --red-soft: rgba(248,113,113,0.10);
+            --red-med: rgba(248,113,113,0.22);
+            --amber: #fbbf24;
+            --amber-soft: rgba(251,191,36,0.10);
+            --amber-med: rgba(251,191,36,0.22);
+            --purple: #a78bfa;
+            --purple-soft: rgba(167,139,250,0.12);
+            --purple-med: rgba(167,139,250,0.22);
+            --max-width: 820px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-sans); background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+        /* --- Progress Bar --- */
+        .progress-bar-track { position: fixed; top: 0; left: 0; right: 0; height: 4px; background: var(--bg-tertiary); z-index: 1000; }
+        .progress-bar-fill { height: 100%; width: 87.5%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 0 2px 2px 0; }
+
+        /* --- Header --- */
+        .lesson-header { background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); border-bottom: 1px solid var(--border-subtle); padding: 28px 0 36px; }
+        .header-inner { max-width: var(--max-width); margin: 0 auto; padding: 0 28px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: var(--text-muted); }
+        .lesson-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+        .badge--stage { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-med); }
+        .badge--time { background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+        .badge--lesson { background: var(--purple-soft); color: var(--purple); border: 1px solid var(--purple-med); }
+        .lesson-title { font-size: 34px; font-weight: 750; letter-spacing: -0.025em; line-height: 1.2; color: #fff; margin-bottom: 12px; }
+        .lesson-subtitle { font-size: 17px; color: var(--text-secondary); line-height: 1.6; max-width: 640px; }
+        .progress-dots { display: flex; gap: 8px; align-items: center; margin-top: 22px; }
+        .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bg-tertiary); border: 2px solid var(--border-subtle); }
+        .progress-dot--complete { background: var(--accent); border-color: var(--accent); }
+        .progress-dot--current { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .progress-dot-label { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+
+        /* --- Body --- */
+        .lesson-body { max-width: var(--max-width); margin: 0 auto; padding: 48px 28px 80px; }
+        .section { margin-bottom: 56px; opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .section.visible { opacity: 1; transform: translateY(0); }
+        .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+        .section-number { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--accent-med); color: var(--accent); font-size: 15px; font-weight: 700; flex-shrink: 0; }
+        .section-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.015em; }
+        .section-time { font-size: 12px; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+        p { margin-bottom: 16px; color: var(--text-primary); }
+        strong { color: #fff; font-weight: 650; }
+
+        /* --- Principle Callout --- */
+        .principle { background: var(--accent-soft); border: 1px solid var(--accent-med); border-left: 4px solid var(--accent); border-radius: var(--radius-md); padding: 20px 24px; margin: 24px 0; }
+        .principle-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 6px; }
+        .principle-text { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.5; margin-bottom: 0; }
+
+        /* --- Insight Callout --- */
+        .callout { background: var(--amber-soft); border: 1px solid var(--amber-med); border-left: 4px solid var(--amber); border-radius: var(--radius-md); padding: 18px 22px; margin: 24px 0; }
+        .callout-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 6px; }
+        .callout p { font-size: 15px; margin-bottom: 0; color: var(--text-primary); }
+
+        /* --- Test Case Type Cards --- */
+        .test-card-grid { display: flex; flex-direction: column; gap: 16px; margin: 28px 0; }
+        .test-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 24px; position: relative; overflow: hidden; transition: transform 0.2s; }
+        .test-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .test-card::before { content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 4px; }
+        .test-card--green::before { background: var(--green); }
+        .test-card--amber::before { background: var(--amber); }
+        .test-card--red::before { background: var(--red); }
+        .test-card--purple::before { background: var(--purple); }
+        .test-card--cyan::before { background: var(--accent); }
+        .test-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .test-card-number { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+        .test-card--green .test-card-number { background: var(--green-soft); color: var(--green); border: 1px solid var(--green-med); }
+        .test-card--amber .test-card-number { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-med); }
+        .test-card--red .test-card-number { background: var(--red-soft); color: var(--red); border: 1px solid var(--red-med); }
+        .test-card--purple .test-card-number { background: var(--purple-soft); color: var(--purple); border: 1px solid var(--purple-med); }
+        .test-card--cyan .test-card-number { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-med); }
+        .test-card-name { font-size: 16px; font-weight: 700; color: #fff; }
+        .test-card-scenario { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.6; }
+        .test-card-tests { font-size: 13px; color: var(--text-muted); font-family: var(--font-mono); }
+        .test-card-tests span { color: var(--accent); font-weight: 500; }
+
+        /* --- Three Things List --- */
+        .three-things { list-style: none; margin: 20px 0; counter-reset: thing; }
+        .three-things li { position: relative; padding: 14px 18px 14px 54px; margin-bottom: 10px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); font-size: 15px; color: var(--text-primary); counter-increment: thing; }
+        .three-things li::before { content: counter(thing); position: absolute; left: 16px; top: 14px; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--accent-med); color: var(--accent); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .three-things li strong { color: var(--accent); }
+
+        /* --- Expandable Details --- */
+        .expandable { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin: 16px 0; overflow: hidden; }
+        .expandable summary { padding: 16px 20px; font-size: 15px; font-weight: 600; color: var(--accent); cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; }
+        .expandable summary::-webkit-details-marker { display: none; }
+        .expandable summary::before { content: '+'; width: 24px; height: 24px; border-radius: 6px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+        .expandable[open] summary::before { content: '\2212'; }
+        .expandable-content { padding: 0 20px 20px; font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+        .expandable-content p { margin-bottom: 10px; font-size: 15px; color: var(--text-secondary); }
+        .expandable-content strong { color: var(--accent); }
+        .example-row { display: grid; grid-template-columns: 100px 1fr; gap: 4px 12px; margin-bottom: 8px; }
+        .example-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); padding-top: 2px; }
+        .example-value { font-size: 14px; color: var(--text-primary); line-height: 1.6; }
+
+        /* --- Diagnosis Cards --- */
+        .diagnosis-grid { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+        .diagnosis-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; transition: transform 0.2s; }
+        .diagnosis-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .diagnosis-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+        .diagnosis-col-label--symptom { color: var(--red); }
+        .diagnosis-col-label--cause { color: var(--amber); }
+        .diagnosis-col-label--fix { color: var(--green); }
+        .diagnosis-col-text { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
+        .diagnosis-header { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; padding: 14px 20px; background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md) var(--radius-md) 0 0; margin-bottom: -1px; }
+        .diagnosis-header span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+        .diagnosis-header span:nth-child(1) { color: var(--red); }
+        .diagnosis-header span:nth-child(2) { color: var(--amber); }
+        .diagnosis-header span:nth-child(3) { color: var(--green); }
+        .diagnosis-grid .diagnosis-card:first-child { border-radius: 0 0 0 0; }
+        .diagnosis-grid .diagnosis-card:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+
+        /* --- Iteration Cycle --- */
+        .cycle-grid { display: flex; flex-direction: column; gap: 0; margin: 28px 0; position: relative; }
+        .cycle-grid::before { content: ''; position: absolute; left: 27px; top: 28px; bottom: 28px; width: 2px; background: linear-gradient(180deg, var(--accent), var(--green), var(--amber), var(--purple), var(--accent)); border-radius: 1px; }
+        .cycle-step { display: flex; gap: 20px; align-items: flex-start; padding: 14px 0; position: relative; }
+        .cycle-number { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; font-size: 20px; font-weight: 800; flex-shrink: 0; position: relative; z-index: 1; }
+        .cycle-step:nth-child(1) .cycle-number { background: var(--accent-soft); color: var(--accent); border: 2px solid var(--accent-med); }
+        .cycle-step:nth-child(2) .cycle-number { background: var(--green-soft); color: var(--green); border: 2px solid var(--green-med); }
+        .cycle-step:nth-child(3) .cycle-number { background: var(--amber-soft); color: var(--amber); border: 2px solid var(--amber-med); }
+        .cycle-step:nth-child(4) .cycle-number { background: var(--purple-soft); color: var(--purple); border: 2px solid var(--purple-med); }
+        .cycle-step:nth-child(5) .cycle-number { background: var(--accent-soft); color: var(--accent); border: 2px solid var(--accent-med); }
+        .cycle-content { padding-top: 6px; }
+        .cycle-label { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .cycle-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* --- Self-Check Purple Cards --- */
+        .self-check { background: var(--purple-soft); border: 1px solid var(--purple-med); border-radius: var(--radius-md); margin: 16px 0; overflow: hidden; }
+        .self-check summary { padding: 16px 20px; font-size: 15px; font-weight: 600; color: var(--purple); cursor: pointer; display: flex; align-items: center; gap: 10px; list-style: none; }
+        .self-check summary::-webkit-details-marker { display: none; }
+        .self-check summary::before { content: '?'; width: 24px; height: 24px; border-radius: 6px; background: var(--purple-med); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; color: var(--purple); }
+        .self-check[open] summary::before { content: '\2713'; }
+        .self-check-content { padding: 0 20px 20px; }
+        .self-check-answer { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 16px 18px; font-size: 14px; color: var(--text-primary); line-height: 1.6; }
+        .self-check-answer strong { color: var(--purple); }
+
+        /* --- Checklist --- */
+        .checklist { list-style: none; margin: 20px 0; }
+        .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: 15px; color: var(--text-primary); }
+        .checklist li::before { content: '\2610'; font-size: 16px; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+        /* --- Divider --- */
+        .divider { border: none; border-top: 1px solid var(--border-subtle); margin: 32px 0; }
+
+        /* --- Nav --- */
+        .lesson-nav { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border-subtle); }
+        .nav-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); color: var(--text-primary); text-decoration: none; font-size: 14px; font-weight: 600; transition: all 0.2s; min-width: 180px; }
+        .nav-btn:hover { border-color: var(--accent); background: var(--bg-tertiary); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+        .nav-btn svg { width: 16px; height: 16px; stroke: var(--text-secondary); fill: none; stroke-width: 2; flex-shrink: 0; }
+        .nav-btn--next { text-align: right; margin-left: auto; justify-content: flex-end; }
+        .nav-btn--next svg { order: 2; }
+        .nav-direction { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+        .nav-title { display: block; color: #fff; }
+
+        /* --- Responsive --- */
+        @media (max-width: 640px) {
+            .lesson-title { font-size: 26px; }
+            .section-title { font-size: 18px; }
+            .section-header { flex-wrap: wrap; }
+            .section-time { margin-left: 50px; }
+            .lesson-body { padding: 32px 18px 60px; }
+            .nav-btn { min-width: unset; padding: 12px 16px; }
+            .diagnosis-card { grid-template-columns: 1fr; gap: 12px; }
+            .diagnosis-header { grid-template-columns: 1fr; gap: 4px; }
+            .diagnosis-header span:nth-child(2),
+            .diagnosis-header span:nth-child(3) { display: none; }
+            .diagnosis-col-label { display: block; }
+            .example-row { grid-template-columns: 1fr; gap: 2px; }
+            .cycle-grid::before { left: 27px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar-track"><div class="progress-bar-fill"></div></div>
+
+<header class="lesson-header">
+    <div class="header-inner">
+        <nav class="breadcrumb">
+            <a href="../../enablement/ba.html">BA Learning Path</a>
+            <span class="sep">/</span>
+            <span>Lesson 7</span>
+        </nav>
+        <div class="lesson-meta">
+            <span class="badge badge--lesson">Lesson 7 of 8</span>
+            <span class="badge badge--stage">Stage 6: Evaluate</span>
+            <span class="badge badge--time">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ~20 min
+            </span>
+        </div>
+        <h1 class="lesson-title">Evaluate and Iterate</h1>
+        <p class="lesson-subtitle">Your agent is built. Now you need to prove it works. Testing agentic workflows requires more than &ldquo;does it run?&rdquo; &mdash; you need structured test cases, clear expected outputs, and a disciplined iteration cycle.</p>
+        <div class="progress-dots">
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--complete"></div>
+            <div class="progress-dot progress-dot--current"></div>
+            <div class="progress-dot"></div>
+            <span class="progress-dot-label">7 / 8</span>
+        </div>
+    </div>
+</header>
+
+<main class="lesson-body">
+
+    <!-- ============================================ -->
+    <!-- SECTION 1: Requirements-Based Testing        -->
+    <!-- ============================================ -->
+    <section class="section" id="section-1">
+        <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">Requirements-Based Testing</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <p>You have a running agent. The temptation is to throw random inputs at it and see what happens. Resist that. Random testing finds random bugs. Structured testing finds the bugs that matter.</p>
+
+        <div class="principle">
+            <div class="principle-label">Key Principle</div>
+            <p class="principle-text">You wrote the scope document. You know what &ldquo;correct&rdquo; looks like. That makes you the right person to write test cases.</p>
+        </div>
+
+        <p>Every scope document implicitly defines five types of test cases. Each one probes a different failure mode. You need all five to have confidence that your agent is production-ready.</p>
+
+        <div class="test-card-grid">
+            <div class="test-card test-card--green">
+                <div class="test-card-header">
+                    <span class="test-card-number">1</span>
+                    <span class="test-card-name">Happy Path</span>
+                </div>
+                <div class="test-card-scenario">Standard feature request, all data available, clear output.</div>
+                <div class="test-card-tests"><span>Tests:</span> basic flow works end to end</div>
+            </div>
+
+            <div class="test-card test-card--amber">
+                <div class="test-card-header">
+                    <span class="test-card-number">2</span>
+                    <span class="test-card-name">Edge Case</span>
+                </div>
+                <div class="test-card-scenario">Cross-team request spanning 3+ teams.</div>
+                <div class="test-card-tests"><span>Tests:</span> agent handles complex dependency chains</div>
+            </div>
+
+            <div class="test-card test-card--red">
+                <div class="test-card-header">
+                    <span class="test-card-number">3</span>
+                    <span class="test-card-name">Data Gap</span>
+                </div>
+                <div class="test-card-scenario">New Jira project with no history (&lt;5 tickets).</div>
+                <div class="test-card-tests"><span>Tests:</span> graceful degradation with clear uncertainty flagging</div>
+            </div>
+
+            <div class="test-card test-card--purple">
+                <div class="test-card-header">
+                    <span class="test-card-number">4</span>
+                    <span class="test-card-name">Ambiguous Input</span>
+                </div>
+                <div class="test-card-scenario">Similar-but-not-duplicate request.</div>
+                <div class="test-card-tests"><span>Tests:</span> similarity scoring at boundary thresholds</div>
+            </div>
+
+            <div class="test-card test-card--cyan">
+                <div class="test-card-header">
+                    <span class="test-card-number">5</span>
+                    <span class="test-card-name">Boundary Conflict</span>
+                </div>
+                <div class="test-card-scenario">Aligns with one OKR but conflicts with another.</div>
+                <div class="test-card-tests"><span>Tests:</span> agent surfaces tension rather than averaging</div>
+            </div>
+        </div>
+
+        <p>If your agent passes all five types, you have strong evidence it is ready for real inputs. If it fails on types 2&ndash;5 but passes type 1, you have a prototype &mdash; not a production system.</p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 2: Writing Good Test Cases           -->
+    <!-- ============================================ -->
+    <section class="section" id="section-2">
+        <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">Writing Good Test Cases</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <p>A test case is not &ldquo;try this and see what happens.&rdquo; A test case is a precise specification of input, expected output, and what you are checking. For each test case, document three things:</p>
+
+        <ol class="three-things">
+            <li><strong>Input</strong> &mdash; the specific request or trigger. Use a real historical example wherever possible.</li>
+            <li><strong>Expected Output</strong> &mdash; what a competent BA would produce for this input.</li>
+            <li><strong>What You're Checking</strong> &mdash; the specific behaviour being tested.</li>
+        </ol>
+
+        <p>The expected output is the critical part. It forces you to articulate what &ldquo;correct&rdquo; actually looks like before you run the test. Without it, you are just observing &mdash; not testing.</p>
+
+        <details class="expandable">
+            <summary>Example: Happy Path Test Case</summary>
+            <div class="expandable-content">
+                <div class="example-row">
+                    <span class="example-label">Input</span>
+                    <span class="example-value">Standard feature request for adding a dashboard filter. Single component, clear description, no duplicates.</span>
+                </div>
+                <div class="example-row">
+                    <span class="example-label">Expected</span>
+                    <span class="example-value">Complexity = Small. Alignment = Medium (Indirect to UX OKR). 1 team impacted. Clean impact summary.</span>
+                </div>
+                <div class="example-row">
+                    <span class="example-label">Checking</span>
+                    <span class="example-value">All data retrieval succeeds, scoring matches criteria, output is complete and professional.</span>
+                </div>
+            </div>
+        </details>
+
+        <details class="expandable">
+            <summary>Example: Boundary Conflict Test Case</summary>
+            <div class="expandable-content">
+                <div class="example-row">
+                    <span class="example-label">Input</span>
+                    <span class="example-value">Feature request that directly advances Revenue OKR but requires resources committed to Platform Stability OKR.</span>
+                </div>
+                <div class="example-row">
+                    <span class="example-label">Expected</span>
+                    <span class="example-value">Agent flags both alignments. Does NOT average them. Surfaces the conflict explicitly for committee review.</span>
+                </div>
+                <div class="example-row">
+                    <span class="example-label">Checking</span>
+                    <span class="example-value">Conflict detection works. Priority recommendation acknowledges tension rather than resolving it.</span>
+                </div>
+            </div>
+        </details>
+
+        <div class="callout">
+            <div class="callout-label">Tip</div>
+            <p>Use real historical examples from your organisation. They anchor your test cases in reality and make the expected outputs easier to define &mdash; because you already know what the correct answer was.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 3: Diagnosing Failures               -->
+    <!-- ============================================ -->
+    <section class="section" id="section-3">
+        <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">Diagnosing Failures</h2>
+            <span class="section-time">~5 min</span>
+        </div>
+
+        <p>When a test fails, resist the urge to immediately tweak the prompt. First, diagnose. The symptom tells you where to look. The cause tells you what to fix.</p>
+
+        <div class="diagnosis-header">
+            <span>Symptom</span>
+            <span>Likely Cause</span>
+            <span>Fix</span>
+        </div>
+        <div class="diagnosis-grid">
+            <div class="diagnosis-card">
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--symptom">Symptom</div>
+                    <div class="diagnosis-col-text">Agent misses relevant data</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--cause">Likely Cause</div>
+                    <div class="diagnosis-col-text">Tool config or API query issue</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--fix">Fix</div>
+                    <div class="diagnosis-col-text">Check data retrieval step</div>
+                </div>
+            </div>
+
+            <div class="diagnosis-card">
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--symptom">Symptom</div>
+                    <div class="diagnosis-col-text">Applies wrong criteria</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--cause">Likely Cause</div>
+                    <div class="diagnosis-col-text">Decision logic not precise enough</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--fix">Fix</div>
+                    <div class="diagnosis-col-text">Refine scope, update config</div>
+                </div>
+            </div>
+
+            <div class="diagnosis-card">
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--symptom">Symptom</div>
+                    <div class="diagnosis-col-text">Correct but poorly formatted</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--cause">Likely Cause</div>
+                    <div class="diagnosis-col-text">Output template issue</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--fix">Fix</div>
+                    <div class="diagnosis-col-text">Adjust template or prompt</div>
+                </div>
+            </div>
+
+            <div class="diagnosis-card">
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--symptom">Symptom</div>
+                    <div class="diagnosis-col-text">Simple cases OK, complex fail</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--cause">Likely Cause</div>
+                    <div class="diagnosis-col-text">Edge cases not in scope</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--fix">Fix</div>
+                    <div class="diagnosis-col-text">Add edge case handling</div>
+                </div>
+            </div>
+
+            <div class="diagnosis-card">
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--symptom">Symptom</div>
+                    <div class="diagnosis-col-text">HIL checkpoint shows too little info</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--cause">Likely Cause</div>
+                    <div class="diagnosis-col-text">Checkpoint design incomplete</div>
+                </div>
+                <div>
+                    <div class="diagnosis-col-label diagnosis-col-label--fix">Fix</div>
+                    <div class="diagnosis-col-text">Surface more working, not just conclusions</div>
+                </div>
+            </div>
+        </div>
+
+        <p>The pattern here is diagnostic, not reactive. Symptom leads to cause, cause leads to fix. Prompt tweaking without diagnosis creates a different agent &mdash; not necessarily a better one.</p>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 4: The Iteration Cycle               -->
+    <!-- ============================================ -->
+    <section class="section" id="section-4">
+        <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">The Iteration Cycle</h2>
+            <span class="section-time">~3 min</span>
+        </div>
+
+        <p>Evaluation is not a single pass. It is a cycle. Each round tightens the gap between what the agent produces and what you need it to produce.</p>
+
+        <div class="cycle-grid">
+            <div class="cycle-step">
+                <div class="cycle-number">1</div>
+                <div class="cycle-content">
+                    <div class="cycle-label">Run</div>
+                    <div class="cycle-desc">Execute test cases across all five types. Do not skip the edge cases &mdash; they are where the real problems hide.</div>
+                </div>
+            </div>
+            <div class="cycle-step">
+                <div class="cycle-number">2</div>
+                <div class="cycle-content">
+                    <div class="cycle-label">Score</div>
+                    <div class="cycle-desc">Compare outputs against expected results. Mark each field as correct, partially correct, or wrong. Be precise.</div>
+                </div>
+            </div>
+            <div class="cycle-step">
+                <div class="cycle-number">3</div>
+                <div class="cycle-content">
+                    <div class="cycle-label">Diagnose</div>
+                    <div class="cycle-desc">For each failure, identify the root cause. Use the diagnosis table. Do not guess &mdash; trace the issue back to its source.</div>
+                </div>
+            </div>
+            <div class="cycle-step">
+                <div class="cycle-number">4</div>
+                <div class="cycle-content">
+                    <div class="cycle-label">Adjust</div>
+                    <div class="cycle-desc">Update the scope document, design, or build artefacts. Fix the root cause, not the symptom.</div>
+                </div>
+            </div>
+            <div class="cycle-step">
+                <div class="cycle-number">5</div>
+                <div class="cycle-content">
+                    <div class="cycle-label">Re-run</div>
+                    <div class="cycle-desc">Verify the fix resolved the issue. Check that previously passing tests still pass &mdash; regressions are common.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout">
+            <div class="callout-label">Iteration Guidance</div>
+            <p>Most agents need 2&ndash;3 iteration rounds before production-ready. Track edit size at each HIL checkpoint &mdash; consistently zero edits means you can remove that checkpoint. Consistently large edits means upstream nodes need improvement.</p>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- SECTION 5: Self-Check                        -->
+    <!-- ============================================ -->
+    <section class="section" id="section-5">
+        <div class="section-header">
+            <span class="section-number">5</span>
+            <h2 class="section-title">Self-Check</h2>
+            <span class="section-time">~2 min</span>
+        </div>
+
+        <details class="self-check">
+            <summary>You notice the agent consistently gets the complexity tier right but the strategic alignment wrong. Where is the problem most likely?</summary>
+            <div class="self-check-content">
+                <div class="self-check-answer">
+                    <p><strong>The alignment assessment node.</strong> Check: is the OKR data being retrieved correctly? Are the alignment criteria in the prompt matching your scope document's taxonomy (Direct / Indirect / Neutral / Conflicting)?</p>
+                    <p>If the data retrieval is fine, the issue is in the decision logic &mdash; the prompt is not specific enough about what distinguishes &ldquo;Direct&rdquo; from &ldquo;Indirect&rdquo; alignment.</p>
+                </div>
+            </div>
+        </details>
+
+        <details class="self-check">
+            <summary>After three iteration rounds, you still make significant edits at the first HIL checkpoint. What does this tell you?</summary>
+            <div class="self-check-content">
+                <div class="self-check-answer">
+                    <p><strong>The assessment nodes (complexity, alignment, team impact) need fundamental improvement.</strong> Consider: are the prompts specific enough? Is the data quality sufficient? Should you revise the scope document's decision criteria?</p>
+                    <p>Three rounds without convergence suggests the problem is structural, not superficial. You may need to go back to the scope or design stage rather than continuing to iterate on the build.</p>
+                </div>
+            </div>
+        </details>
+
+        <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 28px 0 12px;">What you should have after this lesson</h3>
+
+        <ul class="checklist">
+            <li>5 test cases covering all standard types</li>
+            <li>Expected outputs for each test case</li>
+            <li>Understanding of failure diagnosis and iteration</li>
+        </ul>
+
+        <p style="margin-top: 16px;">Reference: <a href="../../worked-example-ba/evaluate.html" style="color: var(--accent);">BA Worked Example &mdash; Stage 6: Evaluate</a> | <a href="../../stages/06-evaluate.html" style="color: var(--accent);">Methodology &mdash; Stage 6</a></p>
+    </section>
+
+    <hr class="divider">
+
+    <nav class="lesson-nav">
+        <a href="06-build-the-agent.html" class="nav-btn">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <div>
+                <span class="nav-direction">Previous</span>
+                <span class="nav-title">Lesson 6: Build the Agent</span>
+            </div>
+        </a>
+        <a href="08-handover-and-scale.html" class="nav-btn nav-btn--next">
+            <div>
+                <span class="nav-direction">Next</span>
+                <span class="nav-title">Lesson 8: Handover and Scale</span>
+            </div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+    </nav>
+</main>
+
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.section').forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

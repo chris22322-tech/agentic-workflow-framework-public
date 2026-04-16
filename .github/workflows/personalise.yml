@@ -1,0 +1,57 @@
+name: Personalise Framework Site
+
+on:
+  push:
+    paths:
+      - "personalise/org-config.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  personalise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install mkdocs mkdocs-material pyyaml
+
+      - name: Install Claude Code CLI
+        run: |
+          npm install -g @anthropic-ai/claude-code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Validate org config exists
+        run: |
+          if [ ! -f personalise/org-config.yaml ]; then
+            echo "Error: personalise/org-config.yaml not found."
+            echo "Copy org-config-template.yaml, fill it in, and push."
+            exit 1
+          fi
+
+      - name: Run fork script
+        run: |
+          python personalise/fork.py --config personalise/org-config.yaml
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Deploy to gh-pages-custom branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: personalise/output/site/site
+          publish_branch: gh-pages-custom
+          commit_message: "Deploy personalised framework site"
