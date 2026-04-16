@@ -1,0 +1,28 @@
+# Scoring Rubric
+# ==============
+# Transfer your Stage 3 Scope Document decision logic here.
+#
+# Methodology reference:
+#   - Stage 3: Scope → Decision Logic columns
+#   - Stage 5: Build → Configuration externalisation
+
+thresholds:
+  high_confidence: 0.80
+  medium_confidence: 0.60
+  low_confidence: 0.40
+
+tiers:
+  - name: "Tier 1"
+    description: "Highest priority — escalate immediately"
+    criteria:
+      - "score >= high_confidence"
+      - "risk_flag == true"
+  - name: "Tier 2"
+    description: "Medium priority — batch review"
+    criteria:
+      - "medium_confidence <= score < high_confidence"
+  - name: "Tier 3"
+    description: "Low priority — automatic"
+    criteria:
+      - "score < medium_confidence"
+      - "risk_flag == false"

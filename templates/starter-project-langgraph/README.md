@@ -1,6 +1,8 @@
-# Workflow Agent — Starter Project
+# Workflow Agent — Starter Project (LangGraph)
 
-A skeleton LangGraph agent from the **Stage 5: Build** methodology. This project gives you a working directory structure, placeholder nodes, and template files — ready to fill in with your Design Document (Stage 4) specifications.
+A skeleton **LangGraph** agent from the **Stage 5: Build** methodology. This project gives you a working directory structure, placeholder nodes, and template files — ready to fill in with your Design Document (Stage 4) specifications.
+
+> **This is the LangGraph variant.** Starter projects also exist for **OpenAI Agents SDK** (`templates/starter-project-openai-agents-sdk/`) and **Google ADK** (`templates/starter-project-adk/`). The framework itself is platform-neutral; pick the starter that matches your team's chosen platform.
 
 ## Quick Setup
 
@@ -87,11 +89,11 @@ python -m pytest tests/test_nodes.py -v
 
 This starter project is part of the workflow agent methodology:
 
-- [**Stage 1: Decompose**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/01-decompose/) — Break the workflow into steps
-- [**Stage 2: Select**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/02-select/) — Choose the right workflow to automate
-- [**Stage 3: Scope**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/03-scope/) — Define data, logic, and boundaries
-- [**Stage 4: Design**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/04-design/) — Specify graph, state, nodes, and prompts
-- [**Stage 5: Build**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/05-build/) — Implement the agent (you are here)
-- [**Stage 6: Evaluate**](https://chris-the-ai-guy.github.io/Workflow_Framework/stages/06-evaluate/) — Test, measure, and iterate
+- [**Stage 1: Decompose**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/01-decompose/) — Break the workflow into steps
+- [**Stage 2: Select**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/02-select/) — Choose the right workflow to automate
+- [**Stage 3: Scope**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/03-scope/) — Define data, logic, and boundaries
+- [**Stage 4: Design**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/04-design/) — Specify graph, state, nodes, and prompts
+- [**Stage 5: Build**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/05-build/) — Implement the agent (you are here)
+- [**Stage 6: Evaluate**](https://chris22322-tech.github.io/agentic-workflow-framework-public/stages/06-evaluate/) — Test, measure, and iterate
 
 Each file in this project includes comments referencing the relevant methodology section. Follow them to connect your Design Document to working code.
