@@ -38,7 +38,7 @@ You configure the agent through a UI rather than writing code. Good for prototyp
 Examples today:
 
 - **[Vertex AI Agent Designer](https://docs.cloud.google.com/agent-builder/agent-designer)** — Google Cloud's low-code visual designer inside Vertex AI Agent Builder. Details panel for agent configuration, Flow tab for sub-agents, tool types include Google Search, URL context, Vertex AI Search Data Stores, and MCP servers.
-- **[Dialogflow CX](https://docs.cloud.google.com/dialogflow/cx/docs/concept/overview)** — Google Cloud's older conversational agent platform with Playbooks, Flows, and data stores. Still supported and integrates with Vertex AI.
+- **[Dialogflow CX](https://docs.cloud.google.com/dialogflow/cx/docs/concept/agent)** — Google Cloud's older conversational agent platform with Playbooks, Flows, and data stores. Still supported and integrates with Vertex AI.
 - Various other low-code agent builders from cloud providers and startups.
 
 ### Managed agent platforms
